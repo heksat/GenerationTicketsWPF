@@ -7,9 +7,9 @@
         mc:Ignorable="d"
         Title="Auth" Height="450" Width="800">
     <Grid>
-        <TextBox HorizontalAlignment="Left" Margin="140,113,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="244" Height="36" FontSize="25"/>
-        <PasswordBox HorizontalAlignment="Left" Margin="140,182,0,0" VerticalAlignment="Top" Width="244" Height="35"/>
-        <Button Content="Войти" HorizontalAlignment="Left" Margin="498,307,0,0" VerticalAlignment="Top" Height="46" Width="213" Click="Button_Click" Background="LightSteelBlue" />
+        <TextBox x:Name="login" HorizontalAlignment="Left" Margin="140,113,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="244" Height="36" FontSize="25"/>
+        <PasswordBox x:Name="password" HorizontalAlignment="Left" Margin="140,182,0,0" VerticalAlignment="Top" Width="244" Height="35"/>
+        <Button x:Name="Log_in" Content="Войти" HorizontalAlignment="Left" Margin="481,295,0,0" VerticalAlignment="Top" Height="58" Width="230" Click="Button_Click" Background="LightSteelBlue" />
         <TextBlock HorizontalAlignment="Left" Margin="54,113,0,0" Text="Логин" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="25"/>
         <TextBlock HorizontalAlignment="Left" Margin="38,183,0,0" Text="Пароль" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="25"/>
 

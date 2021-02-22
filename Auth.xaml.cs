@@ -44,6 +44,7 @@ namespace GenerationTicketsWPF
                 // db.Chairmans.Add(user1);
                 // db.SaveChanges();
                 var users = db.Chairmans.ToList();
+               // db.Chairmans.
                 Console.WriteLine("Данные после добавления:");
                 //txb_Selected.Text = "";
                 foreach (Chairman u in users)
@@ -51,12 +52,14 @@ namespace GenerationTicketsWPF
                     // txb_Selected.Text += ($"{u.Lname} - {u.Fname} - {u.Sname}\n");
                     //Console.WriteLine($"{u.Lname} - {u.Fname} - {u.Sname}");
                 }
+                
             }
         }
 
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            //if (login=)
             Main main = new Main();
             main.Show();
             this.Hide();
