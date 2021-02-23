@@ -26,18 +26,7 @@ namespace GenerationTicketsWPF
         public Auth()
         {
             InitializeComponent();
-
-            var builder = new ConfigurationBuilder();
-            builder.SetBasePath(Directory.GetCurrentDirectory());// установка пути к текущему каталогу
-            builder.AddJsonFile("appconfig.json");// получаем конфигурацию из файла appsettings.json
-            var config = builder.Build(); // создаем конфигурацию
-            string connectionString = config.GetConnectionString("DefaultConnection");// получаем строку подключения
-
-            var optionsBuilder = new DbContextOptionsBuilder<GenerationTicketsContext>();
-            var options = optionsBuilder
-                .UseSqlServer(connectionString)
-                .Options;
-            using (GenerationTicketsContext db = new GenerationTicketsContext(options))
+            using (GenerationTicketsContext db = new GenerationTicketsContext(Config.Options))
             {
                 //Chairman user1 = new Chairman { Lname = "чек", Fname = "Tom", Sname = "kek" };
                 // Добавление
