@@ -1,17 +1,18 @@
-﻿<Window x:Class="GenerationTicketsWPF.Auth"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:GenerationTicketsWPF"
-        mc:Ignorable="d"
-        Title="Auth" Height="450" Width="800">
-    <Grid>
-        <TextBox x:Name="login" HorizontalAlignment="Left" Margin="140,113,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="244" Height="36" FontSize="25"/>
-        <PasswordBox x:Name="password" HorizontalAlignment="Left" Margin="140,182,0,0" VerticalAlignment="Top" Width="244" Height="35"/>
-        <Button x:Name="Log_in" Content="Войти" HorizontalAlignment="Left" Margin="481,295,0,0" VerticalAlignment="Top" Height="58" Width="230" Click="Button_Click" Background="LightSteelBlue" />
-        <TextBlock HorizontalAlignment="Left" Margin="54,113,0,0" Text="Логин" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="25"/>
-        <TextBlock HorizontalAlignment="Left" Margin="38,183,0,0" Text="Пароль" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="25"/>
+﻿<Page x:Class="GenerationTicketsWPF.Auth"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:GenerationTicketsWPF"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Auth">
 
+    <Grid Background="White">
+        <TextBox x:Name="login" HorizontalAlignment="Left" Margin="511,90,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="241" Height="34"/>
+        <PasswordBox x:Name="password" HorizontalAlignment="Left" Margin="511,158,0,0" VerticalAlignment="Top" Width="241" Height="34"/>
+        <TextBlock HorizontalAlignment="Left" Margin="400,90,0,0" Text="Логин" TextWrapping="Wrap" VerticalAlignment="Top" Height="34" Width="92" FontSize="25"/>
+        <TextBlock HorizontalAlignment="Left" Margin="400,158,0,0" Text="Пароль" TextWrapping="Wrap" VerticalAlignment="Top" Height="34" Width="92" FontSize="25"/>
+        <Button Content="Войти" HorizontalAlignment="Left" Margin="573,225,0,0" VerticalAlignment="Top" Height="42" Width="179" Click="Log_In"/>
     </Grid>
-</Window>
+</Page>

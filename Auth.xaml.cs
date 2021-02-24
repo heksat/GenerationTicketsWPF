@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -13,45 +11,37 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore;
 using System.IO;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace GenerationTicketsWPF
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Логика взаимодействия для Auth.xaml
     /// </summary>
-    public partial class Auth : Window
+    public partial class Auth : Page
     {
         public Auth()
         {
             InitializeComponent();
             using (GenerationTicketsContext db = new GenerationTicketsContext(Config.Options))
             {
-                //Chairman user1 = new Chairman { Lname = "чек", Fname = "Tom", Sname = "kek" };
-                // Добавление
-                // db.Chairmans.Add(user1);
-                // db.SaveChanges();
                 var users = db.Chairmans.ToList();
-               // db.Chairmans.
-                Console.WriteLine("Данные после добавления:");
-                //txb_Selected.Text = "";
-                foreach (Chairman u in users)
+                foreach (Chairman e in users)
                 {
-                    // txb_Selected.Text += ($"{u.Lname} - {u.Fname} - {u.Sname}\n");
-                    //Console.WriteLine($"{u.Lname} - {u.Fname} - {u.Sname}");
+                    //Test.Text = $" {e.Lname} and {e.Sname}\n"; //test connection
                 }
-                
             }
         }
 
-
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Log_In(object sender, RoutedEventArgs e)
         {
-            //if (login=)
-            Main main = new Main();
-            main.Show();
-            this.Hide();
+            using (GenerationTicketsContext db = new GenerationTicketsContext(Config.Options))
+            {
+                if (db.Workers.Where(el => el.WorkerLogin.Equals(login.Text) && el.WorkerPassword.Equals(password.Password)).FirstOrDefault()!=null)
+                this.NavigationService.Navigate(new Menu());
+            }
         }
     }
 }

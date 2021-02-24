@@ -8,16 +8,17 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace GenerationTicketsWPF
 {
     /// <summary>
-    /// Логика взаимодействия для Main.xaml
+    /// Логика взаимодействия для Menu.xaml
     /// </summary>
-    public partial class Main : Window
+    public partial class Menu : Page
     {
-        public Main()
+        public Menu()
         {
             InitializeComponent();
         }
