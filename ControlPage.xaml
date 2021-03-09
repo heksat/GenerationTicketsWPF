@@ -1,4 +1,4 @@
-﻿<Page x:Class="GenerationTicketsWPF.Menu"
+﻿<Page x:Class="GenerationTicketsWPF.ControlPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,10 +6,9 @@
       xmlns:local="clr-namespace:GenerationTicketsWPF"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="Menu">
+      Title="ControlPage">
 
-    <Grid x:Name="MainGrid" Background="Wheat">
-        <TextBlock x:Name="text1" HorizontalAlignment="Left" Margin="304,262,0,0" Text="TextBlock" TextWrapping="Wrap" VerticalAlignment="Top"/>
-
+    <Grid Background="White">
+        
     </Grid>
 </Page>

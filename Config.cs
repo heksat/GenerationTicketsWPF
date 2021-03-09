@@ -15,6 +15,11 @@ namespace GenerationTicketsWPF
         {
             get { return options; }
         }
+        private static Worker user;
+        public static Worker User{
+            get { return user; }
+            set { user = value; }
+        }
         static Config()
         {
             var builder = new ConfigurationBuilder();

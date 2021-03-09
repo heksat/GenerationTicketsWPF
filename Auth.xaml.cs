@@ -37,10 +37,15 @@ namespace GenerationTicketsWPF
 
         private void Log_In(object sender, RoutedEventArgs e)
         {
+          // Worker user = null;
             using (GenerationTicketsContext db = new GenerationTicketsContext(Config.Options))
             {
-                if (db.Workers.Where(el => el.WorkerLogin.Equals(login.Text) && el.WorkerPassword.Equals(password.Password)).FirstOrDefault()!=null)
-                this.NavigationService.Navigate(new Menu());
+                Config.User = db.Workers.Where(el => el.WorkerLogin.Equals(login.Text) && el.WorkerPassword.Equals(password.Password)).FirstOrDefault();
+                if (Config.User != null)
+                {
+                    this.NavigationService.Navigate(new Menu());   
+                }
+                
             }
         }
     }

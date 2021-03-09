@@ -18,9 +18,31 @@ namespace GenerationTicketsWPF
     /// </summary>
     public partial class Menu : Page
     {
+        //private Worker user;
         public Menu()
         {
             InitializeComponent();
+            if (Config.User.RoleId == 1)
+            {
+                Button but = new Button()
+                {
+                    Content = "Doroy",
+                    HorizontalAlignment = new System.Windows.HorizontalAlignment(),
+                    Width = 100,
+                    Height = 50,
+                    Margin = new System.Windows.Thickness(573, 225, 0, 0),
+
+                };
+                but.Click += ((x, y) => this.NavigationService.Navigate(new Registration()));
+                MainGrid.Children.Add(but);
+
+            }
+
         }
+   
+        //public Menu(Worker user): this()
+        //{
+        //    this.user = user;
+        //}
     }
 }
