@@ -37,7 +37,14 @@ namespace GenerationTicketsWPF
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            int countcheck = 0;
+            int? roleid = null;
+            int? disciplineid = null;
+            using (var db = new GenerationTicketsContext(Config.Options))
+            {
+               disciplineid = db.Disciplines.Where(x => x.DisciplineName == ListDiscipline.SelectedItem.ToString()).Select(x => x.DisciplineId).FirstOrDefault();
+                roleid = db.Roles.Where(x => x.RoleDecryption == ListRoles.SelectedItem.ToString()).Select(x => x.RoleId).FirstOrDefault();
+            }
+                int countcheck = 0;
             if (!(LName.Text != "" && LName.Text.Length <= 50))
             {
                 LName.BorderBrush = Brushes.Red;
@@ -61,10 +68,19 @@ namespace GenerationTicketsWPF
                 ListDiscipline.Background = new SolidColorBrush(Colors.Red); //не меняет цвет, условие рабочее. 
             }
             else
-                countcheck++;
+                 if (disciplineid==null)
+            {
+                MessageBox.Show("Такой роли нет");
+            }
+            countcheck++;
             if (ListRoles.SelectedIndex == -1)
             {
                 ListRoles.BorderBrush = new SolidColorBrush(Colors.Red); //не меняет цвет, условие рабочее. 
+            }
+            else
+                if (roleid == null)
+            {
+                MessageBox.Show("Такой роли нет");
             }
             else
                 countcheck++;
@@ -110,13 +126,15 @@ namespace GenerationTicketsWPF
             {
                 using (var db = new GenerationTicketsContext(Config.Options))
                 {
-                    var i = db.Database.ExecuteSqlRaw($"insert into Workers (Lname,Fname,Sname,Discipline_ID,Worker_Login,Worker_password,Role_id) values('{LName.Text}'," +
-                        $"'{FName.Text}'," +
-                        $"'{SName.Text}'," +
-                        $"{db.Disciplines.Where(x => x.DisciplineName == ListDiscipline.SelectedItem.ToString()).Select(x => x.DisciplineId).FirstOrDefault()}," +
-                        $"'{Login.Text}'," +
-                        $"'{Password.Password}'," +
-                        $"{db.Roles.Where(x => x.RoleDecryption == ListRoles.SelectedItem.ToString()).Select(x => x.RoleId).FirstOrDefault()})");
+                   db.Workers.Add(new Worker() { Lname = LName.Text, Fname = FName.Text, Sname = SName.Text, DisciplineId = (int)disciplineid, WorkerLogin = Login.Text, RoleId = (int)roleid, WorkerPassword = Password.Password });
+                   db.SaveChanges();
+                    //var i = db.Database.ExecuteSqlRaw($"insert into Workers (Lname,Fname,Sname,Discipline_ID,Worker_Login,Worker_password,Role_id) values('{LName.Text}'," +
+                    //    $"'{FName.Text}'," +
+                    //    $"'{SName.Text}'," +
+                    //    $"{db.Disciplines.Where(x => x.DisciplineName == ListDiscipline.SelectedItem.ToString()).Select(x => x.DisciplineId).FirstOrDefault()}," +
+                    //    $"'{Login.Text}'," +
+                    //    $"'{Password.Password}'," +
+                    //    $"{db.Roles.Where(x => x.RoleDecryption == ListRoles.SelectedItem.ToString()).Select(x => x.RoleId).FirstOrDefault()})");
                     //db.Workers.Add(new Worker() { Lname = LName.Text, 
                     //    Fname = FName.Text, 
                     //    Sname = SName.Text, 
