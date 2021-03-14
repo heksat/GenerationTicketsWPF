@@ -22,8 +22,8 @@ namespace GenerationTicketsWPF
     /// </summary>
     public partial class Registration : Page
     {
-        private int? RoleId = 0;
-        private int? DisciplineId = 0;
+        private int? RoleId = null;
+        private int? DisciplineId = null;
         public Registration()
         {
             InitializeComponent();
@@ -39,12 +39,8 @@ namespace GenerationTicketsWPF
         {
             int? roleid = null;
             int? disciplineid = null;
-            using (var db = new GenerationTicketsContext(Config.Options))
-            {
-               disciplineid = db.Disciplines.Where(x => x.DisciplineName == ListDiscipline.SelectedItem.ToString()).Select(x => x.DisciplineId).FirstOrDefault();
-                roleid = db.Roles.Where(x => x.RoleDecryption == ListRoles.SelectedItem.ToString()).Select(x => x.RoleId).FirstOrDefault();
-            }
-                int countcheck = 0;
+            
+            int countcheck = 0;
             if (!(LName.Text != "" && LName.Text.Length <= 50))
             {
                 LName.BorderBrush = Brushes.Red;
@@ -67,24 +63,32 @@ namespace GenerationTicketsWPF
             {
                 ListDiscipline.Background = new SolidColorBrush(Colors.Red); //не меняет цвет, условие рабочее. 
             }
-            else
-                 if (disciplineid==null)
-            {
-                MessageBox.Show("Такой роли нет");
+            else {
+                using (var db = new GenerationTicketsContext(Config.Options))
+                {
+                    disciplineid = db.Disciplines.Where(x => x.DisciplineName == ListDiscipline.SelectedItem.ToString()).Select(x => x.DisciplineId).FirstOrDefault();
+                }
+                if (disciplineid==null)
+                    MessageBox.Show("Такой роли нет");
+                else
+                    countcheck++;
             }
-            countcheck++;
             if (ListRoles.SelectedIndex == -1)
             {
                 ListRoles.BorderBrush = new SolidColorBrush(Colors.Red); //не меняет цвет, условие рабочее. 
             }
             else
-                if (roleid == null)
             {
-                MessageBox.Show("Такой роли нет");
+                using (var db = new GenerationTicketsContext(Config.Options))
+                {
+                    roleid = db.Roles.Where(x => x.RoleDecryption == ListRoles.SelectedItem.ToString()).Select(x => x.RoleId).FirstOrDefault();
+                }
+                if (roleid == null)
+                    MessageBox.Show("Такой роли нет");
+                else
+                    countcheck++;
             }
-            else
-                countcheck++;
-            if (Login.Text != "" && Login.Text.Length>5)
+                if (Login.Text != "" && Login.Text.Length>5)
             {
                 using (var db = new GenerationTicketsContext(Config.Options))
                 {

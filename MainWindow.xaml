@@ -5,5 +5,5 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GenerationTicketsWPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Source="Registration.xaml" ShowsNavigationUI="False">
+        Title="MainWindow" Height="450" Width="800" Source="Auth.xaml" ShowsNavigationUI="False">
 </NavigationWindow>

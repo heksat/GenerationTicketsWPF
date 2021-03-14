@@ -43,7 +43,7 @@ namespace GenerationTicketsWPF
                 Config.User = db.Workers.Where(el => el.WorkerLogin.Equals(login.Text) && el.WorkerPassword.Equals(password.Password)).FirstOrDefault();
                 if (Config.User != null)
                 {
-                    this.NavigationService.Navigate(new Menu());   
+                    this.NavigationService.Navigate(new MenuPage());   
                 }
                 
             }
