@@ -26,7 +26,7 @@ namespace GenerationTicketsWPF
             InitializeComponent();
             if (Config.User.RoleId == 1)
             {
-                Menu adminPanel = new Menu() { Height = 30, VerticalAlignment = VerticalAlignment.Top };
+                Menu adminPanel = new Menu() { Height = 30, VerticalAlignment = VerticalAlignment.Top};
                 var regBut = new MenuItem() { Header = "Регистрация пользователя"};
                 var changeTable = new MenuItem() { Header = "Изменить таблицы" };
                 changeTable.Items.Add(new MenuItem() { Header = "asds", Name="asd"});
@@ -42,8 +42,8 @@ namespace GenerationTicketsWPF
                 {
                     //var listlocal = new Role();
                     // db.Roles.Attach(listlocal);
-                    //db.Roles.FromSqlRaw("select Role_ID,Role_descryption from Roles").ToList();
-                    //check.ItemsSource = db.Database.("select name from Sys.objects where type = 'U'").ToList();
+                   // db.Roles.FromSqlRaw("select Role_ID,Role_descryption from Roles").ToList();
+                    //check.ItemsSource = db("select name from Sys.objects where type = 'U'").ToList();
                 }
 
             }

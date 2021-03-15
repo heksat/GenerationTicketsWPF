@@ -1,8 +1,8 @@
 
-if exists(SELECT * FROM master.dbo.sysdatabases WHERE name = 'GenerationTickets')
-use GenerationTickets
-else
+if not exists(SELECT * FROM master.dbo.sysdatabases WHERE name = 'GenerationTickets')
 create database GenerationTickets;
+GO
+use GenerationTickets
 GO
 if exists(select * from Sys.objects where type = 'U' and name = 'Tickets')
 drop table Tickets
