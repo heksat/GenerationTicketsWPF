@@ -16,7 +16,7 @@ namespace GenerationTicketsWPF
         public string Lname { get; set; }
         public string Fname { get; set; }
         public string Sname { get; set; }
-        public int DisciplineId { get; set; }
+        public string Gender { get; set; }
         public string WorkerLogin { get; set; }
         public string WorkerPassword { get; set; }
         public int RoleId { get; set; }
