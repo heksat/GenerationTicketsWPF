@@ -130,7 +130,8 @@ namespace GenerationTicketsWPF
             {
                 using (var db = new GenerationTicketsContext(Config.Options))
                 {
-                   db.Workers.Add(new Worker() { Lname = LName.Text, Fname = FName.Text, Sname = SName.Text, DisciplineId = (int)disciplineid, WorkerLogin = Login.Text, RoleId = (int)roleid, WorkerPassword = Password.Password });
+#warning: Здесь проблемесы после изменения поля в таблице, поправить надо регистрацию
+                    db.Workers.Add(new Worker() { Lname = LName.Text, Fname = FName.Text, Sname = SName.Text, Gender = "м", WorkerLogin = Login.Text, RoleId = (int)roleid, WorkerPassword = Password.Password });
                    db.SaveChanges();
                     //var i = db.Database.ExecuteSqlRaw($"insert into Workers (Lname,Fname,Sname,Discipline_ID,Worker_Login,Worker_password,Role_id) values('{LName.Text}'," +
                     //    $"'{FName.Text}'," +

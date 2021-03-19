@@ -131,3 +131,10 @@ Chairmans (Chairman_ID),
 FOREIGN KEY (Task_ID,Discipline_ID) references
 Tasks (Task_ID,Discipline_ID)
 )
+if exists(select * from sys.objects where type='v' and name = 'Table_names')
+drop view Table_names
+GO
+CREATE VIEW Table_names
+AS SELECT name as Name
+FROM sys.objects
+WHERE (type = 'U')
