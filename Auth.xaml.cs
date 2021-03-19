@@ -25,20 +25,12 @@ namespace GenerationTicketsWPF
         public Auth()
         {
             InitializeComponent();
-            using (GenerationTicketsContext db = new GenerationTicketsContext(Config.Options))
-            {
-                var users = db.Chairmans.ToList();
-                foreach (Chairman e in users)
-                {
-                    //Test.Text = $" {e.Lname} and {e.Sname}\n"; //test connection
-                }
-            }
         }
 
         private void Log_In(object sender, RoutedEventArgs e)
         {
           // Worker user = null;
-            using (GenerationTicketsContext db = new GenerationTicketsContext(Config.Options))
+            using (var db = new GenerationTicketsContext(Config.Options))
             {
                 Config.User = db.Workers.Where(el => el.WorkerLogin.Equals(login.Text) && el.WorkerPassword.Equals(password.Password)).FirstOrDefault();
                 if (Config.User != null)

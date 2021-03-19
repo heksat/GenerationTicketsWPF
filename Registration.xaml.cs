@@ -11,7 +11,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Linq;
 using System.Collections.ObjectModel;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,14 +21,14 @@ namespace GenerationTicketsWPF
     /// </summary>
     public partial class Registration : Page
     {
-        private int? RoleId = null;
-        private int? DisciplineId = null;
+        //private int? RoleId = null;
+        //private int? DisciplineId = null;
         public Registration()
         {
             InitializeComponent();
             using (var db = new GenerationTicketsContext(Config.Options))
             {
-                ListDiscipline.ItemsSource = db.Disciplines.Select(x => x.DisciplineName).ToList();
+                //ListDiscipline.ItemsSource = db.Disciplines.Select(x => x.DisciplineName).ToList();
                 ListRoles.ItemsSource = db.Roles.Select(x => x.RoleDecryption).ToList();
             }
         
@@ -37,9 +36,7 @@ namespace GenerationTicketsWPF
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            int? roleid = null;
-            int? disciplineid = null;
-            
+            int? roleid = null;          
             int countcheck = 0;
             if (!(LName.Text != "" && LName.Text.Length <= 50))
             {
@@ -59,19 +56,31 @@ namespace GenerationTicketsWPF
             }
             else
                 countcheck++;
-            if (ListDiscipline.SelectedIndex == -1)
+            //if (ListDiscipline.SelectedIndex == -1)
+            //{
+            //    ListDiscipline.Background = new SolidColorBrush(Colors.Red); //не меняет цвет, условие рабочее. 
+            //}
+            //else {
+            //    using (var db = new GenerationTicketsContext(Config.Options))
+            //    {
+            //        disciplineid = db.Disciplines.Where(x => x.DisciplineName == ListDiscipline.SelectedItem.ToString()).Select(x => x.DisciplineId).FirstOrDefault();
+            //    }
+            //    if (disciplineid==null)
+            //        MessageBox.Show("Такой роли нет");
+            //    else
+            //        countcheck++;
+            //}
+            string gender = "";
+            if (Woman.IsChecked == true)
             {
-                ListDiscipline.Background = new SolidColorBrush(Colors.Red); //не меняет цвет, условие рабочее. 
+                countcheck++;
+                gender = "ж";
             }
-            else {
-                using (var db = new GenerationTicketsContext(Config.Options))
-                {
-                    disciplineid = db.Disciplines.Where(x => x.DisciplineName == ListDiscipline.SelectedItem.ToString()).Select(x => x.DisciplineId).FirstOrDefault();
-                }
-                if (disciplineid==null)
-                    MessageBox.Show("Такой роли нет");
-                else
-                    countcheck++;
+            else
+             if (Man.IsChecked == true)
+            {
+                countcheck++;
+                gender = "м";
             }
             if (ListRoles.SelectedIndex == -1)
             {
@@ -130,8 +139,8 @@ namespace GenerationTicketsWPF
             {
                 using (var db = new GenerationTicketsContext(Config.Options))
                 {
-#warning: Здесь проблемесы после изменения поля в таблице, поправить надо регистрацию
-                    db.Workers.Add(new Worker() { Lname = LName.Text, Fname = FName.Text, Sname = SName.Text, Gender = "м", WorkerLogin = Login.Text, RoleId = (int)roleid, WorkerPassword = Password.Password });
+#warning: Нужно реализовать добавление в teaching учителей и добавить возможность выбора дисциплин
+                    db.Workers.Add(new Worker() { Lname = LName.Text, Fname = FName.Text, Sname = SName.Text, Gender = gender, WorkerLogin = Login.Text, RoleId = (int)roleid, WorkerPassword = Password.Password });
                    db.SaveChanges();
                     //var i = db.Database.ExecuteSqlRaw($"insert into Workers (Lname,Fname,Sname,Discipline_ID,Worker_Login,Worker_password,Role_id) values('{LName.Text}'," +
                     //    $"'{FName.Text}'," +

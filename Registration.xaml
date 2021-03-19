@@ -14,8 +14,16 @@
         <TextBox x:Name="FName" Margin ="10,10,10,10" SelectionChanged="MouseClick" Grid.Row="2" Grid.Column="1" Canvas.Left="130" Canvas.Top="120" Width="180" Height="30"/>
         <TextBlock Text="Отчество" Canvas.Left="130" Canvas.Top="170" Width="180" Height="30"/>
         <TextBox x:Name="SName" Margin ="10,10,10,10" SelectionChanged="MouseClick" Grid.Row="3" Grid.Column="1" Canvas.Left="130" Canvas.Top="190" Width="180" Height="30"/>
-        <TextBlock Text="Дисциплина" Canvas.Left="130" Canvas.Top="240" Width="180" Height="30"/>
-        <ComboBox x:Name="ListDiscipline" Margin ="10,10,10,10" Grid.Row="4" Grid.Column="1" Canvas.Left="130" Canvas.Top="260" Width="180" Height="30"/>
+        <TextBlock Text="Пол" Canvas.Left="130" Canvas.Top="240" Width="180" Height="30"/>
+        <StackPanel x:Name="Gender" Margin ="10,10,10,10" Grid.Row="4" Grid.Column="1" Canvas.Left="130" Canvas.Top="260" Width="180" Height="30" Orientation="Horizontal" >
+            <StackPanel.Resources>
+                <Style TargetType="{x:Type RadioButton}">
+                    <Setter Property="Margin" Value="20,0,20,0"/>
+                </Style>
+            </StackPanel.Resources>
+            <RadioButton x:Name="Man" Content="М"/>
+            <RadioButton x:Name="Woman" Content="Ж"/>
+        </StackPanel>
         <TextBlock Text="Назначение" Canvas.Left="380" Canvas.Top="240" Width="180" Height="30"/>
         <ComboBox x:Name="ListRoles" Margin ="10,10,10,10" Grid.Row="4" Grid.Column="3" Canvas.Left="380" Canvas.Top="260" Width="180" Height="30"/>
         <TextBlock Text="Логин" Canvas.Left="380" Canvas.Top="30" Width="180" Height="30"/>
