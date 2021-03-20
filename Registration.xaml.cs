@@ -23,6 +23,14 @@ namespace GenerationTicketsWPF
     {
         //private int? RoleId = null;
         //private int? DisciplineId = null;
+        /// <summary>
+        /// Новое окно выбора дисциплин
+        /// </summary>
+        private Window window;
+        /// <summary>
+        /// Список id дисциплин
+        /// </summary>
+        List<string> choicelistdisname;
         public Registration()
         {
             InitializeComponent();
@@ -139,23 +147,25 @@ namespace GenerationTicketsWPF
             {
                 using (var db = new GenerationTicketsContext(Config.Options))
                 {
-#warning: Нужно реализовать добавление в teaching учителей и добавить возможность выбора дисциплин
-                    db.Workers.Add(new Worker() { Lname = LName.Text, Fname = FName.Text, Sname = SName.Text, Gender = gender, WorkerLogin = Login.Text, RoleId = (int)roleid, WorkerPassword = Password.Password });
-                   db.SaveChanges();
-                    //var i = db.Database.ExecuteSqlRaw($"insert into Workers (Lname,Fname,Sname,Discipline_ID,Worker_Login,Worker_password,Role_id) values('{LName.Text}'," +
-                    //    $"'{FName.Text}'," +
-                    //    $"'{SName.Text}'," +
-                    //    $"{db.Disciplines.Where(x => x.DisciplineName == ListDiscipline.SelectedItem.ToString()).Select(x => x.DisciplineId).FirstOrDefault()}," +
-                    //    $"'{Login.Text}'," +
-                    //    $"'{Password.Password}'," +
-                    //    $"{db.Roles.Where(x => x.RoleDecryption == ListRoles.SelectedItem.ToString()).Select(x => x.RoleId).FirstOrDefault()})");
-                    //db.Workers.Add(new Worker() { Lname = LName.Text, 
-                    //    Fname = FName.Text, 
-                    //    Sname = SName.Text, 
-                    //    DisciplineId = db.Disciplines.Where(e => e.DisciplineName == ListDiscipline.DataContext.ToString()).Select(e=>e.DisciplineId).First(),
-                    //    WorkerLogin = Login.Text,
-                    //    WorkerPassword = Password.Password,
-                    //    RoleId=2});
+#warning: попробовать извлечь id из локальной базы, чтоб сохранять сразу записи и в teachings и Workers
+                    var newuser = db.Workers.Add(new Worker() { Lname = LName.Text, Fname = FName.Text, Sname = SName.Text, Gender = gender, WorkerLogin = Login.Text, RoleId = (int)roleid, WorkerPassword = Password.Password });
+                    db.SaveChanges();
+                    if (ListRoles.SelectedItem.ToString()=="Teacher") {
+                        var id = db.Workers.Where(x => x.WorkerLogin == Login.Text).Select(x => x.WorkerId).FirstOrDefault();
+                        if (id != 0) {
+                            foreach (var i in choicelistdisname) {
+                                var tempid = (int)db.Disciplines.Where(x => x.DisciplineName == i).Select(x => x.DisciplineId).FirstOrDefault();
+                                if (tempid != 0)
+                                    db.Teachings.Add(new Teaching() { WorkerId = id, DisciplineId = tempid });
+                                else
+                                    MessageBox.Show("Какая-то беда");
+                            }
+                            db.SaveChanges();
+                        }
+                        else
+                            MessageBox.Show("Какая-то беда");
+                    }
+                    
                 }
             }
             
@@ -167,6 +177,58 @@ namespace GenerationTicketsWPF
             el.BorderBrush = Brushes.DarkGray;//Brushes.Gray;//new SolidColorBrush(Color.FromRgb(FFABADB3);
         }
 
+        private void choise_subject(object sender, RoutedEventArgs e)
+        {
+            window = new Window() { Width = 300 };
+            List<string> disciplineName;
+            using (var db = new GenerationTicketsContext(Config.Options))
+            {
+                disciplineName = db.Disciplines.Select(x => x.DisciplineName).ToList();
+            }
+            StackPanel panel = new StackPanel { Orientation = Orientation.Vertical };
+            foreach (var name in disciplineName)
+            {
+                panel.Children.Add(new CheckBox() { Content = name, Height = 20 });
+            }
+            window.Content = panel;
+            var but = new Button() {Content = "Готово!" };
+            but.Click += Confirmed_Choice;
+            panel.Children.Add(but);
+            window.Show();
+        }
+        private void Confirmed_Choice(object sender, RoutedEventArgs e)
+        {
+            var data = (StackPanel)window.Content;
+            choicelistdisname = new List<string>(data.Children.Count - 1);
+            using (var db = new GenerationTicketsContext(Config.Options)) {
+                foreach (var i in data.Children.OfType<CheckBox>())
+                {
+                    if (i.IsChecked == true)
+                    {
+                        choicelistdisname.Add(i.Content.ToString());
+
+                        //var tempid = (int)db.Disciplines.Where(x => x.DisciplineName == i.Content.ToString()).Select(x => x.DisciplineId).FirstOrDefault();
+                        //if (tempid != 0)
+                        //    db.Teachings.Add(new Teaching() { WorkerId = 1, DisciplineId = tempid });
+                        //else
+                        //    MessageBox.Show("Какая-то беда");
+                    }
+
+                }
+                //db.SaveChanges();
+                window.Close();
+            }
+        }
+
+        private void ListRoles_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (((ComboBox)sender).SelectedItem.ToString() == "Teacher")
+            {
+                Predmets.IsEnabled = true;
+            }
+            else
+                Predmets.IsEnabled = false;
+        }
         //private void ListRoles_SelectionChanged(object sender, SelectionChangedEventArgs e)
         //{
         //    using (var db = new GenerationTicketsContext(Config.Options)) {

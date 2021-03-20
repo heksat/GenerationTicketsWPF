@@ -25,7 +25,7 @@
             <RadioButton x:Name="Woman" Content="Ж"/>
         </StackPanel>
         <TextBlock Text="Назначение" Canvas.Left="380" Canvas.Top="240" Width="180" Height="30"/>
-        <ComboBox x:Name="ListRoles" Margin ="10,10,10,10" Grid.Row="4" Grid.Column="3" Canvas.Left="380" Canvas.Top="260" Width="180" Height="30"/>
+        <ComboBox x:Name="ListRoles" Margin ="10,10,10,10" Grid.Row="4" Grid.Column="3" Canvas.Left="380" Canvas.Top="260" Width="180" Height="30" SelectionChanged="ListRoles_SelectionChanged"/>
         <TextBlock Text="Логин" Canvas.Left="380" Canvas.Top="30" Width="180" Height="30"/>
         <TextBox x:Name="Login" Margin ="10,10,10,10" SelectionChanged="MouseClick" Grid.Column="3" Grid.Row="1" Canvas.Left="380" Canvas.Top="50" Width="180" Height="30"/>
         <TextBlock Text="Пароль" Canvas.Left="380" Canvas.Top="100" Width="180" Height="30"/>
@@ -33,5 +33,6 @@
         <TextBlock Text="Повторите пароль" Canvas.Left="380" Canvas.Top="170" Width="180" Height="30"/>
         <PasswordBox x:Name="TryPassword" Margin ="10,10,10,10" Grid.Row="3" Grid.Column="3" Canvas.Left="380" Canvas.Top="190" Width="180" Height="30"/>
         <Button Content="Зарегистрировать!" Margin ="10" Click="Button_Click" FontSize="15" Canvas.Left="586" Canvas.Top="305" Width="180" Height="30"/>
+        <Button x:Name="Predmets" Content="Предметы" Click="choise_subject" FontSize="15" Canvas.Left="140" Canvas.Top="357" Width="180" Height="30" IsEnabled="False"/>
     </Canvas>
 </Page>
