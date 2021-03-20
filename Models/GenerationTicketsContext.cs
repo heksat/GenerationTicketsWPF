@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace GenerationTicketsWPF
+namespace GenerationTicketsWPF.Models
 {
     public partial class GenerationTicketsContext : DbContext
     {
@@ -28,7 +28,6 @@ namespace GenerationTicketsWPF
         public virtual DbSet<Ticket> Tickets { get; set; }
         public virtual DbSet<TypesTask> TypesTasks { get; set; }
         public virtual DbSet<Worker> Workers { get; set; }
-        
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
@@ -37,6 +36,7 @@ namespace GenerationTicketsWPF
         //        optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=GenerationTickets;Trusted_Connection=True;");
         //    }
         //}
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "Cyrillic_General_CI_AS");
@@ -131,8 +131,7 @@ namespace GenerationTicketsWPF
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(128)
-                    .HasColumnName("name");
+                    .HasMaxLength(128);
             });
 
             modelBuilder.Entity<Task>(entity =>
@@ -291,7 +290,7 @@ namespace GenerationTicketsWPF
                 pc.HasNoKey();
                 pc.ToView("Table_names");
             }));
-        OnModelCreatingPartial(modelBuilder);
+            OnModelCreatingPartial(modelBuilder);
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

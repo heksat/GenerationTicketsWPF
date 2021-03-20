@@ -11,7 +11,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Linq;
 using System.Collections.ObjectModel;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,14 +21,14 @@ namespace GenerationTicketsWPF
     /// </summary>
     public partial class Registration : Page
     {
-      //  private Role RoleId = null;
-      //  private Discipline DisciplineId = null;
+        //private int? RoleId = null;
+        //private int? DisciplineId = null;
         public Registration()
         {
             InitializeComponent();
             using (var db = new GenerationTicketsContext(Config.Options))
             {
-                ListDiscipline.ItemsSource = db.Disciplines.Select(x => x.DisciplineName).ToList();
+                //ListDiscipline.ItemsSource = db.Disciplines.Select(x => x.DisciplineName).ToList();
                 ListRoles.ItemsSource = db.Roles.Select(x => x.RoleDecryption).ToList();
             }
         
@@ -37,9 +36,7 @@ namespace GenerationTicketsWPF
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Role roleid = null;
-            Discipline disciplineid = null;
-            
+            int? roleid = null;          
             int countcheck = 0;
             if (!(LName.Text != "" && LName.Text.Length <= 50))
             {
@@ -59,21 +56,31 @@ namespace GenerationTicketsWPF
             }
             else
                 countcheck++;
-            if (ListDiscipline.SelectedIndex == -1)
+            //if (ListDiscipline.SelectedIndex == -1)
+            //{
+            //    ListDiscipline.Background = new SolidColorBrush(Colors.Red); //не меняет цвет, условие рабочее. 
+            //}
+            //else {
+            //    using (var db = new GenerationTicketsContext(Config.Options))
+            //    {
+            //        disciplineid = db.Disciplines.Where(x => x.DisciplineName == ListDiscipline.SelectedItem.ToString()).Select(x => x.DisciplineId).FirstOrDefault();
+            //    }
+            //    if (disciplineid==null)
+            //        MessageBox.Show("Такой роли нет");
+            //    else
+            //        countcheck++;
+            //}
+            string gender = "";
+            if (Woman.IsChecked == true)
             {
-                ListDiscipline.Background = new SolidColorBrush(Colors.Red); //не меняет цвет, условие рабочее. 
+                countcheck++;
+                gender = "ж";
             }
-            else {
-                using (var db = new GenerationTicketsContext(Config.Options))
-                {
-                    disciplineid = db.Disciplines.Where(x => x.DisciplineName == ListDiscipline.SelectedItem.ToString()).Select(x => x).FirstOrDefault();
-                }
-                if (disciplineid == null)
-                    MessageBox.Show("Такой роли нет");
-                else
-                {
-                    countcheck++;
-                }
+            else
+             if (Man.IsChecked == true)
+            {
+                countcheck++;
+                gender = "м";
             }
             if (ListRoles.SelectedIndex == -1)
             {
@@ -83,7 +90,7 @@ namespace GenerationTicketsWPF
             {
                 using (var db = new GenerationTicketsContext(Config.Options))
                 {
-                    roleid = db.Roles.Where(x => x.RoleDecryption == ListRoles.SelectedItem.ToString()).Select(x => x).FirstOrDefault();
+                    roleid = db.Roles.Where(x => x.RoleDecryption == ListRoles.SelectedItem.ToString()).Select(x => x.RoleId).FirstOrDefault();
                 }
                 if (roleid == null)
                     MessageBox.Show("Такой роли нет");
@@ -132,18 +139,23 @@ namespace GenerationTicketsWPF
             {
                 using (var db = new GenerationTicketsContext(Config.Options))
                 {
-                   db.Workers.Add(new Worker() { Lname = LName.Text, Fname = FName.Text, Sname = SName.Text, DisciplineId = (int)disciplineid.DisciplineId, WorkerLogin = Login.Text, RoleId = (int)roleid.RoleId, WorkerPassword = Password.Password });
+#warning: Нужно реализовать добавление в teaching учителей и добавить возможность выбора дисциплин
+                    db.Workers.Add(new Worker() { Lname = LName.Text, Fname = FName.Text, Sname = SName.Text, Gender = gender, WorkerLogin = Login.Text, RoleId = (int)roleid, WorkerPassword = Password.Password });
                    db.SaveChanges();
-                    if (roleid.RoleDecryption == "Teacher")
-                    {
-                        var idnew = db.Workers.Where(x => x.WorkerLogin == Login.Text).Select(x => x.WorkerId).FirstOrDefault();
-                        if (idnew != 0)
-                        {
-                            db.Teachings.Add(new Teaching() { WorkerId = (int)idnew, DisciplineId = disciplineid.DisciplineId });
-                            db.SaveChanges();
-                        }
-
-                    }
+                    //var i = db.Database.ExecuteSqlRaw($"insert into Workers (Lname,Fname,Sname,Discipline_ID,Worker_Login,Worker_password,Role_id) values('{LName.Text}'," +
+                    //    $"'{FName.Text}'," +
+                    //    $"'{SName.Text}'," +
+                    //    $"{db.Disciplines.Where(x => x.DisciplineName == ListDiscipline.SelectedItem.ToString()).Select(x => x.DisciplineId).FirstOrDefault()}," +
+                    //    $"'{Login.Text}'," +
+                    //    $"'{Password.Password}'," +
+                    //    $"{db.Roles.Where(x => x.RoleDecryption == ListRoles.SelectedItem.ToString()).Select(x => x.RoleId).FirstOrDefault()})");
+                    //db.Workers.Add(new Worker() { Lname = LName.Text, 
+                    //    Fname = FName.Text, 
+                    //    Sname = SName.Text, 
+                    //    DisciplineId = db.Disciplines.Where(e => e.DisciplineName == ListDiscipline.DataContext.ToString()).Select(e=>e.DisciplineId).First(),
+                    //    WorkerLogin = Login.Text,
+                    //    WorkerPassword = Password.Password,
+                    //    RoleId=2});
                 }
             }
             

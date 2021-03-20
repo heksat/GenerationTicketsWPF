@@ -29,7 +29,15 @@ namespace GenerationTicketsWPF
                 Menu adminPanel = new Menu() { Height = 30, VerticalAlignment = VerticalAlignment.Top};
                 var regBut = new MenuItem() { Header = "Регистрация пользователя"};
                 var changeTable = new MenuItem() { Header = "Изменить таблицы" };
-                changeTable.Items.Add(new MenuItem() { Header = "asds", Name="asd"});
+                using (var db = new GenerationTicketsContext(Config.Options))
+                {
+                    // Query for all blogs with names starting with B
+                    var tableNames = from tn in db.TableNames select tn;
+                    foreach (var item in tableNames)
+                    {
+                        changeTable.Items.Add(new MenuItem() { Header = item.Name });
+                    }
+                }
                 adminPanel.Items.Add(regBut);
                 adminPanel.Items.Add(changeTable);
                 regBut.Click += ((x, y) => this.NavigationService.Navigate(new Registration()));

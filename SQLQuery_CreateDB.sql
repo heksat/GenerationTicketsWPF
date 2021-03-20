@@ -73,12 +73,13 @@ Worker_ID int IDENTITY (1,1),
 LName nvarchar(50) not NULL,
 FName nvarchar(50) not NULL,
 SName nvarchar(50) not NULL,
-Discipline_ID int not NULL,
+Gender nvarchar(1) not NULL, --Discipline_ID
 Worker_Login nvarchar(20) COLLATE Latin1_General_CS_AS UNIQUE not NULL,
 Worker_password nvarchar(50) COLLATE Latin1_General_CS_AS not NULL,
 Role_ID int not NULL,
 CONSTRAINT PK_UNIQUE_Workers PRIMARY KEY (Worker_ID),
-FOREIGN KEY (Role_ID) REFERENCES Roles (Role_ID)
+FOREIGN KEY (Role_ID) REFERENCES Roles (Role_ID),
+CHECK ((Gender='ì') or (Gender='æ'))
 )
 GO
 create table Teaching(
@@ -130,3 +131,10 @@ Chairmans (Chairman_ID),
 FOREIGN KEY (Task_ID,Discipline_ID) references
 Tasks (Task_ID,Discipline_ID)
 )
+if exists(select * from sys.objects where type='v' and name = 'Table_names')
+drop view Table_names
+GO
+CREATE VIEW Table_names
+AS SELECT name as Name
+FROM sys.objects
+WHERE (type = 'U')

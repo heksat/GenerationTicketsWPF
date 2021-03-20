@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace GenerationTicketsWPF
+namespace GenerationTicketsWPF.Models
 {
     public partial class Worker
     {
