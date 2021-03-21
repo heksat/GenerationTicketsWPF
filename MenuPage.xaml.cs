@@ -57,7 +57,12 @@ namespace GenerationTicketsWPF
             }
 
         }
-   
+
+        private void AddTicket_Click(object sender, RoutedEventArgs e)
+        {
+            this.NavigationService.Navigate(new AddTickets());
+        }
+
         //public Menu(Worker user): this()
         //{
         //    this.user = user;
