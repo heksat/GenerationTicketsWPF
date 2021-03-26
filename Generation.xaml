@@ -11,9 +11,15 @@
     <Grid Background="White">
         <ComboBox x:Name="DiscipList" Margin="33,111,566,298" SelectionChanged="DiscipList_SelectionChanged"/>
         <ComboBox x:Name="Chairmen" Margin="33,209,566,200"/>
-        <TextBox x:Name="Course" Margin="33,299,641,121"/>
-        <TextBox x:Name="Semestr" Margin="33,355,623,62"/>
-        <TextBox x:Name="CountTickets" Margin="322,120,374,298"/>
+        <TextBlock Margin="33,258,641,151" Text="Курс" />
+        <TextBox x:Name="Course" Margin="33,304,641,116"/>
+        <TextBlock Margin="33,334,641,75" Text="Семестр" />
+        <TextBox x:Name="Semestr" Margin="33,380,623,37"/>
+        <TextBlock Margin="322,86,350,335" Text="Количество билетов" />
+        <TextBox x:Name="CountTickets" Margin="322,120,374,298" TextChanged="CountTickets_TextChanged"/>
+        <TextBlock x:Name="MaxTickets" Margin="400,157,350,264" />
+        <TextBlock Text="Lvl" Margin="321,215,429,206" />
+        <ComboBox x:Name="Lvl" Margin="321,246,375,172"/>
         <Button x:Name="Run" Margin="606,372,54,37" Click="Run_Click" />
     </Grid>
 </Page>
