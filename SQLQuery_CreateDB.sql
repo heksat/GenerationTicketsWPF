@@ -41,6 +41,8 @@ Fname nvarchar(50) not NULL,
 SName nvarchar (50) not NULL,
 CONSTRAINT PK_UNIQUE_Chairmans PRIMARY KEY (Chairman_ID)
 );
+insert into Chairmans VALUES ('Глускер','Александр','Игоревич')
+insert into Chairmans VALUES ('Ларионова','Елена','Анатольевна')
 GO
 create table Specialty(
 Specialty_ID nvarchar(8) not NULL, -- нужно ограничение
@@ -50,6 +52,7 @@ CONSTRAINT PK_UNIQUE_Specialty  PRIMARY KEY (Specialty_ID),
 FOREIGN KEY (Chairman_ID) REFERENCES
 dbo.Chairmans (Chairman_ID)
 )
+insert into Specialty VALUES ('09.02.03','Программирование в компьютерных системах',1)
 GO
 create table Disciplines(
 Discipline_ID int IDENTITY(1,1),
@@ -59,6 +62,8 @@ CONSTRAINT PK_UNIQUE_Disciplines PRIMARY KEY (Discipline_ID),
 FOREIGN KEY (Specialty_ID) references
 dbo.Specialty (Specialty_ID)
 )
+insert into Disciplines VALUES ('Операционные системы','09.02.03')
+insert into Disciplines VALUES ('Архитектура компьютерных систем','09.02.03')
 GO
 Create table Roles (
 Role_ID int IDENTITY (1,1),
@@ -81,6 +86,7 @@ CONSTRAINT PK_UNIQUE_Workers PRIMARY KEY (Worker_ID),
 FOREIGN KEY (Role_ID) REFERENCES Roles (Role_ID),
 CHECK ((Gender='м') or (Gender='ж'))
 )
+insert into Workers VALUES ('Admin','Admin','Admin','м','Admin','Admin',1)
 GO
 create table Teaching(
 Discipline_ID int not NULL,
@@ -95,14 +101,18 @@ GO
 create table Levels(
 Level_ID int IDENTITY (1,1),
 Lever_Decryption nvarchar(50) not NULL,
-CONSTRAINT PK_UNIQUE_Levels PRIMARY KEY (Level_ID),
+CONSTRAINT PK_UNIQUE_Levels PRIMARY KEY (Level_ID)
 )
+insert into Levels VALUES ('Halyava')
+insert into Levels VALUES ('Hard')
 GO
 create table TypesTask(
 Types_Task_ID int IDENTITY (1,1),
 Types_Task_Decryption nvarchar(50) not NULL,
 CONSTRAINT PK_UNIQUE_TypesTask PRIMARY KEY (Types_Task_ID)
 )
+insert into TypesTask VALUES ('Практика')
+insert into TypesTask VALUES ('Теория')
 GO
 create table Tasks(
 Task_ID int IDENTITY (1,1),
@@ -120,7 +130,7 @@ FOREIGN KEY (Level_ID) REFERENCES Levels (Level_ID)
 )
 GO
 create table Tickets(
-Ticket_ID int IDENTITY (1,1),
+Ticket_ID int, --IDENTITY (1,1),
 TaskNumber TINYINT not NULL, --спросить про диапазон между 1 и 3, как сделать
 Task_ID int not NULL,
 Discipline_ID int not NULL,
