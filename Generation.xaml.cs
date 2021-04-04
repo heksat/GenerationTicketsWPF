@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WinForms = System.Windows.Forms;
 using System.Linq;
 namespace GenerationTicketsWPF
 {
@@ -22,10 +23,12 @@ namespace GenerationTicketsWPF
         private List<Task> teorqesta;
         private List<Task> practqesta;
         private int currentDiscipID;
+        private int _numValue = 0;
         public Generation()
         {
             InitializeComponent();
             MaxTickets.Text = "Unknows";
+            txtNum.Text = _numValue.ToString();
             using (var db = new GenerationTicketsContext(Config.Options))
             {
                 DiscipList.ItemsSource = (from p in db.Disciplines
@@ -39,40 +42,89 @@ namespace GenerationTicketsWPF
 
         private void Run_Click(object sender, RoutedEventArgs e)
         {
-            if (Lvl.SelectedIndex != -1 && DiscipList.SelectedIndex != -1)
+            var pathChoice = new WinForms.FolderBrowserDialog();
+            if (pathChoice.ShowDialog() == WinForms.DialogResult.OK)
             {
-                using (var db = new GenerationTicketsContext(Config.Options))
+                var path = pathChoice.SelectedPath;
+                List<Ticket> listTickets = null;
+                if (Lvl.SelectedIndex != -1 && DiscipList.SelectedIndex != -1 && _numValue > 0)
                 {
-                    var AllTasks = db.Tasks.Where(y =>
-                        (y.DisciplineId == (int)(db.Disciplines.Where(x => x.DisciplineName == (DiscipList.SelectedItem.ToString())).Select(x => x.DisciplineId).FirstOrDefault()))
-                        && (y.Level.LeverDecryption == Lvl.SelectedItem.ToString())
-                        ).Select(x => new { IDTask = x.TaskId, TypeTask = x.TypesTaskId });
-                    var teorTask = AllTasks.Where(x => x.TypeTask == 2).Select(x => x.IDTask).ToList();
-                    var practTask = AllTasks.Where(x => x.TypeTask == 1).Select(x => x.IDTask).ToList();
-                    Random random = new Random();
-                    int neededTickets = 0;
-                    if (int.TryParse(CountTickets.Text, out neededTickets))
+                    using (var db = new GenerationTicketsContext(Config.Options))
                     {
-                        if (MaxTickets.Text!="Unknows" && neededTickets>0 && neededTickets<=int.Parse(MaxTickets.Text)) {
+                        var AllTasks = db.Tasks.Where(y =>
+                            (y.DisciplineId == (db.Disciplines.Where(x => x.DisciplineName == (DiscipList.SelectedItem.ToString())).Select(x => x.DisciplineId).FirstOrDefault()))
+                            && (y.Level.LeverDecryption == Lvl.SelectedItem.ToString())
+                            ).Select(x => new { IDTask = x.TaskId, TypeTask = x.TypesTaskId });
+                        var teorTask = AllTasks.Where(x => x.TypeTask == 2).Select(x => x.IDTask).ToList();
+                        var practTask = AllTasks.Where(x => x.TypeTask == 1).Select(x => x.IDTask).ToList();
+                        Random random = new Random();
+                        if (MaxTickets.Text != "Unknows" && _numValue <= int.Parse(MaxTickets.Text))
+                        {
                             db.Tickets.RemoveRange(db.Tickets);
-                            for (int i = 1; i <= neededTickets; i++)
+                            for (int i = 1; i <= _numValue; i++)
                             {
-                                var item = random.Next(0, teorTask.Count-1);
-                                db.Tickets.Add(new Ticket() { TicketId=i ,TaskNumber = 1, TaskId = (teorTask[item]), DisciplineId = currentDiscipID, ChairmanId = 1 });
+                                var item = random.Next(0, teorTask.Count - 1);
+                                db.Tickets.Add(new Ticket() { TicketId = i, TaskNumber = 1, TaskId = (teorTask[item]), DisciplineId = currentDiscipID, ChairmanId = 1 });
                                 teorTask.RemoveAt(item);
-                                item = random.Next(0, teorTask.Count-1);
-                                db.Tickets.Add(new Ticket() { TicketId = i,TaskNumber = 2, TaskId = (teorTask[item]), DisciplineId = currentDiscipID, ChairmanId = 1 });
+                                item = random.Next(0, teorTask.Count - 1);
+                                db.Tickets.Add(new Ticket() { TicketId = i, TaskNumber = 2, TaskId = (teorTask[item]), DisciplineId = currentDiscipID, ChairmanId = 1 });
                                 teorTask.RemoveAt(item);
-                                item = random.Next(0, practTask.Count-1);
-                                db.Tickets.Add(new Ticket() { TicketId = i,TaskNumber = 3, TaskId = (practTask[item]), DisciplineId = currentDiscipID, ChairmanId = 1 }); //Вопрос в инкременте бд
+                                item = random.Next(0, practTask.Count - 1);
+                                db.Tickets.Add(new Ticket() { TicketId = i, TaskNumber = 3, TaskId = (practTask[item]), DisciplineId = currentDiscipID, ChairmanId = 1 }); //Вопрос в инкременте бд
                                 practTask.RemoveAt(item);
                             };
                             db.SaveChanges();
+                            listTickets = db.Tickets.Select(x => x).ToList();
                         }
+                        else
+                        {
+                            MessageBox.Show("Проверьте выбранное кол-во билетов");
+                        }
+
+
                     }
-                    else
+
+                    if (listTickets != null)
                     {
-                        MessageBox.Show("Не удалось конвертировать кол-во билетов");
+                        using (var db = new GenerationTicketsContext(Config.Options))
+                        {
+                            var wordhelper = new WordHelper("Shablon.docx");
+                            var item = new Dictionary<string, string>
+                    {
+                        {"<SPEC>", (from c in db.Disciplines
+                                   join p in db.Specialties on c.SpecialtyId equals p.SpecialtyId
+                                   where c.DisciplineName==DiscipList.SelectedItem.ToString()
+                                   select p.SpecialtyDecryption).FirstOrDefault()},
+                        {"<DISP>", DiscipList.SelectedItem.ToString()},
+                        {"<CMAN>", Chairmen.SelectedItem.ToString() },
+                        {"<COURSE>",Course.Text},
+                        {"<SMSTR>", Semestr.Text },
+                        {"<TEACHER>", $"TEST."}, //$"{Config.User.Lname} {Config.User.Fname[0]}. {Config.User.Sname[0]}."
+                        {"<TASK1>", ""},
+                        {"<TASK2>", ""},
+                        {"<TASK3>", ""},
+                        {"<NUMB>",""},
+                    };
+                            var app = new Microsoft.Office.Interop.Word.Application();
+                            var file = (wordhelper.getFileInfo).FullName;
+                            var missing = Type.Missing;
+                            app.Documents.Open(file);
+                            for (int i = 0; i < _numValue; i++)
+                            {
+                                object times = 1;
+                                while (app.ActiveDocument.Undo(ref times))
+                                { }
+                                var currentTicket = listTickets.Where(x => x.TicketId == (i + 1)).Select(x => x).ToList();
+                                item["<TASK1>"] = db.Tasks.Where(x => x.TaskId == currentTicket[0].TaskId).Select(x => x.TaskDecryption).FirstOrDefault();
+                                item["<TASK2>"] = db.Tasks.Where(x => x.TaskId == currentTicket[1].TaskId).Select(x => x.TaskDecryption).FirstOrDefault();
+                                item["<TASK3>"] = db.Tasks.Where(x => x.TaskId == currentTicket[2].TaskId).Select(x => x.TaskDecryption).FirstOrDefault();
+                                item["<NUMB>"] = (i+1).ToString();
+                                wordhelper.Process(item,path,app,file,missing);
+                            }
+
+                            app.ActiveDocument.Close();
+                            app.Quit();
+                        }
                     }
                 }
             }
@@ -126,6 +178,41 @@ namespace GenerationTicketsWPF
                 }
                 else
                     MaxTickets.Text = "Unknows";
+            }
+        }
+
+
+        public int NumValue
+        {
+            get { return _numValue; }
+            set
+            {
+                _numValue = value;
+                txtNum.Text = value.ToString();
+            }
+        }
+
+
+        private void cmdUp_Click(object sender, RoutedEventArgs e)
+        {
+            NumValue++;
+        }
+
+        private void cmdDown_Click(object sender, RoutedEventArgs e)
+        {
+            NumValue--;
+        }
+
+        private void txtNum_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (txtNum == null)
+            {
+                return;
+            }
+
+            if (!int.TryParse(txtNum.Text, out _numValue))
+            {
+                txtNum.Text = _numValue.ToString();   
             }
         }
     }

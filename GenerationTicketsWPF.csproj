@@ -4,6 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
+	<UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,6 +15,8 @@
       <Guid>00020905-0000-0000-c000-000000000046</Guid>
       <Lcid>0</Lcid>
       <Isolated>false</Isolated>
+      <Private>true</Private>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
 
@@ -30,6 +33,9 @@
   <ItemGroup>
     <None Update="appconfig.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shablon.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

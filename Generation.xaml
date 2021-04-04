@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:GenerationTicketsWPF"
+      xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Generation">
@@ -16,10 +17,14 @@
         <TextBlock Margin="33,334,641,75" Text="Семестр" />
         <TextBox x:Name="Semestr" Margin="33,380,623,37"/>
         <TextBlock Margin="322,86,350,335" Text="Количество билетов" />
-        <TextBox x:Name="CountTickets" Margin="322,120,374,298" />
         <TextBlock x:Name="MaxTickets" Margin="400,157,350,264" />
         <TextBlock Text="Lvl" Margin="321,215,429,206" />
         <ComboBox x:Name="Lvl" Margin="321,246,375,172" SelectionChanged="CountTickets_TextChanged"/>
         <Button x:Name="Run" Margin="606,372,54,37" Click="Run_Click" />
+        <StackPanel Orientation="Horizontal" Margin="321,112,359,298">
+            <TextBox x:Name="txtNum" x:FieldModifier="private" Margin="5,5,0,5" Width="50" Text="0" TextChanged="txtNum_TextChanged" />
+            <Button x:Name="cmdUp" x:FieldModifier="private" Margin="5,5,0,5" Content="˄" Width="20" Click="cmdUp_Click" />
+            <Button x:Name="cmdDown" x:FieldModifier="private" Margin="0,5,0,5"  Content="˅" Width="20" Click="cmdDown_Click" />
+        </StackPanel>
     </Grid>
 </Page>
