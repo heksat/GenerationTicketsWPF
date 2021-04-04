@@ -33,7 +33,7 @@ namespace GenerationTicketsWPF
             {
                 DiscipList.ItemsSource = (from p in db.Disciplines
                                           join c in db.Teachings on p.DisciplineId equals c.DisciplineId
-                                          where c.WorkerId == 1//Config.User.WorkerId
+                                          where c.WorkerId == Config.User.WorkerId
                                           select p.DisciplineName).ToList();
                 Lvl.ItemsSource= db.Levels.Select(x => x.LeverDecryption).ToList();
             }
@@ -99,7 +99,7 @@ namespace GenerationTicketsWPF
                         {"<CMAN>", Chairmen.SelectedItem.ToString() },
                         {"<COURSE>",Course.Text},
                         {"<SMSTR>", Semestr.Text },
-                        {"<TEACHER>", $"TEST."}, //$"{Config.User.Lname} {Config.User.Fname[0]}. {Config.User.Sname[0]}."
+                        {"<TEACHER>", $"{Config.User.Lname} {Config.User.Fname[0]}. {Config.User.Sname[0]}." }, //$"{Config.User.Lname} {Config.User.Fname[0]}. {Config.User.Sname[0]}."
                         {"<TASK1>", ""},
                         {"<TASK2>", ""},
                         {"<TASK3>", ""},
@@ -138,7 +138,7 @@ namespace GenerationTicketsWPF
                                         join c in db.Specialties on p.ChairmanId equals c.ChairmanId
                                         join x in db.Disciplines on c.SpecialtyId equals x.SpecialtyId
                                         join t in db.Teachings on x.DisciplineId equals t.DisciplineId
-                                        where (t.WorkerId == 1) && (((ComboBox)sender).SelectedItem.ToString()==x.DisciplineName)//Config.User.WorkerId
+                                        where (t.WorkerId == Config.User.WorkerId) && (((ComboBox)sender).SelectedItem.ToString()==x.DisciplineName)//Config.User.WorkerId
                                         select p.Lname + ' ' + p.Fname + ' ' + p.Sname).Distinct().ToList();
             
             }
@@ -168,8 +168,7 @@ namespace GenerationTicketsWPF
                     && (y.Level.LeverDecryption == Lvl.SelectedItem.ToString())
                     && (y.TypesTaskId == 1)
                     ).Select(x => x).Count();
-                    MaxTickets.Text = ((CountTeorTask/2 < CountPractTask) ? CountTeorTask/2 : CountPractTask).ToString();
-#warning:Двойное деление в одном ифе, чет придумать
+                    MaxTickets.Text = ((CountTeorTask/2 < CountPractTask) ? CountTeorTask/2 : CountPractTask).ToString(); //реф
                     //MaxTickets.Text = db.Tasks.Where(y =>
                     //(y.DisciplineId == (int)(db.Disciplines.Where(x => x.DisciplineName == (DiscipList.SelectedItem.ToString())).Select(x => x.DisciplineId).FirstOrDefault()))
                     //&& (y.Level.LeverDecryption == Lvl.SelectedItem.ToString())

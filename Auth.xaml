@@ -8,7 +8,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Auth">
 
-    <Grid x:Name="MainGrid" Background="White">
+    <Grid x:Name="MainGrid" >
         <TextBox x:Name="login" HorizontalAlignment="Left" Margin="511,90,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="241" Height="34"/>
         <PasswordBox x:Name="password" HorizontalAlignment="Left" Margin="511,158,0,0" VerticalAlignment="Top" Width="241" Height="34"/>
         <TextBlock HorizontalAlignment="Left" Margin="400,90,0,0" Text="Логин" TextWrapping="Wrap" VerticalAlignment="Top" Height="34" Width="92" FontSize="25"/>

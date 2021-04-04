@@ -9,7 +9,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Generation">
 
-    <Grid Background="White">
+    <Grid >
         <ComboBox x:Name="DiscipList" Margin="33,111,566,298" SelectionChanged="DiscipList_SelectionChanged"/>
         <ComboBox x:Name="Chairmen" Margin="33,209,566,200"/>
         <TextBlock Margin="33,258,641,151" Text="Курс" />
