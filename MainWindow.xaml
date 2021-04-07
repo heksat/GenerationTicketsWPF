@@ -5,5 +5,5 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GenerationTicketsWPF"
         mc:Ignorable="d"
-        Title="Generation" Height="450" Width="800" Source="PersonalArea.xaml" ShowsNavigationUI="False" Background="White">
+        Title="Generation" Height="450" Width="800" Source="Auth.xaml" ShowsNavigationUI="False" Background="White">
 </NavigationWindow>

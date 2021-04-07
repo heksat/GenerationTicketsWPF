@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 #nullable disable
 
@@ -18,10 +19,13 @@ namespace GenerationTicketsWPF
         public int LevelId { get; set; }
         public int TypesTaskId { get; set; }
         public int WorkerId { get; set; }
-
+        [Browsable(false)]
         public virtual Level Level { get; set; }
+        [Browsable(false)]
         public virtual Teaching Teaching { get; set; }
+        [Browsable(false)]
         public virtual TypesTask TypesTask { get; set; }
+        [Browsable(false)]
         public virtual ICollection<Ticket> Tickets { get; set; }
     }
 }

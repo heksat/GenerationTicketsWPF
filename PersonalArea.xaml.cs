@@ -18,9 +18,62 @@ namespace GenerationTicketsWPF
     /// </summary>
     public partial class PersonalArea : Page
     {
+        private bool pressed = false;
         public PersonalArea()
         {
             InitializeComponent();
+            GridPA.DataContext = Config.User;
+        }
+
+        private void Change_Click(object sender, RoutedEventArgs e)
+        {
+            pressed = !pressed;
+            AllowOrBlockBox(pressed);
+            if (pressed)
+            {
+                ((Button)sender).Content = "Применить";
+            }
+            else
+            {
+                    if (CheckStringOnSpaceAndStringEmpty(LnameBox.Text) || CheckStringOnSpaceAndStringEmpty(FnameBox.Text) || CheckStringOnSpaceAndStringEmpty(SnameBox.Text))
+                    {
+                        MessageBox.Show("Проверьте правильность измененных значений");
+                    }
+                    else
+                    {
+                        BindingExpression expression = LnameBox.GetBindingExpression(TextBox.TextProperty);
+                        BindingExpression expression2 = FnameBox.GetBindingExpression(TextBox.TextProperty);
+                        BindingExpression expression3 = SnameBox.GetBindingExpression(TextBox.TextProperty);
+                        //BindingExpression.UpdateSource();
+                        expression.UpdateSource();
+                        expression2.UpdateSource();
+                        expression3.UpdateSource();
+                    }
+
+                MessageBox.Show($"{Config.User.Lname},{Config.User.Fname},{Config.User.Sname}");
+                ((Button)sender).Content = "Изменить";
+            }
+
+        }
+        private void AllowOrBlockBox(bool value)
+        {
+            LnameBox.IsEnabled = value;
+            FnameBox.IsEnabled = value;
+            SnameBox.IsEnabled = value;
+        }
+        
+        private bool CheckStringOnSpaceAndStringEmpty(string str)
+        {
+            bool check = false;
+            if (!str.Contains(" ")) {
+                if (str == String.Empty)
+                {
+                    check = true;
+                }
+            }
+            else
+                check = true;
+            return check;
         }
     }
 }

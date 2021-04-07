@@ -12,6 +12,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace GenerationTicketsWPF
 {
@@ -26,11 +27,14 @@ namespace GenerationTicketsWPF
             InitializeComponent();
             if (Config.User.RoleId == 1)
             {
+                //PropertyInfo[] properties = db.GetType().GetProperties().Where(p => !p.GetMethod.IsVirtual).ToArray();
                 Menu adminPanel = new Menu() { Height = 30, VerticalAlignment = VerticalAlignment.Top};
                 var regBut = new MenuItem() { Header = "Регистрация пользователя"};
                 var changeTable = new MenuItem() { Header = "Изменить таблицы" };
                 using (var db = new GenerationTicketsContext(Config.Options))
                 {
+                    Test.ItemsSource = db.Tasks.GetType().GetProperties().Where(p => !p.GetMethod.IsVirtual).ToList();
+
                     // Query for all blogs with names starting with B
                     var tableNames = from tn in db.TableNames select tn;
                     foreach (var item in tableNames)
@@ -66,6 +70,11 @@ namespace GenerationTicketsWPF
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             this.NavigationService.Navigate(new Generation());
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new PersonalArea());
         }
 
         //public Menu(Worker user): this()

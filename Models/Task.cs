@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 #nullable disable
 
@@ -13,6 +14,7 @@ namespace GenerationTicketsWPF.Models
         }
 
         public int TaskId { get; set; }
+        [Browsable(false)]
         public int DisciplineId { get; set; }
         public string TaskDecryption { get; set; }
         public int LevelId { get; set; }
