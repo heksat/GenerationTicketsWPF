@@ -14,7 +14,7 @@ using Microsoft.Extensions.Configuration;
 using System.IO;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
-
+using GenerationTicketsWPF.Models;
 namespace GenerationTicketsWPF
 {
     /// <summary>

@@ -12,6 +12,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WinForms = System.Windows.Forms;
 using System.Linq;
+using GenerationTicketsWPF.Models;
 namespace GenerationTicketsWPF
 {
     /// <summary>

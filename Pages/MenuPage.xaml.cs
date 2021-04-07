@@ -13,7 +13,7 @@ using System.Windows.Shapes;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-
+using GenerationTicketsWPF.Models;
 namespace GenerationTicketsWPF
 {
     /// <summary>

@@ -13,7 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using Microsoft.EntityFrameworkCore;
-
+using GenerationTicketsWPF.Models;
 namespace GenerationTicketsWPF
 {
     /// <summary>
