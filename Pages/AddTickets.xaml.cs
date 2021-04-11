@@ -24,15 +24,10 @@ namespace GenerationTicketsWPF
         {
             InitializeComponent();
             CounterChar.Text = $"0 / {TicketBox.MaxLength}";
-            using (var db = new GenerationTicketsContext(Config.Options)) {
-                DiscipAllow.ItemsSource = (from p in db.Disciplines
-                                          join c in db.Teachings on p.DisciplineId equals c.DisciplineId
-                                          where c.WorkerId == Config.User.WorkerId
-                                          select p.DisciplineName).ToList();
-                LvlList.ItemsSource = db.Levels.Select(x => x.LeverDecryption).ToList();
-                //db.Teachings.Where(x=>x.WorkerId==Config.User.WorkerId).Select(x => x).Join(db.Disciplines.Select(x=>x),e=>e.DisciplineId,p=>p.Teachings.id,;
-                //db.Teachings.Join(Discipline,Discipline.)
-            }
+            var DBhelper = new DbInteraction();
+            DiscipAllow.ItemsSource = DBhelper.GetAllowDisciplines();
+            LvlList.ItemsSource = (System.Collections.IEnumerable)DBhelper.GetLevels();
+       
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)

@@ -14,6 +14,8 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using GenerationTicketsWPF.Models;
+using GenerationTicketsWPF.Pages;
+
 namespace GenerationTicketsWPF
 {
     /// <summary>
@@ -31,25 +33,14 @@ namespace GenerationTicketsWPF
                 Menu adminPanel = new Menu() { Height = 30, VerticalAlignment = VerticalAlignment.Top};
                 var regBut = new MenuItem() { Header = "Регистрация пользователя"};
                 var changeTable = new MenuItem() { Header = "Изменить таблицы" };
-                using (var db = new GenerationTicketsContext(Config.Options))
-                {
-                    Test.ItemsSource = db.Tasks.GetType().GetProperties().Where(p => !p.GetMethod.IsVirtual).ToList();
-
-                    // Query for all blogs with names starting with B
-                    var tableNames = from tn in db.TableNames select tn;
-                    foreach (var item in tableNames)
-                    {
-                        changeTable.Items.Add(new MenuItem() { Header = item.Name });
-                    }
-                }
                 adminPanel.Items.Add(regBut);
                 adminPanel.Items.Add(changeTable);
                 regBut.Click += ((x, y) => this.NavigationService.Navigate(new Registration()));
+                changeTable.Click += ((x, y) => NavigationService.Navigate(new ChangeTables()));
                 MainGrid.Children.Add(adminPanel);
                 Grid.SetColumn(adminPanel, 0);
                 Grid.SetRow(adminPanel, 0);
                 Grid.SetColumnSpan(adminPanel, 5); //создание и размещение админ панели
-                
                 using (var db = new GenerationTicketsContext(Config.Options))
                 {
                     //var listlocal = new Role();
@@ -75,6 +66,11 @@ namespace GenerationTicketsWPF
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             NavigationService.Navigate(new PersonalArea());
+        }
+
+        private void ViewTicketsList(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new ViewTickets());
         }
 
         //public Menu(Worker user): this()

@@ -21,8 +21,8 @@ namespace GenerationTicketsWPF
 
     public partial class Generation : Page
     {
-        private List<Task> teorqesta;
-        private List<Task> practqesta;
+        private List<Discipline> DiscipList = null;
+        private List<Level> LvlList = null;
         private int currentDiscipID;
         private int _numValue = 0;
         public Generation()
@@ -30,13 +30,16 @@ namespace GenerationTicketsWPF
             InitializeComponent();
             MaxTickets.Text = "Unknows";
             txtNum.Text = _numValue.ToString();
+            var test = new DbInteraction();
+            DiscipList = (List<Discipline>)test.GetDiscipList();
+            LvlList = (List<Level>)test.GetLevels();
             using (var db = new GenerationTicketsContext(Config.Options))
             {
-                DiscipList.ItemsSource = (from p in db.Disciplines
-                                          join c in db.Teachings on p.DisciplineId equals c.DisciplineId
-                                          where c.WorkerId == Config.User.WorkerId
-                                          select p.DisciplineName).ToList();
-                Lvl.ItemsSource= db.Levels.Select(x => x.LeverDecryption).ToList();
+                DiscipDescList.ItemsSource = (from p in db.Disciplines
+                                              join c in db.Teachings on p.DisciplineId equals c.DisciplineId
+                                              where c.WorkerId == Config.User.WorkerId
+                                              select p.DisciplineName).ToList();
+                Lvl.ItemsSource = db.Levels.Select(x => x.LeverDecryption).ToList();
             }
 
         }
@@ -48,12 +51,12 @@ namespace GenerationTicketsWPF
             {
                 var path = pathChoice.SelectedPath;
                 List<Ticket> listTickets = null;
-                if (Lvl.SelectedIndex != -1 && DiscipList.SelectedIndex != -1 && _numValue > 0)
+                if (Lvl.SelectedIndex != -1 && DiscipDescList.SelectedIndex != -1 && _numValue > 0)
                 {
                     using (var db = new GenerationTicketsContext(Config.Options))
                     {
                         var AllTasks = db.Tasks.Where(y =>
-                            (y.DisciplineId == (db.Disciplines.Where(x => x.DisciplineName == (DiscipList.SelectedItem.ToString())).Select(x => x.DisciplineId).FirstOrDefault()))
+                            (y.DisciplineId == (db.Disciplines.Where(x => x.DisciplineName == (DiscipDescList.SelectedItem.ToString())).Select(x => x.DisciplineId).FirstOrDefault()))
                             && (y.Level.LeverDecryption == Lvl.SelectedItem.ToString())
                             ).Select(x => new { IDTask = x.TaskId, TypeTask = x.TypesTaskId });
                         var teorTask = AllTasks.Where(x => x.TypeTask == 2).Select(x => x.IDTask).ToList();
@@ -94,9 +97,9 @@ namespace GenerationTicketsWPF
                     {
                         {"<SPEC>", (from c in db.Disciplines
                                    join p in db.Specialties on c.SpecialtyId equals p.SpecialtyId
-                                   where c.DisciplineName==DiscipList.SelectedItem.ToString()
+                                   where c.DisciplineName==DiscipDescList.SelectedItem.ToString()
                                    select p.SpecialtyDecryption).FirstOrDefault()},
-                        {"<DISP>", DiscipList.SelectedItem.ToString()},
+                        {"<DISP>", DiscipDescList.SelectedItem.ToString()},
                         {"<CMAN>", Chairmen.SelectedItem.ToString() },
                         {"<COURSE>",Course.Text},
                         {"<SMSTR>", Semestr.Text },
@@ -150,14 +153,14 @@ namespace GenerationTicketsWPF
         {
             using (var db = new GenerationTicketsContext(Config.Options))
             {
-                currentDiscipID = db.Disciplines.Where(x => x.DisciplineName == (DiscipList.SelectedItem.ToString())).Select(x => x.DisciplineId).FirstOrDefault();
+                currentDiscipID = db.Disciplines.Where(x => x.DisciplineName == (DiscipDescList.SelectedItem.ToString())).Select(x => x.DisciplineId).FirstOrDefault();
                 var AllTasks = db.Tasks.Where(y =>
                    (y.DisciplineId == currentDiscipID)
                    && (y.Level.LeverDecryption == Lvl.SelectedItem.ToString())
                    ).Select(x => new {IDTask = x.TaskId, TypeTask = x.TypesTaskId }); // получение всех вопросов локально, их id и тип
 
 
-                if (Lvl.SelectedIndex != -1 && DiscipList.SelectedIndex != -1)
+                if (Lvl.SelectedIndex != -1 && DiscipDescList.SelectedIndex != -1)
                 {
                     int CountTeorTask = db.Tasks.Where(y =>
                     (y.DisciplineId == currentDiscipID)

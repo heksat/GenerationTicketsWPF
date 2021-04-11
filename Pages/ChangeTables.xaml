@@ -1,0 +1,151 @@
+﻿<Page x:Class="GenerationTicketsWPF.Pages.ChangeTables"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:GenerationTicketsWPF.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ChangeTables">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <TabControl x:Name="ControlItems" Grid.Row="0">
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Председатели"/>
+                </TabItem.Header>
+                <DataGrid x:Name="ChairGrid" AutoGenerateColumns="False" >
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Номер председателя" Binding="{Binding ChairmanId}"/>
+                        <DataGridTextColumn Header="Фамилия" Binding="{Binding Lname,Mode=TwoWay}"/>
+                        <DataGridTextColumn Header="Имя" Binding="{Binding Fname,Mode=TwoWay}"/>
+                        <DataGridTextColumn Header="Отчество" Binding="{Binding Sname,Mode=TwoWay}"/>
+
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Дисциплины"/>
+                </TabItem.Header>
+                <DataGrid x:Name="DispGrid" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Номер дисциплины" Binding="{Binding DisciplineId}"/>
+                        <DataGridTextColumn Header="Название дисциплины" Binding="{Binding DisciplineName}"/>
+                        <DataGridTextColumn Header="Номер специальности" Binding="{Binding SpecialtyId}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Уровень сложности"/>
+                </TabItem.Header>
+                <DataGrid x:Name="LvlGrid" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Номер уровня" Binding="{Binding LevelId}"/>
+                        <DataGridTextColumn Header="Уровень" Binding="{Binding LeverDecryption}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Роли"/>
+                </TabItem.Header>
+                <DataGrid x:Name="RoleGrid" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Номер роли" Binding="{Binding RoleId}"/>
+                        <DataGridTextColumn Header="Расшифровка роли" Binding="{Binding RoleDecryption}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Специальность"/>
+                </TabItem.Header>
+                <DataGrid x:Name="SpecGrid" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Номер специальности" Binding="{Binding SpecialtyId}"/>
+                        <DataGridTextColumn Header="Расшифровка специальности" Binding="{Binding SpecialtyDecryption}"/>
+                        <DataGridTextColumn Header="Номер председателя" Binding="{Binding ChairmanId}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Задания"/>
+                </TabItem.Header>
+                <DataGrid x:Name="TaskGrid" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Номер специальности" Binding="{Binding TaskId}"/>
+                        <DataGridTextColumn Header="Расшифровка специальности" Binding="{Binding DisciplineId}"/>
+                        <DataGridTextColumn Header="Задание" Binding="{Binding TaskDecryption}"/>
+                        <DataGridTextColumn Header="Уровень" Binding="{Binding LevelId}"/>
+                        <DataGridTextColumn Header="Тип задания" Binding="{Binding TypesTaskId}"/>
+                        <DataGridTextColumn Header="Добавил(а)" Binding="{Binding WorkerId}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Преподаватели"/>
+                </TabItem.Header>
+                <DataGrid x:Name="TeachGrid" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Номер дисциплины" Binding="{Binding DisciplineId}"/>
+                        <DataGridTextColumn Header="Номер работника" Binding="{Binding WorkerId}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Билеты"/>
+                </TabItem.Header>
+                <DataGrid x:Name="TickGrid" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Номер дисциплины" Binding="{Binding TicketId}"/>
+                        <DataGridTextColumn Header="Номер билета" Binding="{Binding TaskNumber}"/>
+                        <DataGridTextColumn Header="Номер задания" Binding="{Binding TaskId}"/>
+                        <DataGridTextColumn Header="Номер дисциплины" Binding="{Binding DisciplineId}"/>
+                        <DataGridTextColumn Header="Номер председателя" Binding="{Binding ChairmanId}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Типы заданий"/>
+                </TabItem.Header>
+                <DataGrid x:Name="TypeGrid" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Номер типа" Binding="{Binding TypesTaskId}"/>
+                        <DataGridTextColumn Header="Расшифровка типа" Binding="{Binding TypesTaskDecryption}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Работники"/>
+                </TabItem.Header>
+                <DataGrid x:Name="WorkGrid" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Номер работника" Binding="{Binding WorkerId}"/>
+                        <DataGridTextColumn Header="Фамилия" Binding="{Binding Lname}"/>
+                        <DataGridTextColumn Header="Имя" Binding="{Binding Fname}"/>
+                        <DataGridTextColumn Header="Отчество" Binding="{Binding Sname}"/>
+                        <DataGridTextColumn Header="Пол" Binding="{Binding Gender}"/>
+                        <DataGridTextColumn Header="Логин" Binding="{Binding WorkerLogin}"/>
+                        <DataGridTextColumn Header="Логин" Binding="{Binding WorkerLogin}"/>
+                        <DataGridTextColumn Header="Номер должности" Binding="{Binding RoleId}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+        </TabControl>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" >
+            <Button x:Name="GoBack" Content="Back" Width="50" Margin="5" Click="GoBack_Click"/>
+            <Button x:Name="UpdateDB" Width="150" Margin="5" Click="UpdateDB_Click"/>
+         </StackPanel>
+    </Grid>
+</Page>

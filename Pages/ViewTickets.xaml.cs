@@ -8,25 +8,22 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Linq;
+using GenerationTicketsWPF.Models;
 
-namespace GenerationTicketsWPF
+namespace GenerationTicketsWPF.Pages
 {
     /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
+    /// Interaction logic for ViewTickets.xaml
     /// </summary>
-    public partial class MainWindow : NavigationWindow
+    public partial class ViewTickets : Page
     {
-        public MainWindow()
+        public ViewTickets()
         {
             InitializeComponent();
+            TicketsGrid.ItemsSource = (System.Collections.IEnumerable)(new DbInteraction()).ListTickets();
         }
-        
-       // public static Click Goback()
-       // public void GoBack_Click(object sender, RoutedEventArgs e)
-       // {
-       //     NavigationService.GoBack();
-       // }
     }
 }

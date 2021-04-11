@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using GenerationTicketsWPF.Pages;
 
 namespace GenerationTicketsWPF
 {
@@ -74,6 +75,12 @@ namespace GenerationTicketsWPF
             else
                 check = true;
             return check;
+        }
+
+        private void ChangePass_Click(object sender, RoutedEventArgs e)
+        {
+            var changepasswin = new ChangePassword() {Width = 300 };
+            changepasswin.Show();
         }
     }
 }
