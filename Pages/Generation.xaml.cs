@@ -31,7 +31,7 @@ namespace GenerationTicketsWPF
             MaxTickets.Text = "Unknows";
             txtNum.Text = _numValue.ToString();
             var test = new DbInteraction();
-            DiscipList = (List<Discipline>)test.GetDiscipList();
+            DiscipList = test.GetDiscipList();
             LvlList = (List<Level>)test.GetLevels();
             using (var db = new GenerationTicketsContext(Config.Options))
             {
@@ -217,6 +217,11 @@ namespace GenerationTicketsWPF
             {
                 txtNum.Text = _numValue.ToString();   
             }
+        }
+
+        private void Back_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.GoBack();
         }
     }
 }

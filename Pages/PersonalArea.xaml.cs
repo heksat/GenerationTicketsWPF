@@ -82,5 +82,10 @@ namespace GenerationTicketsWPF
             var changepasswin = new ChangePassword() {Width = 300 };
             changepasswin.Show();
         }
+
+        private void Back_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.GoBack();
+        }
     }
 }

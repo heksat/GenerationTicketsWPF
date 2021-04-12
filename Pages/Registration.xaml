@@ -18,7 +18,7 @@
             <ColumnDefinition Width="600"/>
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
-        <Canvas Background="White" Grid.Column="1"  Grid.Row="">
+        <Canvas Background="White" Grid.Column="1"  Grid.Row="1">
             <TextBlock Text="Фамилия" Canvas.Left="60" Canvas.Top="12" Width="180" Height="30"/>
             <TextBox x:Name="LName" Margin ="10,10,10,10" SelectionChanged="MouseClick" Canvas.Left="50" Canvas.Top="32" Width="180" Height="30"/>
             <TextBlock Text="Имя" Canvas.Left="60" Canvas.Top="77" Width="180" Height="30"/>
@@ -45,7 +45,7 @@
             <PasswordBox x:Name="TryPassword" Margin ="10,10,10,10" Grid.Row="3" Grid.Column="3" Canvas.Left="319" Canvas.Top="180" Width="180" Height="30"/>
             <Button Content="Зарегистрировать!" Margin ="10" Click="Button_Click" FontSize="15" Canvas.Left="394" Canvas.Top="309" Width="180" Height="30"/>
             <Button x:Name="Predmets" Content="Предметы" Click="choise_subject" FontSize="15" Canvas.Left="31" Canvas.Top="315" Width="180" Height="30" IsEnabled="False"/>
-            <Button x:Name="GoBack" Content="Back" Canvas.Left="532" Canvas.Top="17" />
+            <Button x:Name="GoBack" Content="Back" Canvas.Left="532" Canvas.Top="17" Click="GoBack_Click" />
         </Canvas>
     </Grid>
 </Page>

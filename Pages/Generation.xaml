@@ -20,6 +20,7 @@
         <TextBlock x:Name="MaxTickets" Margin="400,157,350,264" />
         <TextBlock Text="Lvl" Margin="321,215,429,206" />
         <ComboBox x:Name="Lvl" Margin="321,246,375,172" SelectionChanged="CountTickets_TextChanged"/>
+        <Button x:Name="Back" Content="Back" Width="50" Height="30" Margin="696,50,54,370" Click="Back_Click"/>
         <Button x:Name="Run" Margin="606,372,54,37" Click="Run_Click" />
         <StackPanel Orientation="Horizontal" Margin="321,112,362,298">
             <TextBox x:Name="txtNum" x:FieldModifier="private" Margin="5,5,0,5" Width="50" Text="0" TextChanged="txtNum_TextChanged" />

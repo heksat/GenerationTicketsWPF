@@ -229,6 +229,11 @@ namespace GenerationTicketsWPF
             else
                 Predmets.IsEnabled = false;
         }
+
+        private void GoBack_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.GoBack();
+        }
         //private void ListRoles_SelectionChanged(object sender, SelectionChangedEventArgs e)
         //{
         //    using (var db = new GenerationTicketsContext(Config.Options)) {

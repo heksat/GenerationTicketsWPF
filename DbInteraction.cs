@@ -21,21 +21,21 @@ namespace GenerationTicketsWPF.Models
                 return (from p in db.Tickets join c in db.Tasks on p.TaskId equals c.TaskId select new { p.TicketId, p.TaskNumber, c.TaskDecryption }).ToList();
             }
         }
-        public object GetDiscipList()
+        public List<Discipline> GetDiscipList()
         {
             using (var db = new GenerationTicketsContext(Config.Options)) 
             {
                 return (from p in db.Disciplines
                         join c in db.Teachings on p.DisciplineId equals c.DisciplineId
                         where c.WorkerId == Config.User.WorkerId
-                        select new {p.DisciplineId, p.DisciplineName }).ToList();
+                        select p ).ToList();
             }
         }
-        public object GetLevels()
+        public List<Level> GetLevels()
         {
             using (var db = new GenerationTicketsContext(Config.Options))
             {
-                return db.Levels.Select(x => new { x.LevelId, x.LeverDecryption }).ToList();
+                return db.Levels.Select(x => x).ToList();
             }
         }
         public bool UpdatePassword(string pass)

@@ -26,7 +26,7 @@ namespace GenerationTicketsWPF
             CounterChar.Text = $"0 / {TicketBox.MaxLength}";
             var DBhelper = new DbInteraction();
             DiscipAllow.ItemsSource = DBhelper.GetAllowDisciplines();
-            LvlList.ItemsSource = (System.Collections.IEnumerable)DBhelper.GetLevels();
+            LvlList.ItemsSource = DBhelper.GetLevels().Select(x=>x.LeverDecryption);
        
         }
 
@@ -47,7 +47,7 @@ namespace GenerationTicketsWPF
             }
             if (rbcontext == "")
             {
-
+                MessageBox.Show("Выберите тип задания!");
             }
             else
             {
@@ -65,6 +65,11 @@ namespace GenerationTicketsWPF
                         MessageBox.Show("Беда!");
                 }
             }
+        }
+
+        private void Back_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.GoBack();
         }
     }
 }

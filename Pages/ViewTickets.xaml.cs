@@ -25,5 +25,10 @@ namespace GenerationTicketsWPF.Pages
             InitializeComponent();
             TicketsGrid.ItemsSource = (System.Collections.IEnumerable)(new DbInteraction()).ListTickets();
         }
+
+        private void Back_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.GoBack();
+        }
     }
 }
