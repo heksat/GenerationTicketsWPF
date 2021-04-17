@@ -45,7 +45,6 @@ namespace GenerationTicketsWPF
                         BindingExpression expression = LnameBox.GetBindingExpression(TextBox.TextProperty);
                         BindingExpression expression2 = FnameBox.GetBindingExpression(TextBox.TextProperty);
                         BindingExpression expression3 = SnameBox.GetBindingExpression(TextBox.TextProperty);
-                        //BindingExpression.UpdateSource();
                         expression.UpdateSource();
                         expression2.UpdateSource();
                         expression3.UpdateSource();

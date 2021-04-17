@@ -63,6 +63,43 @@ namespace GenerationTicketsWPF.Models
                          select p.DisciplineName).ToList();
             }
         }
+        public List<string> GetDisciplinesDecryption()
+        {
+            using (var db = new GenerationTicketsContext(Config.Options))
+            {
+                return db.Disciplines.Select(x => x.DisciplineName).ToList();
+            }
+        }
+        public SByte AddUser(Worker newuser, List<string> choicelistdisname)
+        {
+            SByte check = 0;
+            using (var db = new GenerationTicketsContext(Config.Options))
+            {
+                db.Workers.Add(newuser);
+                var ias= db.Workers.Where(x => x == newuser).Select(x => x.WorkerId).FirstOrDefault();
+                // db.SaveChanges();
+                if (newuser.RoleId == 2) //teacher
+                {
+                    int id = db.Workers.Where(x => x.WorkerLogin == newuser.WorkerLogin).Select(x => x.WorkerId).FirstOrDefault();
+                    if (id != 0)
+                    {
+                        foreach (var i in choicelistdisname)
+                        {
+                            var tempid = (int)db.Disciplines.Where(x => x.DisciplineName == i).Select(x => x.DisciplineId).FirstOrDefault();
+                            if (tempid != 0)
+                                db.Teachings.Add(new Teaching() { WorkerId = id, DisciplineId = tempid });
+                            else
+                                check = -2;
+                        }
+                    }
+                    else
+                        check = -3;
+                }
+                if (check==0)
+                    db.SaveChanges();
+                return check;
+            }
+        }
         //public List<T> GetListTable<T>()
         //{
         //    var test = (Type.GetTypeCode(typeof(Discipline)));

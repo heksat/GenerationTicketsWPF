@@ -6,7 +6,12 @@
       xmlns:local="clr-namespace:GenerationTicketsWPF"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="AddTickets">
+      Title="
+      
+      
+      
+      
+      Tickets">
 
     <Grid Background="white">
         <Grid.RowDefinitions>
