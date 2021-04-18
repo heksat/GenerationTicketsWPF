@@ -41,10 +41,9 @@ namespace GenerationTicketsWPF.Pages
 
         private void UpdateDB_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.GoBack();
             using (var db = new GenerationTicketsContext(Config.Options))
             {
-                
+                db.SaveChanges();       
             }
         }
         private void GoBack_Click(object sender, RoutedEventArgs e)

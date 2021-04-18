@@ -129,7 +129,7 @@
                 <TabItem.Header>
                     <TextBlock Text="Работники"/>
                 </TabItem.Header>
-                <DataGrid x:Name="WorkGrid" AutoGenerateColumns="False">
+                <DataGrid x:Name="WorkGrid" AutoGenerateColumns="False" >
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Номер работника" Binding="{Binding WorkerId}"/>
                         <DataGridTextColumn Header="Фамилия" Binding="{Binding Lname}"/>
