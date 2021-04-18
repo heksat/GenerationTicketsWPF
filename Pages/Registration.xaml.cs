@@ -28,7 +28,7 @@ namespace GenerationTicketsWPF
         /// <summary>
         /// Список id дисциплин
         /// </summary>
-        List<string> choicelistdisname;
+        List<Discipline> choicelistdisname=new List<Discipline>();
         public Registration()
         {
             InitializeComponent();
@@ -139,7 +139,10 @@ namespace GenerationTicketsWPF
             {
                 //using (var db = new GenerationTicketsContext(Config.Options))
                 //{
-                    Dbhelper.AddUser(new Worker() { Lname = LName.Text, Fname = FName.Text, Sname = SName.Text, Gender = gender, WorkerLogin = Login.Text, RoleId = (int)ListRoles.SelectedValue, WorkerPassword = Password.Password },choicelistdisname);
+
+
+                    Dbhelper.AddUser(new Worker() { Lname = LName.Text, Fname = FName.Text, Sname = SName.Text, Gender = gender, WorkerLogin = Login.Text, 
+                        RoleId = (int)ListRoles.SelectedValue, WorkerPassword = Password.Password },choicelistdisname);
                 //    var newuser = db.Workers.Add(new Worker() { Lname = LName.Text, Fname = FName.Text, Sname = SName.Text, Gender = gender, WorkerLogin = Login.Text, RoleId = (int)ListRoles.SelectedValue, WorkerPassword = Password.Password });
                 //    db.SaveChanges();
                 //    if (((Role)ListRoles.SelectedItem).RoleDecryption == "Teacher")
@@ -174,8 +177,10 @@ namespace GenerationTicketsWPF
         {
             window = new Window() { Width = 300 };
             var DbHelper = new DbInteraction();
-            var disciplineName = DbHelper.GetDisciplinesDecryption();
+            var disciplineName = DbHelper.GetDisciplines();
             StackPanel panel = new StackPanel { Orientation = Orientation.Vertical };
+            panel.Children.Clear();
+            choicelistdisname = new List<Discipline>(0);
             foreach (var name in disciplineName)
             {
                 panel.Children.Add(new CheckBox() { Content = name, Height = 20 });
@@ -189,12 +194,12 @@ namespace GenerationTicketsWPF
         private void Confirmed_Choice(object sender, RoutedEventArgs e)
         {
             var data = (StackPanel)window.Content;
-            choicelistdisname = new List<string>(data.Children.Count - 1);
+            choicelistdisname = new List<Discipline>(data.Children.Count - 1);
                 foreach (var i in data.Children.OfType<CheckBox>())
                 {
                     if (i.IsChecked == true)
                     {
-                        choicelistdisname.Add(i.Content.ToString());
+                        choicelistdisname.Add((Discipline)i.Content);
                     }
 
                 }

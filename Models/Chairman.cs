@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable disable
 
@@ -12,7 +14,6 @@ namespace GenerationTicketsWPF.Models
             Specialties = new HashSet<Specialty>();
             Tickets = new HashSet<Ticket>();
         }
-
         public int ChairmanId { get; set; }
         public string Lname { get; set; }
         public string Fname { get; set; }

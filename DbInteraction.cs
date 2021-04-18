@@ -3,8 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using GenerationTicketsWPF.Pages;
 using System.Linq;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore;
+
 namespace GenerationTicketsWPF.Models
 {
+
+
     class DbInteraction
     {
         public Worker Auth(string login,string password)
@@ -70,33 +75,28 @@ namespace GenerationTicketsWPF.Models
                 return db.Disciplines.Select(x => x.DisciplineName).ToList();
             }
         }
-        public SByte AddUser(Worker newuser, List<string> choicelistdisname)
+        public List<Discipline> GetDisciplines()
+        {
+            using (var db = new GenerationTicketsContext(Config.Options))
+            {
+                return db.Disciplines.Select(x => x).ToList();
+            }
+        }
+
+
+        public SByte AddUser(Worker newuser, List<Discipline> choicelistdisname)
         {
             SByte check = 0;
             using (var db = new GenerationTicketsContext(Config.Options))
             {
                 db.Workers.Add(newuser);
-                var ias= db.Workers.Where(x => x == newuser).Select(x => x.WorkerId).FirstOrDefault();
-                // db.SaveChanges();
                 if (newuser.RoleId == 2) //teacher
                 {
-                    int id = db.Workers.Where(x => x.WorkerLogin == newuser.WorkerLogin).Select(x => x.WorkerId).FirstOrDefault();
-                    if (id != 0)
-                    {
-                        foreach (var i in choicelistdisname)
-                        {
-                            var tempid = (int)db.Disciplines.Where(x => x.DisciplineName == i).Select(x => x.DisciplineId).FirstOrDefault();
-                            if (tempid != 0)
-                                db.Teachings.Add(new Teaching() { WorkerId = id, DisciplineId = tempid });
-                            else
-                                check = -2;
-                        }
-                    }
-                    else
-                        check = -3;
-                }
-                if (check==0)
-                    db.SaveChanges();
+                    choicelistdisname.ForEach((i) =>
+                         db.Entry(new Teaching() { Worker = newuser, Discipline = i }).State = EntityState.Added);
+                }  
+                
+                db.SaveChanges();
                 return check;
             }
         }
