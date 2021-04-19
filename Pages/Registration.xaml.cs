@@ -137,32 +137,8 @@ namespace GenerationTicketsWPF
             }
             if (countcheck == 8)
             {
-                //using (var db = new GenerationTicketsContext(Config.Options))
-                //{
-
-
                     Dbhelper.AddUser(new Worker() { Lname = LName.Text, Fname = FName.Text, Sname = SName.Text, Gender = gender, WorkerLogin = Login.Text, 
                         RoleId = (int)ListRoles.SelectedValue, WorkerPassword = Password.Password },choicelistdisname);
-                //    var newuser = db.Workers.Add(new Worker() { Lname = LName.Text, Fname = FName.Text, Sname = SName.Text, Gender = gender, WorkerLogin = Login.Text, RoleId = (int)ListRoles.SelectedValue, WorkerPassword = Password.Password });
-                //    db.SaveChanges();
-                //    if (((Role)ListRoles.SelectedItem).RoleDecryption == "Teacher")
-                //    {
-                //        var id = db.Workers.Where(x => x.WorkerLogin == Login.Text).Select(x => x.WorkerId).FirstOrDefault();
-                //        if (id != 0) {
-                //            foreach (var i in choicelistdisname) {
-                //                var tempid = (int)db.Disciplines.Where(x => x.DisciplineName == i).Select(x => x.DisciplineId).FirstOrDefault();
-                //                if (tempid != 0)
-                //                    db.Teachings.Add(new Teaching() { WorkerId = id, DisciplineId = tempid });
-                //                else
-                //                    MessageBox.Show("Какая-то беда");
-                //            }
-                //            db.SaveChanges();
-                //        }
-                //        else
-                //            MessageBox.Show("Какая-то беда");
-                //    }
-                    
-                //}
             }
             
         }
@@ -181,9 +157,11 @@ namespace GenerationTicketsWPF
             StackPanel panel = new StackPanel { Orientation = Orientation.Vertical };
             panel.Children.Clear();
             choicelistdisname = new List<Discipline>(0);
-            foreach (var name in disciplineName)
+            foreach (var item in disciplineName)
             {
-                panel.Children.Add(new CheckBox() { Content = name, Height = 20 });
+                var ind = panel.Children.Add(new CheckBox() { DataContext = item, Height = 20 });
+                Binding bind = new Binding("DisciplineName");
+                ((CheckBox)panel.Children[ind]).SetBinding(CheckBox.ContentProperty, bind);
             }
             window.Content = panel;
             var but = new Button() {Content = "Готово!" };

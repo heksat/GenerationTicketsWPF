@@ -4,11 +4,16 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:GenerationTicketsWPF.Pages"
+      xmlns:model="clr-namespace:GenerationTicketsWPF.Models"
+Loaded="Page_Loaded"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ChangeTables">
-
-    <Grid>
+    <Page.Resources>
+        <CollectionViewSource x:Key="chairmanViewSource"
+                                d:DesignSource="{d:DesignInstance {x:Type model:Chairman}, CreateList=True}"/>
+    </Page.Resources>
+        <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="50"/>
@@ -18,12 +23,12 @@
                 <TabItem.Header>
                     <TextBlock Text="Председатели"/>
                 </TabItem.Header>
-                <DataGrid x:Name="ChairGrid" AutoGenerateColumns="False" >
+                <DataGrid  DataContext="{StaticResource chairmanViewSource}" EnableRowVirtualization="True" ItemsSource="{Binding}" x:Name="ChairGrid" AutoGenerateColumns="False" >
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Номер председателя" Binding="{Binding ChairmanId}"/>
-                        <DataGridTextColumn Header="Фамилия" Binding="{Binding Lname,Mode=TwoWay}"/>
-                        <DataGridTextColumn Header="Имя" Binding="{Binding Fname,Mode=TwoWay}"/>
-                        <DataGridTextColumn Header="Отчество" Binding="{Binding Sname,Mode=TwoWay}"/>
+                        <DataGridTextColumn Header="Номер председателя" Binding="{Binding ChairmanId}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Фамилия" Binding="{Binding Lname}"/>
+                        <DataGridTextColumn Header="Имя" Binding="{Binding Fname}"/>
+                        <DataGridTextColumn Header="Отчество" Binding="{Binding Sname}"/>
 
                     </DataGrid.Columns>
                 </DataGrid>

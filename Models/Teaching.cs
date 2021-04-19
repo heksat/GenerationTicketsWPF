@@ -20,8 +20,8 @@ namespace GenerationTicketsWPF.Models
         [Key]
         public int WorkerId { get; set; }
 
-        public Discipline Discipline { get; set; }
-        public Worker Worker { get; set; }
-        public ICollection<Task> Tasks { get; set; }
+        public virtual Discipline Discipline { get; set; }
+        public virtual Worker Worker { get; set; }
+        public virtual ICollection<Task> Tasks { get; set; }
     }
 }

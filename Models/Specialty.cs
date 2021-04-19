@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -11,7 +12,7 @@ namespace GenerationTicketsWPF.Models
     {
         public Specialty()
         {
-            Disciplines = new HashSet<Discipline>();
+            Disciplines = new ObservableCollection<Discipline>();
         }
 
         public string SpecialtyId { get; set; }
@@ -19,6 +20,6 @@ namespace GenerationTicketsWPF.Models
         public int ChairmanId { get; set; }
 
         public virtual Chairman Chairman { get; set; }
-        public virtual ICollection<Discipline> Disciplines { get; set; }
+        public virtual ObservableCollection<Discipline> Disciplines { get; set; }
     }
 }

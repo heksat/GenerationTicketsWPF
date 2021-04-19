@@ -12,6 +12,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace GenerationTicketsWPF.Pages
 {
@@ -25,7 +28,7 @@ namespace GenerationTicketsWPF.Pages
             InitializeComponent();
             using (var db = new GenerationTicketsContext(Config.Options))
             {
-                ChairGrid.ItemsSource = db.Chairmans.Select(x => x).ToList();
+                // ChairGrid.ItemsSource = db.Chairmans.Select(x => x).ToList();
                 DispGrid.ItemsSource = db.Disciplines.Select(x => x).ToList();
                 LvlGrid.ItemsSource = db.Levels.Select(x => x).ToList();
                 RoleGrid.ItemsSource = db.Roles.Select(x => x).ToList();
@@ -43,12 +46,42 @@ namespace GenerationTicketsWPF.Pages
         {
             using (var db = new GenerationTicketsContext(Config.Options))
             {
-                db.SaveChanges();       
+
+                db.SaveChanges();
+                // Refresh the grids so the database generated values show up.
+                this.ChairGrid.Items.Refresh();
+
             }
         }
         private void GoBack_Click(object sender, RoutedEventArgs e)
         {
             NavigationService.GoBack();
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            using (var db = new GenerationTicketsContext(Config.Options))
+            {
+                
+                System.Windows.Data.CollectionViewSource chairmanViewSource =
+                   ((System.Windows.Data.CollectionViewSource)(this.FindResource("chairmanViewSource")));
+                db.Chairmans.Load();
+                chairmanViewSource.Source = db.Chairmans.Local.ToObservableCollection();
+                ((ObservableCollection<Chairman>)chairmanViewSource.Source).CollectionChanged += Chairman_CollectionChanged;
+
+            }
+        }
+        private static void Chairman_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Remove: 
+                    using (var db = new GenerationTicketsContext(Config.Options))
+                    {
+                        db.Chairmans.Remove((Chairman)e.OldItems[0]);
+                    }
+                    break;
+            }
         }
     }
 }
