@@ -23,11 +23,13 @@ namespace GenerationTicketsWPF.Pages
     /// </summary>
     public partial class ChangeTables : Page
     {
+        public GenerationTicketsContext db = new GenerationTicketsContext(Config.Options);
         public ChangeTables()
         {
             InitializeComponent();
-            using (var db = new GenerationTicketsContext(Config.Options))
-            {
+            //var db = new GenerationTicketsContext(Config.Options)
+            //using (var db = new GenerationTicketsContext(Config.Options))
+            //{
                 // ChairGrid.ItemsSource = db.Chairmans.Select(x => x).ToList();
                 DispGrid.ItemsSource = db.Disciplines.Select(x => x).ToList();
                 LvlGrid.ItemsSource = db.Levels.Select(x => x).ToList();
@@ -39,19 +41,19 @@ namespace GenerationTicketsWPF.Pages
                 TypeGrid.ItemsSource = db.TypesTasks.Select(x => x).ToList();
                 WorkGrid.ItemsSource = db.Workers.Select(x => x).ToList();
 
-            }
+           // }
         }
 
         private void UpdateDB_Click(object sender, RoutedEventArgs e)
         {
-            using (var db = new GenerationTicketsContext(Config.Options))
-            {
+            //using (var db = new GenerationTicketsContext(Config.Options))
+            //{
 
                 db.SaveChanges();
                 // Refresh the grids so the database generated values show up.
                 this.ChairGrid.Items.Refresh();
 
-            }
+            //}
         }
         private void GoBack_Click(object sender, RoutedEventArgs e)
         {
@@ -60,28 +62,28 @@ namespace GenerationTicketsWPF.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            using (var db = new GenerationTicketsContext(Config.Options))
-            {
+            //using (var db = new GenerationTicketsContext(Config.Options))
+            //{
                 
                 System.Windows.Data.CollectionViewSource chairmanViewSource =
                    ((System.Windows.Data.CollectionViewSource)(this.FindResource("chairmanViewSource")));
                 db.Chairmans.Load();
                 chairmanViewSource.Source = db.Chairmans.Local.ToObservableCollection();
-                ((ObservableCollection<Chairman>)chairmanViewSource.Source).CollectionChanged += Chairman_CollectionChanged;
+               // ((ObservableCollection<Chairman>)chairmanViewSource.Source).CollectionChanged += Chairman_CollectionChanged;
 
-            }
+            //}
         }
-        private static void Chairman_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            switch (e.Action)
-            {
-                case NotifyCollectionChangedAction.Remove: 
-                    using (var db = new GenerationTicketsContext(Config.Options))
-                    {
-                        db.Chairmans.Remove((Chairman)e.OldItems[0]);
-                    }
-                    break;
-            }
-        }
+        //private static void Chairman_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        //{
+        //    switch (e.Action)
+        //    {
+        //        case NotifyCollectionChangedAction.Remove:
+        //            using (var db = new GenerationTicketsContext(Config.Options))
+        //            {
+        //                db.Chairmans.Remove((Chairman)e.OldItems[0]);
+        //            }
+        //            break;
+        //    }
+        //}
     }
 }
