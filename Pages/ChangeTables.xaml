@@ -12,8 +12,26 @@ Loaded="Page_Loaded"
     <Page.Resources>
         <CollectionViewSource x:Key="chairmanViewSource"
                                 d:DesignSource="{d:DesignInstance {x:Type model:Chairman}, CreateList=True}"/>
+        <CollectionViewSource x:Key="discipViewSource"
+                                d:DesignSource="{d:DesignInstance {x:Type model:Discipline}, CreateList=True}"/>
+        <CollectionViewSource x:Key="LvlViewSource"
+                                d:DesignSource="{d:DesignInstance {x:Type model:Level}, CreateList=True}"/>
+        <CollectionViewSource x:Key="RoleViewSource"
+                                d:DesignSource="{d:DesignInstance {x:Type model:Role}, CreateList=True}"/>
+        <CollectionViewSource x:Key="specViewSource"
+                                d:DesignSource="{d:DesignInstance {x:Type model:Specialty}, CreateList=True}"/>
+        <CollectionViewSource x:Key="taskViewSource"
+                                d:DesignSource="{d:DesignInstance {x:Type model:Task}, CreateList=True}"/>
+        <CollectionViewSource x:Key="ticketViewSource"
+                                d:DesignSource="{d:DesignInstance {x:Type model:Ticket}, CreateList=True}"/>
+        <CollectionViewSource x:Key="teachViewSource"
+                                d:DesignSource="{d:DesignInstance {x:Type model:Teaching}, CreateList=True}"/>
+        <CollectionViewSource x:Key="typesViewSource"
+                                d:DesignSource="{d:DesignInstance {x:Type model:TypesTask}, CreateList=True}"/>
+        <CollectionViewSource x:Key="workerViewSource"
+                                d:DesignSource="{d:DesignInstance {x:Type model:Worker}, CreateList=True}"/>
     </Page.Resources>
-        <Grid>
+        <Grid x:Name="mainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="50"/>
@@ -37,9 +55,9 @@ Loaded="Page_Loaded"
                 <TabItem.Header>
                     <TextBlock Text="Дисциплины"/>
                 </TabItem.Header>
-                <DataGrid x:Name="DispGrid" AutoGenerateColumns="False">
+                <DataGrid DataContext="{StaticResource discipViewSource}" ItemsSource="{Binding}" x:Name="DispGrid" AutoGenerateColumns="False">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Номер дисциплины" Binding="{Binding DisciplineId}"/>
+                        <DataGridTextColumn Header="Номер дисциплины" Binding="{Binding DisciplineId}" IsReadOnly="True"/>
                         <DataGridTextColumn Header="Название дисциплины" Binding="{Binding DisciplineName}"/>
                         <DataGridTextColumn Header="Номер специальности" Binding="{Binding SpecialtyId}"/>
                     </DataGrid.Columns>
@@ -49,7 +67,7 @@ Loaded="Page_Loaded"
                 <TabItem.Header>
                     <TextBlock Text="Уровень сложности"/>
                 </TabItem.Header>
-                <DataGrid x:Name="LvlGrid" AutoGenerateColumns="False">
+                <DataGrid DataContext="{StaticResource LvlViewSource}" ItemsSource="{Binding}" x:Name="LvlGrid" AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Номер уровня" Binding="{Binding LevelId}"/>
                         <DataGridTextColumn Header="Уровень" Binding="{Binding LeverDecryption}"/>
@@ -58,9 +76,9 @@ Loaded="Page_Loaded"
             </TabItem>
             <TabItem>
                 <TabItem.Header>
-                    <TextBlock Text="Роли"/>
+                    <TextBlock Text="Должности"/>
                 </TabItem.Header>
-                <DataGrid x:Name="RoleGrid" AutoGenerateColumns="False">
+                <DataGrid DataContext="{StaticResource RoleViewSource}" ItemsSource="{Binding}" x:Name="RoleGrid" AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Номер роли" Binding="{Binding RoleId}"/>
                         <DataGridTextColumn Header="Расшифровка роли" Binding="{Binding RoleDecryption}"/>
@@ -71,7 +89,7 @@ Loaded="Page_Loaded"
                 <TabItem.Header>
                     <TextBlock Text="Специальность"/>
                 </TabItem.Header>
-                <DataGrid x:Name="SpecGrid" AutoGenerateColumns="False">
+                <DataGrid DataContext="{StaticResource specViewSource}" ItemsSource="{Binding}" x:Name="SpecGrid" AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Номер специальности" Binding="{Binding SpecialtyId}"/>
                         <DataGridTextColumn Header="Расшифровка специальности" Binding="{Binding SpecialtyDecryption}"/>
@@ -83,7 +101,7 @@ Loaded="Page_Loaded"
                 <TabItem.Header>
                     <TextBlock Text="Задания"/>
                 </TabItem.Header>
-                <DataGrid x:Name="TaskGrid" AutoGenerateColumns="False">
+                <DataGrid DataContext="{StaticResource taskViewSource}" ItemsSource="{Binding}" x:Name="TaskGrid" AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Номер специальности" Binding="{Binding TaskId}"/>
                         <DataGridTextColumn Header="Расшифровка специальности" Binding="{Binding DisciplineId}"/>
@@ -98,7 +116,7 @@ Loaded="Page_Loaded"
                 <TabItem.Header>
                     <TextBlock Text="Преподаватели"/>
                 </TabItem.Header>
-                <DataGrid x:Name="TeachGrid" AutoGenerateColumns="False">
+                <DataGrid DataContext="{StaticResource teachViewSource}" ItemsSource="{Binding}" x:Name="TeachGrid" AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Номер дисциплины" Binding="{Binding DisciplineId}"/>
                         <DataGridTextColumn Header="Номер работника" Binding="{Binding WorkerId}"/>
@@ -109,7 +127,7 @@ Loaded="Page_Loaded"
                 <TabItem.Header>
                     <TextBlock Text="Билеты"/>
                 </TabItem.Header>
-                <DataGrid x:Name="TickGrid" AutoGenerateColumns="False">
+                <DataGrid x:Name="TickGrid" DataContext="{StaticResource ticketViewSource}" ItemsSource="{Binding}" AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Номер дисциплины" Binding="{Binding TicketId}"/>
                         <DataGridTextColumn Header="Номер билета" Binding="{Binding TaskNumber}"/>
@@ -123,7 +141,7 @@ Loaded="Page_Loaded"
                 <TabItem.Header>
                     <TextBlock Text="Типы заданий"/>
                 </TabItem.Header>
-                <DataGrid x:Name="TypeGrid" AutoGenerateColumns="False">
+                <DataGrid DataContext="{StaticResource typesViewSource}" ItemsSource="{Binding}" x:Name="TypeGrid" AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Номер типа" Binding="{Binding TypesTaskId}"/>
                         <DataGridTextColumn Header="Расшифровка типа" Binding="{Binding TypesTaskDecryption}"/>
@@ -134,7 +152,7 @@ Loaded="Page_Loaded"
                 <TabItem.Header>
                     <TextBlock Text="Работники"/>
                 </TabItem.Header>
-                <DataGrid x:Name="WorkGrid" AutoGenerateColumns="False" >
+                <DataGrid DataContext="{StaticResource workerViewSource}" ItemsSource="{Binding}" x:Name="WorkGrid" AutoGenerateColumns="False" >
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Номер работника" Binding="{Binding WorkerId}"/>
                         <DataGridTextColumn Header="Фамилия" Binding="{Binding Lname}"/>

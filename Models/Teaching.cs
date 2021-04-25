@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -11,7 +12,7 @@ namespace GenerationTicketsWPF.Models
     {
         public Teaching()
         {
-            Tasks = new HashSet<Task>();
+            Tasks = new ObservableCollection<Task>();
         }
 
         [Key]
@@ -22,6 +23,6 @@ namespace GenerationTicketsWPF.Models
 
         public virtual Discipline Discipline { get; set; }
         public virtual Worker Worker { get; set; }
-        public virtual ICollection<Task> Tasks { get; set; }
+        public virtual ObservableCollection<Task> Tasks { get; set; }
     }
 }
