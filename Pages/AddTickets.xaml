@@ -39,7 +39,7 @@
             <TextBlock x:Name="CounterChar" Grid.Column="1" Grid.Row="1" />
         </Grid>
         <Button x:Name="AddTick" Grid.Row="2" Grid.Column="2" Click="AddTick_Click"/>
-        <Button x:Name="Back" Content="Back" Grid.Row="1" Grid.Column="2" Height="30" Margin="5,10,5,249" Click="Back_Click"/>
+        <Button x:Name="Back" Content="Back" Grid.Row="1" Grid.Column="2" Height="30" Margin="5,10,5,220" Click="Back_Click"/>
         <StackPanel Grid.Row="1" Grid.Column="0" >
             <TextBlock Text="Выбор дисциплины"/>
             <ComboBox x:Name="DiscipAllow"/>
