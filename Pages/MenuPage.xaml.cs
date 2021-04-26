@@ -30,24 +30,26 @@ namespace GenerationTicketsWPF
             if (Config.User.RoleId == 1)
             {
                 //PropertyInfo[] properties = db.GetType().GetProperties().Where(p => !p.GetMethod.IsVirtual).ToArray();
-                Menu adminPanel = new Menu() { Height = 30, VerticalAlignment = VerticalAlignment.Top};
-                var regBut = new MenuItem() { Header = "Регистрация пользователя"};
-                var changeTable = new MenuItem() { Header = "Изменить таблицы" };
-                adminPanel.Items.Add(regBut);
-                adminPanel.Items.Add(changeTable);
-                regBut.Click += ((x, y) => this.NavigationService.Navigate(new Registration()));
-                changeTable.Click += ((x, y) => NavigationService.Navigate(new ChangeTables()));
-                MainGrid.Children.Add(adminPanel);
-                Grid.SetColumn(adminPanel, 0);
-                Grid.SetRow(adminPanel, 0);
-                Grid.SetColumnSpan(adminPanel, 5); //создание и размещение админ панели
-                using (var db = new GenerationTicketsContext(Config.Options))
-                {
+                AdmBut1.IsEnabled = true;
+                AdmBut2.IsEnabled = true;
+                //Menu adminPanel = new Menu() { Height = 30, VerticalAlignment = VerticalAlignment.Top};
+                //var regBut = new MenuItem() { Header = "Регистрация пользователя"};
+                //var changeTable = new MenuItem() { Header = "Изменить таблицы" };
+                //adminPanel.Items.Add(regBut);
+                //adminPanel.Items.Add(changeTable);
+                //regBut.Click += ((x, y) => this.NavigationService.Navigate(new Registration()));
+                //changeTable.Click += ((x, y) => NavigationService.Navigate(new ChangeTables()));
+                //MainGrid.Children.Add(adminPanel);
+               // Grid.SetColumn(adminPanel, 0);
+               // Grid.SetRow(adminPanel, 0);
+               // Grid.SetColumnSpan(adminPanel, 5); //создание и размещение админ панели
+              //  using (var db = new GenerationTicketsContext(Config.Options))
+             //   {
                     //var listlocal = new Role();
                     // db.Roles.Attach(listlocal);
                    // db.Roles.FromSqlRaw("select Role_ID,Role_descryption from Roles").ToList();
                     //check.ItemsSource = db("select name from Sys.objects where type = 'U'").ToList();
-                }
+              //  }
 
             }
 
@@ -71,6 +73,16 @@ namespace GenerationTicketsWPF
         private void ViewTicketsList(object sender, RoutedEventArgs e)
         {
             NavigationService.Navigate(new ViewTickets());
+        }
+
+        private void Reg_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new Registration());
+        }
+
+        private void Change_DB(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new ChangeTables());
         }
 
         //public Menu(Worker user): this()

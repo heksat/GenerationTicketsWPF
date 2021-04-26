@@ -48,20 +48,38 @@ namespace GenerationTicketsWPF.Pages
         {
             //using (var db = new GenerationTicketsContext(Config.Options))
             //{
-
+            try
+            {
                 db.SaveChanges();
-            this.ChairGrid.Items.Refresh();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            ChairGrid.Items.Refresh();
+            DispGrid.Items.Refresh();
+            LvlGrid.Items.Refresh();
+            RoleGrid.Items.Refresh();
+            SpecGrid.Items.Refresh();
+            TaskGrid.Items.Refresh();
+            TeachGrid.Items.Refresh();
+            TypeGrid.Items.Refresh();
+            TickGrid.Items.Refresh();
+            WorkGrid.Items.Refresh();
             //this.ControlItems.Items.Refresh();
-           // foreach (var item in ControlItems.Items)
-           // {
-              //  if (item is TabItem tabItem)
-             //   {
+            //ControlItems.TabPages
+            //foreach (var item in ControlItems.Items)
+            //{
+            //   item.tab
+            //  if (item is TabItem tabItem)
+            {
+               //     if (tabItem)
              //       tabItem.UpdateLayout();
-             //   }
+                //}
             //}
 //                this.mainGrid.Children
 
-            //}
+            }
         }
         private void GoBack_Click(object sender, RoutedEventArgs e)
         {

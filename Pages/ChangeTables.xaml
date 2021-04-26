@@ -47,7 +47,6 @@ Loaded="Page_Loaded"
                         <DataGridTextColumn Header="Фамилия" Binding="{Binding Lname}"/>
                         <DataGridTextColumn Header="Имя" Binding="{Binding Fname}"/>
                         <DataGridTextColumn Header="Отчество" Binding="{Binding Sname}"/>
-
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>
@@ -160,7 +159,7 @@ Loaded="Page_Loaded"
                         <DataGridTextColumn Header="Отчество" Binding="{Binding Sname}"/>
                         <DataGridTextColumn Header="Пол" Binding="{Binding Gender}"/>
                         <DataGridTextColumn Header="Логин" Binding="{Binding WorkerLogin}"/>
-                        <DataGridTextColumn Header="Логин" Binding="{Binding WorkerLogin}"/>
+                        <DataGridTextColumn Header="Пароль" Binding="{Binding WorkerPassword}"/>
                         <DataGridTextColumn Header="Номер должности" Binding="{Binding RoleId}"/>
                     </DataGrid.Columns>
                 </DataGrid>

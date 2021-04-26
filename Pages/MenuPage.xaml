@@ -27,7 +27,7 @@
         <Button Content="Список билетов" Grid.Column="1" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Center" Height="80" Width="180" Click="ViewTicketsList"/>
         <Button Content="Добавить билет" Grid.Column="1" HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center" Height="80" Width="180" Click="AddTicket_Click"/>
         <Button Content="Личный кабинет" Grid.Column="3" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Height="80" Width="180" Click="Button_Click_1"/>
-        <Button Content="" Grid.Column="3" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Center" Height="80" Width="180"/>
-        <Button Content="" Grid.Column="3" HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center" Height="80" Width="180"/>
+        <Button x:Name="AdmBut1" Content="Регистрация пользователя" Grid.Column="3" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Center" Height="80" Width="180" Click="Reg_Click" IsEnabled="False"/>
+        <Button x:Name="AdmBut2" Content="Изменить БД" Grid.Column="3" HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center" Height="80" Width="180" Click="Change_DB" IsEnabled="False"/>
     </Grid>
 </Page>
