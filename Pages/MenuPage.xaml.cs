@@ -52,6 +52,11 @@ namespace GenerationTicketsWPF
               //  }
 
             }
+            else
+            {
+                AdmBut1.IsEnabled = false;
+                AdmBut2.IsEnabled = false;
+            }
 
         }
 

@@ -22,7 +22,7 @@
         </Grid.ColumnDefinitions>
         <Canvas Grid.Row="1" Grid.Column="1">
             <ComboBox x:Name="DiscipDescList" SelectionChanged="DiscipList_SelectionChanged" Canvas.Left="33" Width="123" Canvas.Top="73"/>
-            <ComboBox x:Name="Chairmen"  Canvas.Left="33" Canvas.Top="120" Width="123"/>
+            <ComboBox x:Name="Chairmen" IsEnabled="False" Canvas.Left="33" Canvas.Top="120" Width="123"/>
             <TextBlock  Text="Курс" Canvas.Left="33" Canvas.Top="179"/>
             <TextBox x:Name="Course" Canvas.Left="33" Canvas.Top="200" Width="54" />
             <TextBlock  Text="Семестр" Canvas.Left="37" Canvas.Top="234"  />

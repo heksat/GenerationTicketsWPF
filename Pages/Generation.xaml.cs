@@ -146,6 +146,7 @@ namespace GenerationTicketsWPF
                                         select p.Lname + ' ' + p.Fname + ' ' + p.Sname).Distinct().ToList();
             
             }
+            Chairmen.IsEnabled = true;
             CountTickets_TextChanged(sender, e);
         }
 
@@ -153,34 +154,37 @@ namespace GenerationTicketsWPF
         {
             using (var db = new GenerationTicketsContext(Config.Options))
             {
-                currentDiscipID = db.Disciplines.Where(x => x.DisciplineName == (DiscipDescList.SelectedItem.ToString())).Select(x => x.DisciplineId).FirstOrDefault();
-                var AllTasks = db.Tasks.Where(y =>
-                   (y.DisciplineId == currentDiscipID)
-                   && (y.Level.LeverDecryption == Lvl.SelectedItem.ToString())
-                   ).Select(x => new {IDTask = x.TaskId, TypeTask = x.TypesTaskId }); // получение всех вопросов локально, их id и тип
-
-
-                if (Lvl.SelectedIndex != -1 && DiscipDescList.SelectedIndex != -1)
+                if (DiscipDescList.SelectedIndex != -1)
                 {
-                    int CountTeorTask = db.Tasks.Where(y =>
-                    (y.DisciplineId == currentDiscipID)
-                    && (y.Level.LeverDecryption == Lvl.SelectedItem.ToString())
-                    && (y.TypesTaskId==2)
-                    ).Select(x => x).Count();
-                    int CountPractTask = db.Tasks.Where(y =>
-                    (y.DisciplineId == currentDiscipID)
-                    && (y.Level.LeverDecryption == Lvl.SelectedItem.ToString())
-                    && (y.TypesTaskId == 1)
-                    ).Select(x => x).Count();
-                    MaxTickets.Text = ((CountTeorTask/2 < CountPractTask) ? CountTeorTask/2 : CountPractTask).ToString(); //реф
-                    //MaxTickets.Text = db.Tasks.Where(y =>
-                    //(y.DisciplineId == (int)(db.Disciplines.Where(x => x.DisciplineName == (DiscipList.SelectedItem.ToString())).Select(x => x.DisciplineId).FirstOrDefault()))
-                    //&& (y.Level.LeverDecryption == Lvl.SelectedItem.ToString())
-                    //).Select(x => x).Count().ToString();
+                    currentDiscipID = db.Disciplines.Where(x => x.DisciplineName == (DiscipDescList.SelectedItem.ToString())).Select(x => x.DisciplineId).FirstOrDefault();
+                    var AllTasks = db.Tasks.Where(y =>
+                       (y.DisciplineId == currentDiscipID)
+                       && (y.Level.LeverDecryption == Lvl.SelectedItem.ToString())
+                       ).Select(x => new { IDTask = x.TaskId, TypeTask = x.TypesTaskId }); // получение всех вопросов локально, их id и тип
 
+
+                    if (Lvl.SelectedIndex != -1 && DiscipDescList.SelectedIndex != -1)
+                    {
+                        int CountTeorTask = db.Tasks.Where(y =>
+                        (y.DisciplineId == currentDiscipID)
+                        && (y.Level.LeverDecryption == Lvl.SelectedItem.ToString())
+                        && (y.TypesTaskId == 2)
+                        ).Select(x => x).Count();
+                        int CountPractTask = db.Tasks.Where(y =>
+                        (y.DisciplineId == currentDiscipID)
+                        && (y.Level.LeverDecryption == Lvl.SelectedItem.ToString())
+                        && (y.TypesTaskId == 1)
+                        ).Select(x => x).Count();
+                        MaxTickets.Text = ((CountTeorTask / 2 < CountPractTask) ? CountTeorTask / 2 : CountPractTask).ToString(); //реф
+                                                                                                                                  //MaxTickets.Text = db.Tasks.Where(y =>
+                                                                                                                                  //(y.DisciplineId == (int)(db.Disciplines.Where(x => x.DisciplineName == (DiscipList.SelectedItem.ToString())).Select(x => x.DisciplineId).FirstOrDefault()))
+                                                                                                                                  //&& (y.Level.LeverDecryption == Lvl.SelectedItem.ToString())
+                                                                                                                                  //).Select(x => x).Count().ToString();
+
+                    }
+                    else
+                        MaxTickets.Text = "Unknows";
                 }
-                else
-                    MaxTickets.Text = "Unknows";
             }
         }
 
