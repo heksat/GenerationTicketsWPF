@@ -22,20 +22,20 @@ namespace GenerationTicketsWPF.Models
         public virtual DbSet<Level> Levels { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<Specialty> Specialties { get; set; }
-        public virtual DbSet<TableName> TableNames { get; set; }
         public virtual DbSet<Task> Tasks { get; set; }
         public virtual DbSet<Teaching> Teachings { get; set; }
         public virtual DbSet<Ticket> Tickets { get; set; }
         public virtual DbSet<TypesTask> TypesTasks { get; set; }
         public virtual DbSet<Worker> Workers { get; set; }
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    if (!optionsBuilder.IsConfigured)
-        //    {
-        //        optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=GenerationTickets;Trusted_Connection=True;");
-        //    }
-        //}
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=GenerationTickets;Trusted_Connection=True;");
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -77,8 +77,7 @@ namespace GenerationTicketsWPF.Models
                 entity.HasOne(d => d.Specialty)
                     .WithMany(p => p.Disciplines)
                     .HasForeignKey(d => d.SpecialtyId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Disciplin__Speci__681373AD");
+                    .HasConstraintName("FK__Disciplin__Speci__7A521F79");
             });
 
             modelBuilder.Entity<Level>(entity =>
@@ -119,19 +118,7 @@ namespace GenerationTicketsWPF.Models
                 entity.HasOne(d => d.Chairman)
                     .WithMany(p => p.Specialties)
                     .HasForeignKey(d => d.ChairmanId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Specialty__Chair__65370702");
-            });
-
-            modelBuilder.Entity<TableName>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.ToView("Table_names");
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(128);
+                    .HasConstraintName("FK__Specialty__Chair__7775B2CE");
             });
 
             modelBuilder.Entity<Task>(entity =>
@@ -159,20 +146,17 @@ namespace GenerationTicketsWPF.Models
                 entity.HasOne(d => d.Level)
                     .WithMany(p => p.Tasks)
                     .HasForeignKey(d => d.LevelId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Tasks__Level_ID__7B264821");
+                    .HasConstraintName("FK__Tasks__Level_ID__0D64F3ED");
 
                 entity.HasOne(d => d.TypesTask)
                     .WithMany(p => p.Tasks)
                     .HasForeignKey(d => d.TypesTaskId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Tasks__Types_Tas__7A3223E8");
+                    .HasConstraintName("FK__Tasks__Types_Tas__0C70CFB4");
 
                 entity.HasOne(d => d.Teaching)
                     .WithMany(p => p.Tasks)
                     .HasForeignKey(d => new { d.DisciplineId, d.WorkerId })
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Tasks__793DFFAF");
+                    .HasConstraintName("FK__Tasks__0B7CAB7B");
             });
 
             modelBuilder.Entity<Teaching>(entity =>
@@ -189,14 +173,12 @@ namespace GenerationTicketsWPF.Models
                 entity.HasOne(d => d.Discipline)
                     .WithMany(p => p.Teachings)
                     .HasForeignKey(d => d.DisciplineId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Teaching__Discip__719CDDE7");
+                    .HasConstraintName("FK__Teaching__Discip__03DB89B3");
 
                 entity.HasOne(d => d.Worker)
                     .WithMany(p => p.Teachings)
                     .HasForeignKey(d => d.WorkerId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Teaching__Worker__72910220");
+                    .HasConstraintName("FK__Teaching__Worker__04CFADEC");
             });
 
             modelBuilder.Entity<Ticket>(entity =>
@@ -204,27 +186,16 @@ namespace GenerationTicketsWPF.Models
                 entity.HasKey(e => new { e.TicketId, e.TaskNumber })
                     .HasName("PK_UNIQUE_Tickets");
 
-                entity.Property(e => e.TicketId)
-                    .ValueGeneratedOnAdd()
-                    .HasColumnName("Ticket_ID");
-
-                entity.Property(e => e.ChairmanId).HasColumnName("Chairman_ID");
+                entity.Property(e => e.TicketId).HasColumnName("Ticket_ID");
 
                 entity.Property(e => e.DisciplineId).HasColumnName("Discipline_ID");
 
                 entity.Property(e => e.TaskId).HasColumnName("Task_ID");
 
-                entity.HasOne(d => d.Chairman)
-                    .WithMany(p => p.Tickets)
-                    .HasForeignKey(d => d.ChairmanId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Tickets__Chairma__7E02B4CC");
-
                 entity.HasOne(d => d.Task)
                     .WithMany(p => p.Tickets)
                     .HasForeignKey(d => new { d.TaskId, d.DisciplineId })
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Tickets__7EF6D905");
+                    .HasConstraintName("FK__Tickets__10416098");
             });
 
             modelBuilder.Entity<TypesTask>(entity =>
@@ -241,7 +212,7 @@ namespace GenerationTicketsWPF.Models
 
             modelBuilder.Entity<Worker>(entity =>
             {
-                entity.HasIndex(e => e.WorkerLogin, "UQ__Workers__913667C7C96E2E3B")
+                entity.HasIndex(e => e.WorkerLogin, "UQ__Workers__913667C7D366FA7D")
                     .IsUnique();
 
                 entity.Property(e => e.WorkerId).HasColumnName("Worker_ID");
@@ -282,14 +253,9 @@ namespace GenerationTicketsWPF.Models
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.Workers)
                     .HasForeignKey(d => d.RoleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Workers__Role_ID__6DCC4D03");
+                    .HasConstraintName("FK__Workers__Role_ID__000AF8CF");
             });
-            modelBuilder.Entity<TableName>((pc =>
-            {
-                pc.HasNoKey();
-                pc.ToView("Table_names");
-            }));
+
             OnModelCreatingPartial(modelBuilder);
         }
 

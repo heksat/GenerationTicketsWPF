@@ -1,6 +1,6 @@
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=DESKTOP-B31G168\\SQLEXPRESS;Database=GenerationTickets;Trusted_Connection=True;" //DESKTOP-B31G168\SQLEXPRESS (localdb)\\mssqllocaldb
+    "DefaultConnection": "Server=.\\SQLEXPRESS;Database=GenerationTickets;Trusted_Connection=True;" //DESKTOP-B31G168\SQLEXPRESS (localdb)\\mssqllocaldb
   }
 } //DESKTOP-RU3VFUA\SQLEXPRESS
 

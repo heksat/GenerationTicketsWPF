@@ -68,13 +68,13 @@ namespace GenerationTicketsWPF
                             for (int i = 1; i <= _numValue; i++)
                             {
                                 var item = random.Next(0, teorTask.Count - 1);
-                                db.Tickets.Add(new Ticket() { TicketId = i, TaskNumber = 1, TaskId = (teorTask[item]), DisciplineId = currentDiscipID, ChairmanId = 1 });
+                                db.Tickets.Add(new Ticket() { TicketId = i, TaskNumber = 1, TaskId = (teorTask[item]), DisciplineId = currentDiscipID });
                                 teorTask.RemoveAt(item);
                                 item = random.Next(0, teorTask.Count - 1);
-                                db.Tickets.Add(new Ticket() { TicketId = i, TaskNumber = 2, TaskId = (teorTask[item]), DisciplineId = currentDiscipID, ChairmanId = 1 });
+                                db.Tickets.Add(new Ticket() { TicketId = i, TaskNumber = 2, TaskId = (teorTask[item]), DisciplineId = currentDiscipID });
                                 teorTask.RemoveAt(item);
                                 item = random.Next(0, practTask.Count - 1);
-                                db.Tickets.Add(new Ticket() { TicketId = i, TaskNumber = 3, TaskId = (practTask[item]), DisciplineId = currentDiscipID, ChairmanId = 1 }); //Вопрос в инкременте бд
+                                db.Tickets.Add(new Ticket() { TicketId = i, TaskNumber = 3, TaskId = (practTask[item]), DisciplineId = currentDiscipID }); //Вопрос в инкременте бд
                                 practTask.RemoveAt(item);
                             };
                             db.SaveChanges();

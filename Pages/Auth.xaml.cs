@@ -29,10 +29,10 @@ namespace GenerationTicketsWPF
 
         private void Log_In(object sender, RoutedEventArgs e)
         {
-            Config.User = (new DbInteraction()).Auth(login.Text,password.Password);
+            Config.User = (new DbInteraction()).Auth(login.Text, password.Password);
             if (Config.User != null)
             {
-                this.NavigationService.Navigate(new MenuPage());   
+                this.NavigationService.Navigate(new MenuPage());
             }
         }
     }

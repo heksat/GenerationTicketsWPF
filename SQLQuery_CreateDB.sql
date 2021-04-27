@@ -51,6 +51,8 @@ Chairman_ID int not NULL ,
 CONSTRAINT PK_UNIQUE_Specialty  PRIMARY KEY (Specialty_ID),
 FOREIGN KEY (Chairman_ID) REFERENCES
 dbo.Chairmans (Chairman_ID)
+ON DELETE CASCADE
+ON UPDATE CASCADE
 )
 insert into Specialty VALUES ('09.02.03','Программирование в компьютерных системах',1)
 GO
@@ -60,9 +62,11 @@ Discipline_name nvarchar(50) not NULL,
 Specialty_ID nvarchar(8) not NULL,
 CONSTRAINT PK_UNIQUE_Disciplines PRIMARY KEY (Discipline_ID),
 FOREIGN KEY (Specialty_ID) references
-dbo.Specialty (Specialty_ID)
+dbo.Specialty (Specialty_ID) 
+ON DELETE CASCADE
+ON UPDATE CASCADE
 )
-insert into Disciplines VALUES ('Операционные системы','09.02.03')
+insert into Disciplines VALUES ('Системное программирование','09.02.03')
 insert into Disciplines VALUES ('Архитектура компьютерных систем','09.02.03')
 GO
 Create table Roles (
@@ -83,7 +87,9 @@ Worker_Login nvarchar(20) COLLATE Latin1_General_CS_AS UNIQUE not NULL,
 Worker_password nvarchar(50) COLLATE Latin1_General_CS_AS not NULL,
 Role_ID int not NULL,
 CONSTRAINT PK_UNIQUE_Workers PRIMARY KEY (Worker_ID),
-FOREIGN KEY (Role_ID) REFERENCES Roles (Role_ID),
+FOREIGN KEY (Role_ID) REFERENCES Roles (Role_ID)
+ON DELETE CASCADE
+ON UPDATE CASCADE,
 CHECK ((Gender='м') or (Gender='ж'))
 )
 insert into Workers VALUES ('Admin','Admin','Admin','м','Admin','Admin',1)
@@ -93,10 +99,15 @@ Discipline_ID int not NULL,
 Worker_ID int not NULL,
 CONSTRAINT PK_UNIQUE_Teaching PRIMARY KEY (Discipline_ID,Worker_ID),
 FOREIGN KEY (Discipline_ID) REFERENCES
-Disciplines (Discipline_ID),
+Disciplines (Discipline_ID)
+ON DELETE CASCADE
+ON UPDATE CASCADE,
 FOREIGN KEY (Worker_ID) REFERENCES
 Workers (Worker_ID)
+ON DELETE CASCADE
+ON UPDATE CASCADE
 )
+insert into Teaching VALUES (1,1)
 GO
 create table Levels(
 Level_ID int IDENTITY (1,1),
@@ -123,28 +134,32 @@ Types_Task_ID int not NULL,
 Worker_ID int not NULL,
 CONSTRAINT PK_UNIQIE_Tasks PRIMARY KEY (TASK_ID,Discipline_ID),
 FOREIGN KEY (Discipline_ID,Worker_ID) REFERENCES
-Teaching (Discipline_ID,Worker_ID),
+Teaching (Discipline_ID,Worker_ID)
+ON DELETE CASCADE
+ON UPDATE CASCADE,
 FOREIGN KEY (Types_Task_ID) REFERENCES
-TypesTask (Types_Task_ID),
+TypesTask (Types_Task_ID)
+ON DELETE CASCADE
+ON UPDATE CASCADE,
 FOREIGN KEY (Level_ID) REFERENCES Levels (Level_ID)
+ON DELETE CASCADE
+ON UPDATE CASCADE
 )
+insert into Tasks VALUES (1,N'Прикладное и системное программирование. Языки системного программирования. Особенности языков системного программирования.'
+,1,2,1)
 GO
 create table Tickets(
 Ticket_ID int, --IDENTITY (1,1),
 TaskNumber TINYINT not NULL, --спросить про диапазон между 1 и 3, как сделать
 Task_ID int not NULL,
 Discipline_ID int not NULL,
-Chairman_ID int not NULL,
 CONSTRAINT PK_UNIQUE_Tickets PRIMARY KEY (Ticket_ID,TaskNumber),
-FOREIGN KEY (Chairman_ID) references
-Chairmans (Chairman_ID),
 FOREIGN KEY (Task_ID,Discipline_ID) references
 Tasks (Task_ID,Discipline_ID)
+ON DELETE CASCADE
+ON UPDATE CASCADE
 )
 if exists(select * from sys.objects where type='v' and name = 'Table_names')
 drop view Table_names
+
 GO
-CREATE VIEW Table_names
-AS SELECT name as Name
-FROM sys.objects
-WHERE (type = 'U')

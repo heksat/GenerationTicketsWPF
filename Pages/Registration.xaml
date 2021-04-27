@@ -32,7 +32,7 @@
                         <Setter Property="Margin" Value="20,0,20,0"/>
                     </Style>
                 </StackPanel.Resources>
-                <RadioButton x:Name="Man" Content="М"/>
+                <RadioButton x:Name="Man" Content="М" />
                 <RadioButton x:Name="Woman" Content="Ж"/>
             </StackPanel>
             <TextBlock Text="Назначение" Canvas.Left="331" Canvas.Top="235" Width="180" Height="30"/>
@@ -40,12 +40,12 @@
             <TextBlock Text="Логин" Canvas.Left="331" Canvas.Top="30" Width="180" Height="30"/>
             <TextBox x:Name="Login" Margin ="10,10,10,10" SelectionChanged="MouseClick" Grid.Column="3" Grid.Row="1" Canvas.Left="319" Canvas.Top="45" Width="180" Height="30"/>
             <TextBlock Text="Пароль" Canvas.Left="331" Canvas.Top="95" Width="180" Height="30"/>
-            <PasswordBox x:Name="Password" Margin ="10,10,10,10" Grid.Row="2" Grid.Column="3" Canvas.Left="320" Canvas.Top="117" Width="180" Height="30" IsHitTestVisible="True"/>
+            <PasswordBox x:Name="Password" Margin ="10,10,10,10" Grid.Row="2" Grid.Column="3" Canvas.Left="320" Canvas.Top="117" Width="180" Height="30" IsHitTestVisible="True" PasswordChanged="MouseClick"/>
             <TextBlock Text="Повторите пароль" Canvas.Left="329" Canvas.Top="165" Width="180" Height="30"/>
-            <PasswordBox x:Name="TryPassword" Margin ="10,10,10,10" Grid.Row="3" Grid.Column="3" Canvas.Left="319" Canvas.Top="180" Width="180" Height="30"/>
+            <PasswordBox x:Name="TryPassword" Margin ="10,10,10,10" Grid.Row="3" Grid.Column="3" Canvas.Left="319" Canvas.Top="180" Width="180" Height="30" PasswordChanged="MouseClick"/>
             <Button Content="Зарегистрировать!" Margin ="10" Click="Button_Click" FontSize="15" Canvas.Left="394" Canvas.Top="309" Width="180" Height="30"/>
             <Button x:Name="Predmets" Content="Предметы" Click="choise_subject" FontSize="15" Canvas.Left="31" Canvas.Top="315" Width="180" Height="30" IsEnabled="False"/>
-            <Button x:Name="GoBack" Content="Back" Canvas.Left="532" Canvas.Top="17" Click="GoBack_Click" />
+            <Button x:Name="GoBack" Content="Back" Canvas.Left="532" Canvas.Top="17" Click="GoBack_Click"  />
         </Canvas>
     </Grid>
 </Page>

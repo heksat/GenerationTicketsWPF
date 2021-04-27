@@ -14,6 +14,8 @@ using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using Microsoft.EntityFrameworkCore;
 using GenerationTicketsWPF.Models;
+using System.Text.RegularExpressions;
+
 namespace GenerationTicketsWPF
 {
     /// <summary>
@@ -62,20 +64,6 @@ namespace GenerationTicketsWPF
             }
             else
                 countcheck++;
-            //if (ListDiscipline.SelectedIndex == -1)
-            //{
-            //    ListDiscipline.Background = new SolidColorBrush(Colors.Red); //не меняет цвет, условие рабочее. 
-            //}
-            //else {
-            //    using (var db = new GenerationTicketsContext(Config.Options))
-            //    {
-            //        disciplineid = db.Disciplines.Where(x => x.DisciplineName == ListDiscipline.SelectedItem.ToString()).Select(x => x.DisciplineId).FirstOrDefault();
-            //    }
-            //    if (disciplineid==null)
-            //        MessageBox.Show("Такой роли нет");
-            //    else
-            //        countcheck++;
-            //}
             string gender = "";
             if (Woman.IsChecked == true)
             {
@@ -88,6 +76,11 @@ namespace GenerationTicketsWPF
                 countcheck++;
                 gender = "м";
             }
+            else
+            {
+                Woman.BorderBrush = Brushes.Red;
+                Man.BorderBrush = Brushes.Red;
+            }
             if (ListRoles.SelectedIndex == -1)
             {
                 ListRoles.BorderBrush = new SolidColorBrush(Colors.Red); //не меняет цвет, условие рабочее.
@@ -99,14 +92,23 @@ namespace GenerationTicketsWPF
             }
                 if (Login.Text != "" && Login.Text.Length>5)
             {
-                using (var db = new GenerationTicketsContext(Config.Options))
+                
+                if (Regex.IsMatch(Login.Text, @"^[\da-z]+$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace))
                 {
-                    if ((db.Workers.Select(x => x.WorkerLogin).Contains(Login.Text)))
+
+                    using (var db = new GenerationTicketsContext(Config.Options))
                     {
-                        Login.BorderBrush = Brushes.Red;
+                        if ((db.Workers.Select(x => x.WorkerLogin).Contains(Login.Text)))
+                        {
+                            Login.BorderBrush = Brushes.Red;
+                        }
+                        else
+                            countcheck++;
                     }
-                    else
-                        countcheck++;
+                }
+                else
+                {
+                    MessageBox.Show("В логине могут быть лишь цифры и буклы латинского алфавита");
                 }
             }
             else
@@ -134,7 +136,7 @@ namespace GenerationTicketsWPF
             {
                 Password.BorderBrush = Brushes.Red;
                 MessageBox.Show("Пароли не равны");
-            }
+            }   
             if (countcheck == 8)
             {
                     Dbhelper.AddUser(new Worker() { Lname = LName.Text, Fname = FName.Text, Sname = SName.Text, Gender = gender, WorkerLogin = Login.Text, 
@@ -145,8 +147,27 @@ namespace GenerationTicketsWPF
 
         private void MouseClick(object sender, RoutedEventArgs e)
         {
-            var el = (Control)sender;
-            el.BorderBrush = Brushes.DarkGray;//Brushes.Gray;//new SolidColorBrush(Color.FromRgb(FFABADB3);
+            switch (sender)
+            {
+                case RadioButton radio:
+                    {
+                        Woman.BorderBrush = Brushes.DarkGray;
+                        Man.BorderBrush = Brushes.DarkGray;
+                    }
+                    break;
+                case PasswordBox passwordBox:
+                    {
+                        passwordBox.BorderBrush = Brushes.DarkGray;
+                    }
+                    break;
+                case Control control:
+                    {
+                        control.BorderBrush = Brushes.DarkGray;
+                    }break;
+               
+            }
+            
+         
         }
 
         private void choise_subject(object sender, RoutedEventArgs e)
@@ -177,7 +198,7 @@ namespace GenerationTicketsWPF
                 {
                     if (i.IsChecked == true)
                     {
-                        choicelistdisname.Add((Discipline)i.Content);
+                        choicelistdisname.Add((Discipline)i.DataContext);
                     }
 
                 }

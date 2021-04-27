@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using GenerationTicketsWPF.Models;
 using GenerationTicketsWPF.Pages;
 
 namespace GenerationTicketsWPF
@@ -36,18 +37,21 @@ namespace GenerationTicketsWPF
             }
             else
             {
-                    if (CheckStringOnSpaceAndStringEmpty(LnameBox.Text) || CheckStringOnSpaceAndStringEmpty(FnameBox.Text) || CheckStringOnSpaceAndStringEmpty(SnameBox.Text))
+                    if (CheckStringOnSpaceAndStringEmpty(LnameBox.Text) || CheckStringOnSpaceAndStringEmpty(FnameBox.Text) || CheckStringOnSpaceAndStringEmpty(SnameBox.Text) || LnameBox.Text.Length>50 || FnameBox.Text.Length > 50 || SnameBox.Text.Length > 50)
                     {
                         MessageBox.Show("Проверьте правильность измененных значений");
                     }
                     else
                     {
+                        var dbhelp = new DbInteraction();
                         BindingExpression expression = LnameBox.GetBindingExpression(TextBox.TextProperty);
                         BindingExpression expression2 = FnameBox.GetBindingExpression(TextBox.TextProperty);
                         BindingExpression expression3 = SnameBox.GetBindingExpression(TextBox.TextProperty);
                         expression.UpdateSource();
                         expression2.UpdateSource();
                         expression3.UpdateSource();
+                        dbhelp.UpdateUser(Config.User);
+                        
                     }
 
                 MessageBox.Show($"{Config.User.Lname},{Config.User.Fname},{Config.User.Sname}");

@@ -100,6 +100,14 @@ namespace GenerationTicketsWPF.Models
                 return check;
             }
         }
+        public void UpdateUser(Worker worker)
+        {
+            using (var db = new GenerationTicketsContext(Config.Options))
+            {
+                db.Entry(worker).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+        }
         //public List<T> GetListTable<T>()
         //{
         //    var test = (Type.GetTypeCode(typeof(Discipline)));

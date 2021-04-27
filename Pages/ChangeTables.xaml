@@ -167,7 +167,7 @@ Loaded="Page_Loaded"
         </TabControl>
         <StackPanel Grid.Row="1" Orientation="Horizontal" >
             <Button x:Name="GoBack" Content="Back" Width="50" Margin="5" Click="GoBack_Click"/>
-            <Button x:Name="UpdateDB" Width="150" Margin="5" Click="UpdateDB_Click"/>
+            <Button x:Name="UpdateDB" Content="Сохранить" Width="150" Margin="5" Click="UpdateDB_Click"/>
          </StackPanel>
     </Grid>
 </Page>
