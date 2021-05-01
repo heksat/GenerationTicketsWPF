@@ -14,6 +14,8 @@ using WinForms = System.Windows.Forms;
 using System.Linq;
 using GenerationTicketsWPF.Models;
 using System.Text.RegularExpressions;
+using  Trd = System.Threading.Tasks;
+using System.Threading;
 
 namespace GenerationTicketsWPF
 {
@@ -49,8 +51,10 @@ namespace GenerationTicketsWPF
 
         }
 
-        private void Run_Click(object sender, RoutedEventArgs e)
+        private async void Run_Click(object sender, RoutedEventArgs e)
         {
+            ProgressCheck.Value = 1;
+            
             if (DoLocalGen.IsChecked == true)
             {
                 listTickets = dbInteraction.GetTickets();
@@ -59,6 +63,7 @@ namespace GenerationTicketsWPF
             {
                 listTickets = localTickets;
             }
+
             int semestr, course;
 
             if (Chairmen.SelectedIndex == -1 || !(Int32.TryParse(Semestr.Text, out semestr)) || !(Int32.TryParse(Course.Text, out course)) || course < 1 || course > 6 || semestr < 1 || semestr > 6)
@@ -73,6 +78,7 @@ namespace GenerationTicketsWPF
                 }
                 else
                 {
+                    ProgressCheck.Maximum = listTickets.Count+1;
                     if (listTickets.Any())
                     {
                         var pathChoice = new WinForms.FolderBrowserDialog();
@@ -113,13 +119,17 @@ namespace GenerationTicketsWPF
                                 item["<TASK2>"] = listTasks.Where(x => x.TaskId == currentTicket[1].TaskId).Select(x => x.TaskDecryption).FirstOrDefault();
                                 item["<TASK3>"] = listTasks.Where(x => x.TaskId == currentTicket[2].TaskId).Select(x => x.TaskDecryption).FirstOrDefault();
                                 item["<NUMB>"] = (i + 1).ToString();
-                                wordhelper.Process(item, path, app, file, missing);
+                                await Trd.Task.Run(()=> { wordhelper.Process(item, path, app, file, missing); });
+                                ProgressCheck.Value += 1;
+                                //  ProgressCheck.Value += 1;
                             }
 
                             app.ActiveDocument.Close();
                             app.Quit();
+                            ProgressCheck.Value = ProgressCheck.Maximum;
                         }
-
+                        MessageBox.Show("Готово!");
+                        ProgressCheck.Value = 0;
                     }
                     else
                     {
@@ -151,6 +161,7 @@ namespace GenerationTicketsWPF
 
         private void CountTickets_TextChanged(object sender, SelectionChangedEventArgs e)
         {
+
             using (var db = new GenerationTicketsContext(Config.Options))
             {
                 if (DiscipDescList.SelectedIndex != -1)
@@ -185,10 +196,12 @@ namespace GenerationTicketsWPF
             }
         }
 
-        public bool GenerationintoDB(DbInteraction dbinteration,bool inDB)
+        public async void GenerationintoDB(DbInteraction dbinteration,bool inDB)
         {
             if ((DoLocalGen.IsChecked == true) || (Lvl.SelectedIndex != -1 && DiscipDescList.SelectedIndex != -1 && _numValue > 0))
             {
+                    ProgressCheck.Value = 1;
+                    ProgressCheck.Maximum = _numValue+1;
                     var AllTasks = dbinteration.GetTasks(DiscipDescList.SelectedItem.ToString(),Lvl.SelectedItem.ToString());
                     var teorTask = AllTasks.Where(x => x.TypesTaskId == 2).Select(x => x.TaskId).ToList();
                     var practTask = AllTasks.Where(x => x.TypesTaskId == 1).Select(x => x.TaskId).ToList();
@@ -198,20 +211,26 @@ namespace GenerationTicketsWPF
                     localTickets = new List<Ticket>(_numValue);
                         for (int i = 1; i <= _numValue; i++)
                         {
+                        await Trd.Task.Run(() =>
+                        {
                             var item = random.Next(0, teorTask.Count - 1);
-                        localTickets.Add(new Ticket() { TicketId = i, TaskNumber = 1, TaskId = (teorTask[item]), DisciplineId = currentDiscipID });
+                            localTickets.Add(new Ticket() { TicketId = i, TaskNumber = 1, TaskId = (teorTask[item]), DisciplineId = currentDiscipID });
                             teorTask.RemoveAt(item);
                             item = random.Next(0, teorTask.Count - 1);
-                        localTickets.Add(new Ticket() { TicketId = i, TaskNumber = 2, TaskId = (teorTask[item]), DisciplineId = currentDiscipID });
+                            localTickets.Add(new Ticket() { TicketId = i, TaskNumber = 2, TaskId = (teorTask[item]), DisciplineId = currentDiscipID });
                             teorTask.RemoveAt(item);
                             item = random.Next(0, practTask.Count - 1);
-                        localTickets.Add(new Ticket() { TicketId = i, TaskNumber = 3, TaskId = (practTask[item]), DisciplineId = currentDiscipID }); //Вопрос в инкременте бд
+                            localTickets.Add(new Ticket() { TicketId = i, TaskNumber = 3, TaskId = (practTask[item]), DisciplineId = currentDiscipID }); //Вопрос в инкременте бд
                             practTask.RemoveAt(item);
+                        });
+                        ProgressCheck.Value += 1;
                         };
                         if (inDB)
                         {
                             dbinteration.PullTickets(localTickets);
                         }
+                        MessageBox.Show("Готово!");
+                    ProgressCheck.Value = 0;
                     }
                     else
                     {
@@ -219,7 +238,8 @@ namespace GenerationTicketsWPF
 
                     }
             }
-            return true;
+            
+            //return true;
         }
         public int NumValue
         {

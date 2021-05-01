@@ -12,7 +12,7 @@
     <Grid >
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
-            <RowDefinition Height="600"/>
+            <RowDefinition Height="450"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -42,6 +42,9 @@
             <CheckBox x:Name="DoLocalGen"  Content="Генерировать по БД" Canvas.Left="566" Canvas.Top="197"  IsThreeState="False" Checked="DoAddDB_Checked" Unchecked="DoAddDB_UnChecked"/>
 
             <CheckBox x:Name="DoAddDB"  Content="Обновить базу данных" Canvas.Left="566" Canvas.Top="224"  IsThreeState="False" />
+            <StatusBar Width="315" Canvas.Left="33" Canvas.Top="392" Height="24">
+                <ProgressBar x:Name="ProgressCheck" Minimum="0" Width="310" Height="18" /> 
+            </StatusBar>
         </Canvas>
     </Grid>
 </Page>
