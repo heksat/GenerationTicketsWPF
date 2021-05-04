@@ -6,6 +6,8 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore;
 using GenerationTicketsWPF;
+using System.Windows;
+
 namespace GenerationTicketsWPF.Models
 {
 
@@ -175,18 +177,34 @@ namespace GenerationTicketsWPF.Models
                // from p in db.Tickets join c in db.Tasks on p.TaskId equals c.TaskId select c.DisciplineId
             }
         }
-       
-        //public List<T> GetListTable<T>()
-        //{
-        //    var test = (Type.GetTypeCode(typeof(Discipline)));
-        //    using (var db = new GenerationTicketsContext(Config.Options)) {
-        //        switch(Type.GetTypeCode(typeof(T)))
-        //        {
-        //            case test: return db.Disciplines.Select(x => x).ToList();
-        //            default: return null;
-        //        };
-            
-        //    }
-        //}
-    }
+        public void TaskAdd(Task task)
+        {
+            try
+            {
+                using (var db = new GenerationTicketsContext(Config.Options))
+                {
+                    db.Tasks.Add(task);
+                    db.SaveChanges();
+                }
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+        }
+
+            //public List<T> GetListTable<T>()
+            //{
+            //    var test = (Type.GetTypeCode(typeof(Discipline)));
+            //    using (var db = new GenerationTicketsContext(Config.Options)) {
+            //        switch(Type.GetTypeCode(typeof(T)))
+            //        {
+            //            case test: return db.Disciplines.Select(x => x).ToList();
+            //            default: return null;
+            //        };
+
+            //    }
+            //}
+        }
 }

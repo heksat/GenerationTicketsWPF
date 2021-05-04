@@ -98,7 +98,7 @@ namespace GenerationTicketsWPF
 
                     using (var db = new GenerationTicketsContext(Config.Options))
                     {
-                        if ((db.Workers.Select(x => x.WorkerLogin).Contains(Login.Text)))
+                        if ((db.Workers.Select(x => x.WorkerLogin.ToUpper()).Contains((Login.Text).ToUpper())))
                         {
                             Login.BorderBrush = Brushes.Red;
                         }
