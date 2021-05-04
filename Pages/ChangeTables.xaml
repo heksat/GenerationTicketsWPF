@@ -41,7 +41,7 @@ Loaded="Page_Loaded"
                 <TabItem.Header>
                     <TextBlock Text="Председатели"/>
                 </TabItem.Header>
-                <DataGrid  DataContext="{StaticResource chairmanViewSource}" EnableRowVirtualization="True" ItemsSource="{Binding}" x:Name="ChairGrid" AutoGenerateColumns="False" >
+                <DataGrid  DataContext="{StaticResource chairmanViewSource}" EnableRowVirtualization="True" ItemsSource="{Binding}" x:Name="ChairGrid" AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Номер председателя" Binding="{Binding ChairmanId}" IsReadOnly="True"/>
                         <DataGridTextColumn Header="Фамилия" Binding="{Binding Lname}"/>

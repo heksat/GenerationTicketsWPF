@@ -49,6 +49,7 @@ Specialty_ID nvarchar(8) not NULL, -- нужно ограничение
 Specialty_decryption nvarchar(50) not NULL,
 Chairman_ID int not NULL ,
 CONSTRAINT PK_UNIQUE_Specialty  PRIMARY KEY (Specialty_ID),
+CONSTRAINT chk_Specialty_ID CHECK ((Specialty_ID like '[0-9][0-9].[0-9][0-9].[0-9][0-9]') and (Specialty_ID != '00.00.00')),
 FOREIGN KEY (Chairman_ID) REFERENCES
 dbo.Chairmans (Chairman_ID)
 ON DELETE CASCADE
@@ -118,12 +119,12 @@ insert into Levels VALUES ('Halyava')
 insert into Levels VALUES ('Hard')
 GO
 create table TypesTask(
-Types_Task_ID int IDENTITY (1,1),
+Types_Task_ID int,
 Types_Task_Decryption nvarchar(50) not NULL,
 CONSTRAINT PK_UNIQUE_TypesTask PRIMARY KEY (Types_Task_ID)
 )
-insert into TypesTask VALUES ('Практика')
-insert into TypesTask VALUES ('Теория')
+insert into TypesTask VALUES (1,'Практика')
+insert into TypesTask VALUES (2,'Теория')
 GO
 create table Tasks(
 Task_ID int IDENTITY (1,1),

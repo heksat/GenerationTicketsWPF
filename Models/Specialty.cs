@@ -10,6 +10,7 @@ namespace GenerationTicketsWPF.Models
         public Specialty()
         {
             Disciplines = new HashSet<Discipline>();
+            SpecialtyId = "00.00.00";
         }
 
         public string SpecialtyId { get; set; }

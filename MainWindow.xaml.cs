@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Navigation;
+using System.Security.Permissions;
 
 namespace GenerationTicketsWPF
 {
@@ -18,6 +19,7 @@ namespace GenerationTicketsWPF
     /// </summary>
     public partial class MainWindow : NavigationWindow
     {
+        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public MainWindow()
         {
             InitializeComponent();

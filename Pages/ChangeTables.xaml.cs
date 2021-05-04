@@ -15,33 +15,24 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Security.Permissions;
 
 namespace GenerationTicketsWPF.Pages
 {
+
     /// <summary>
     /// Interaction logic for ChangeTables.xaml
     /// </summary>
+
     public partial class ChangeTables : Page
     {
+        //public event UnhandledExceptionEventHandler? UnhandledException;
+
         public GenerationTicketsContext db = new GenerationTicketsContext(Config.Options);
+        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public ChangeTables()
         {
             InitializeComponent();
-            //var db = new GenerationTicketsContext(Config.Options)
-            //using (var db = new GenerationTicketsContext(Config.Options))
-            //{
-            // ChairGrid.ItemsSource = db.Chairmans.Select(x => x).ToList();
-            //DispGrid.ItemsSource = db.Disciplines.Select(x => x).ToList();
-            //LvlGrid.ItemsSource = db.Levels.Select(x => x).ToList();
-            //RoleGrid.ItemsSource = db.Roles.Select(x => x).ToList();
-            //SpecGrid.ItemsSource = db.Specialties.Select(x => x).ToList();
-            //TaskGrid.ItemsSource = db.Tasks.Select(x => x).ToList();
-            //TeachGrid.ItemsSource = db.Teachings.Select(x => x).ToList();
-            //TickGrid.ItemsSource = db.Tickets.Select(x => x).ToList();
-            //TypeGrid.ItemsSource = db.TypesTasks.Select(x => x).ToList();
-            //WorkGrid.ItemsSource = db.Workers.Select(x => x).ToList();
-
-            // }
             MessageBox.Show("Все действия проделанные здесь после сохранения на прямую влияет на базу данных! При удалении какой-то записи также удаляются данные, связанные с удаленной записью в зависимых таблицах. При сохранении обязательно проверить правильности изменений. ");
 
         }
@@ -87,13 +78,16 @@ namespace GenerationTicketsWPF.Pages
         {
             NavigationService.GoBack();
         }
+        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             //using (var db = new GenerationTicketsContext(Config.Options))
             //{
-                
-                System.Windows.Data.CollectionViewSource chairmanViewSource =
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            currentDomain.UnhandledException += new UnhandledExceptionEventHandler((s, e) => MessageBox.Show("Так делать нельзя."));
+            //UnhandledException += ((s, e) => MessageBox.Show("Так делать нельзя."));
+            System.Windows.Data.CollectionViewSource chairmanViewSource =
                    ((System.Windows.Data.CollectionViewSource)(this.FindResource("chairmanViewSource")));
             System.Windows.Data.CollectionViewSource discipViewSource =
                   ((System.Windows.Data.CollectionViewSource)(this.FindResource("discipViewSource")));
