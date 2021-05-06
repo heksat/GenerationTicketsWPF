@@ -34,6 +34,10 @@ namespace GenerationTicketsWPF
             {
                 this.NavigationService.Navigate(new MenuPage());
             }
+            else
+            {
+                MessageBox.Show("Не получилось!(");
+            }
         }
     }
 }
