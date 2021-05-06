@@ -23,24 +23,14 @@ WizardStyle=modern
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
-[Code]
 
-  procedure ButtonOnClick(Sender: TObject);
-   var
-  Params: string;
-  ResultCode: Integer;
-
-begin
-  if MsgBox('Setup will now create CLIP Database ', mbInformation, mb_YesNo) = idNo then
-      Params := '-v CLIPDATA="C:\dev\CLIP" CLIPINDEX="C:\dev\CLIP" CLIPLOG="C:\dev\CLIP" -S localhost\WISE -U sa -P wadmwadm -i "{app}\SQLQuery_CreateDB.sql';
-      Exec ('sqlcmd',Params, '', SW_SHOW, ewWaitUntilTerminated, ResultCode) 
-    Exit;
-end;
 [Types]
 Name: "full"; Description:"Полная установка"
 Name: "custom"; Description: "Выборочная установка"; Flags:iscustom
+
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "CreateOrUpdateDB"; Description: "Create\Update Database | Создание\Обновление бд"; Flags: unchecked
 
 [Files]
 Source: "bin\Debug\netcoreapp3.1\GenerationTicketsWPF.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: program
@@ -48,7 +38,7 @@ Source: "bin\Debug\netcoreapp3.1\*.dll"; DestDir: "{app}"; Flags: ignoreversion 
 Source: "bin\Debug\netcoreapp3.1\Shablon.docx"; DestDir: "{app}"; Flags: ignoreversion; Components: program
 Source: "bin\Debug\netcoreapp3.1\*.json"; DestDir: "{app}"; Flags: ignoreversion; Components: program
 Source: "SQLQuery_CreateDB.sql"; DestDir: "{app}"; Flags: ignoreversion; Components: program
-
+Source: "UpDBscript.bat"; DestDir: "{app}"; Flags: ignoreversion;
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]
@@ -63,7 +53,9 @@ Name: "{autoprograms}\GenTicks"; Filename: "{app}\GenerationTicketsWPF.exe"
 Name: "{autodesktop}\GenTicks"; Filename: "{app}\GenerationTicketsWPF.exe"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\GenerationTicketsWPF.exe"; Description: "{cm:LaunchProgram,GenTicks}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\GenerationTicketsWPF.exe"; Flags: nowait postinstall skipifsilent; Description: "{cm:LaunchProgram,GenTicks}"
+Filename: "{app}\UpDBscript.bat"; WorkingDir: "{app}"; Flags: waituntilterminated runascurrentuser; Description: "Создание\обновление бд"; Tasks: CreateOrUpdateDB
 
 [Components]
 Name: "program"; Description: "Программа"
+

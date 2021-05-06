@@ -40,12 +40,20 @@ namespace GenerationTicketsWPF
             var test = new DbInteraction();
             DiscipList = test.GetDiscipList();
             LvlList = (List<Level>)test.GetLevels();
+            
             using (var db = new GenerationTicketsContext(Config.Options))
             {
-                DiscipDescList.ItemsSource = (from p in db.Disciplines
-                                              join c in db.Teachings on p.DisciplineId equals c.DisciplineId
-                                              where c.WorkerId == Config.User.WorkerId
-                                              select p.DisciplineName).ToList();
+                if (Config.User.RoleId != 1)
+                {
+                    DiscipDescList.ItemsSource = (from p in db.Disciplines
+                                                  join c in db.Teachings on p.DisciplineId equals c.DisciplineId
+                                                  where c.WorkerId == Config.User.WorkerId
+                                                  select p.DisciplineName).ToList();
+                }
+                else
+                {
+                    DiscipDescList.ItemsSource = db.Disciplines.Select(x => x.DisciplineName).ToList();
+                }
                 Lvl.ItemsSource = db.Levels.Select(x => x.LeverDecryption).ToList();
             }
 

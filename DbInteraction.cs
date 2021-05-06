@@ -164,7 +164,15 @@ namespace GenerationTicketsWPF.Models
                         choicelistdisname.ForEach((i) =>
                              db.Entry(new Teaching() { Worker = newuser, Discipline = i }).State = EntityState.Added);
                     }
-
+                   // else
+                   // {
+                    //    if (newuser.RoleId == 1)
+                    //    {
+                    //        var listdis = db.Disciplines.ToList();
+                    //        listdis.ForEach((i) =>
+                    //         db.Entry(new Teaching() { Worker = newuser, Discipline = i }).State = EntityState.Added);
+                    //    }
+                    //}
                     db.SaveChanges();
                     return check;
                 }

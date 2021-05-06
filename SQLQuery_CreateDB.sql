@@ -129,7 +129,7 @@ GO
 create table Tasks(
 Task_ID int IDENTITY (1,1),
 Discipline_ID int not NULL,
-Task_decryption nvarchar(255) not NULL,
+Task_decryption nvarchar(500) not NULL,
 Level_ID INT not NULL,
 Types_Task_ID int not NULL,
 Worker_ID int not NULL,
@@ -146,8 +146,58 @@ FOREIGN KEY (Level_ID) REFERENCES Levels (Level_ID)
 ON DELETE CASCADE
 ON UPDATE CASCADE
 )
+--Теор вопросы
 insert into Tasks VALUES (1,N'Прикладное и системное программирование. Языки системного программирования. Особенности языков системного программирования.'
 ,1,2,1)
+insert into Tasks VALUES (1,N' Программные прерывания. Функции 9, 4c, 3F, 40 прерывания 21h. Методики ввода/вывода чисел на ассемблере.'
+,1,2,1)
+insert into Tasks VALUES (1,N'Система типов языка Си.'
+,1,2,1)
+insert into Tasks VALUES (1,N'Операции языка Си.'
+,1,2,1)
+insert into Tasks VALUES (1,N' Работа с файлами на языке Си'
+,1,2,1)
+insert into Tasks VALUES (1,N'Управляющие операторы языка Си. Процедуры и функции языка Си. va_arg.'
+,1,2,1)
+insert into Tasks VALUES (1,N'Язык препроцессора.'
+,1,2,1)
+insert into Tasks VALUES (1,N'Ключевые слова static, extern, auto, register, const, restrict, volatile, _Alignas, _Atomic'
+,1,2,1)
+insert into Tasks VALUES (1,N' Методика работы с многобайтовыми и широкими символами на языке Си.'
+,1,2,1)
+insert into Tasks VALUES (1,N'Инструменты автоматизации сборки: make, cmake. Статические и динамические библиотеки. Методики их создания и использования.'
+,1,2,1)
+insert into Tasks VALUES (1,N'Unit-тестирование. Понятие. Принципы. Фреймворк.'
+,1,2,1)
+insert into Tasks VALUES (1,N'Методы создания процессов и потоков: CreateThread, fork, thread языка C. Критические секции. Семафоры. Mutex.'
+,1,2,1)
+--Практ вопросы
+insert into Tasks VALUES (1,N'Для данного натурального числа найдите сумму первых двух его цифр. Работа осуществляется в среде dosbox, реализовать программу следует на языке Ассемблера.'
+,1,1,1)
+insert into Tasks VALUES (1,N'Разработайте программы для Linux и Windows, используя API операционных систем. У обычных файлов (regular file), у которых имя является целым неотрицательным числом прибавить к этому числу 1000. Предполагается, что изначально файлы имеют названия, числовое значение которых не превышает 999.'
+,1,1,1)
+insert into Tasks VALUES (1,N' Разработайте программы для Linux и Windows, используя API операционных систем. Удалить из имен обычных файлов (regular file) все цифры..'
+,1,1,1)
+insert into Tasks VALUES (1,N'Система типов языка Си.'
+,1,1,1)
+insert into Tasks VALUES (1,N'Система типов языка Си.'
+,1,1,1)
+insert into Tasks VALUES (1,N'Система типов языка Си.'
+,1,1,1)
+insert into Tasks VALUES (1,N'Система типов языка Си.'
+,1,1,1)
+insert into Tasks VALUES (1,N'Система типов языка Си.'
+,1,1,1)
+insert into Tasks VALUES (1,N'Система типов языка Си.'
+,1,1,1)
+insert into Tasks VALUES (1,N'Система типов языка Си.'
+,1,1,1)
+insert into Tasks VALUES (1,N'Система типов языка Си.'
+,1,1,1)
+insert into Tasks VALUES (1,N'Система типов языка Си.'
+,1,1,1)
+
+
 GO
 create table Tickets(
 Ticket_ID int, --IDENTITY (1,1),
