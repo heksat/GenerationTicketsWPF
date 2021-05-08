@@ -103,6 +103,7 @@ namespace GenerationTicketsWPF
                             var item = new Dictionary<string, string>
                     {
                         {"<SPEC>", spec.SpecialtyDecryption},
+                        {"<SPECI>", spec.SpecialtyDecryption},
                         {"<DISP>", discipchoised},
                         {"<CMAN>", Chairmenchoised},
                         {"<COURSE>",coursechoised},
@@ -116,7 +117,7 @@ namespace GenerationTicketsWPF
                             var app = new Microsoft.Office.Interop.Word.Application();
                             var file = (wordhelper.getFileInfo).FullName;
                             var missing = Type.Missing;
-                            app.Documents.Open(file);
+                            var fil = app.Documents.Open(file);
                             for (int i = 0; i < listTickets.Count() / 3; i++)
                             {
                                 object times = 1;
@@ -128,6 +129,8 @@ namespace GenerationTicketsWPF
                                 item["<TASK3>"] = listTasks.Where(x => x.TaskId == currentTicket[2].TaskId).Select(x => x.TaskDecryption).FirstOrDefault();
                                 item["<NUMB>"] = (i + 1).ToString();
                                 await Trd.Task.Run(()=> { wordhelper.Process(item, path, app, file, missing); });
+                               
+                                //app.ActiveDocument.UndoClear();
                                 ProgressCheck.Value += 1;
                                 //  ProgressCheck.Value += 1;
                             }

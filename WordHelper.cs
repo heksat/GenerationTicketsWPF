@@ -25,31 +25,33 @@ namespace GenerationTicketsWPF
 
         internal void Process(Dictionary<string, string> item, string path, Word.Application app, string file, object missing)
         {
-           // var file = fileinfo.FullName;
+            // var file = fileinfo.FullName;
             //var missing = Type.Missing; 
-           // app.Documents.Open(file);
+            // app.Documents.Open(file);
             foreach (var i in item)
             {
-                Word.Find find = app.Selection.Find;
-                find.Text = i.Key;
-                find.Replacement.Text = i.Value;
-                object wrap = Word.WdFindWrap.wdFindContinue;
-                object replace = Word.WdReplace.wdReplaceAll;
-                find.Execute(FindText: missing,
-                    MatchCase: false,
-                    MatchWholeWord: false,
-                    MatchWildcards: false,
-                    MatchSoundsLike: missing,
-                    MatchAllWordForms: false,
-                    Forward: true,
-                    Wrap: wrap,
-                    Format: false,
-                    ReplaceWith: missing,
-                    Replace: replace);
+                var range = app.ActiveDocument.Content;
+                range.Find.Execute(i.Key);
+                range.Text = i.Value;
+                //Word.Find find = app.Selection.Find;
+                //find.Text = i.Key;
+                //find.Replacement.Text = i.Value;
+                //object wrap = Word.WdFindWrap.wdFindContinue;
+                //object replace = Word.WdReplace.wdReplaceAll;
+                //find.Execute(FindText: missing,
+                //    MatchCase: false,
+                //    MatchWholeWord: false,
+                //    MatchWildcards: false,
+                //    MatchSoundsLike: missing,
+                //    MatchAllWordForms: false,
+                //    Forward: true,
+                //    Wrap: wrap,
+                //    Format: false,
+                //    ReplaceWith: missing,
+                //    Replace: replace);
             }
             var newFile = Path.Combine($"{path}\\Ticket{item["<NUMB>"]}");
             app.ActiveDocument.SaveAs2(newFile);
-            //app.ActiveDocument.UndoClear();
 
             //https://docs.microsoft.com/ru-ru/dotnet/api/microsoft.office.tools.word.document.undo?view=vsto-2017
             // app.ActiveDocument.Close();
