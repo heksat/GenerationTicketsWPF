@@ -60,6 +60,7 @@ namespace GenerationTicketsWPF
                     if (iddisp != 0 && idtype!=0 && idlvl!=0)
                     {
                         DBhelper.TaskAdd(new Task() { TaskDecryption = TicketBox.Text, DisciplineId = iddisp, WorkerId = Config.User.WorkerId, TypesTaskId = idtype, LevelId = idlvl });
+                        MessageBox.Show("Билет добавлен");
                     }
                     else
                         MessageBox.Show("Беда!");

@@ -141,6 +141,7 @@ namespace GenerationTicketsWPF
             {
                     Dbhelper.AddUser(new Worker() { Lname = LName.Text, Fname = FName.Text, Sname = SName.Text, Gender = gender, WorkerLogin = Login.Text, 
                         RoleId = (int)ListRoles.SelectedValue, WorkerPassword = Password.Password },choicelistdisname);
+                MessageBox.Show("Пользователь зарегистрирован");
             }
             
         }

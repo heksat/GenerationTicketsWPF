@@ -86,24 +86,26 @@ namespace GenerationTicketsWPF
                 }
                 else
                 {
-                    ProgressCheck.Maximum = listTickets.Count+1;
-                    if (listTickets.Any())
+                    try
                     {
-                        var pathChoice = new WinForms.FolderBrowserDialog();
-                        if (pathChoice.ShowDialog() == WinForms.DialogResult.OK)
+                        ProgressCheck.Maximum = listTickets.Count + 1;
+                        if (listTickets.Any())
                         {
-                            var path = pathChoice.SelectedPath;
-                            var wordhelper = new WordHelper("Shablon.docx");
-                            var spec = dbInteraction.GetSpectoDisp(dbInteraction.GetDispfromTickets());
-                            List<Task> listTasks = dbInteraction.GetTasks();
-                            var discipchoised = dbInteraction.GetDispfromTickets();
-                            var coursechoised = Course.Text;
-                            var Chairmenchoised = Chairmen.SelectedItem.ToString();
-                            var Semestrchoised = Semestr.Text;
-                            var item = new Dictionary<string, string>
+                            var pathChoice = new WinForms.FolderBrowserDialog();
+                            if (pathChoice.ShowDialog() == WinForms.DialogResult.OK)
+                            {
+                                var path = pathChoice.SelectedPath;
+                                var wordhelper = new WordHelper("Shablon.docx");
+                                var spec = dbInteraction.GetSpectoDisp(dbInteraction.GetDispfromTickets());
+                                List<Task> listTasks = dbInteraction.GetTasks();
+                                var discipchoised = dbInteraction.GetDispfromTickets();
+                                var coursechoised = Course.Text;
+                                var Chairmenchoised = Chairmen.SelectedItem.ToString();
+                                var Semestrchoised = Semestr.Text;
+                                var item = new Dictionary<string, string>
                     {
                         {"<SPEC>", spec.SpecialtyDecryption},
-                        {"<SPECI>", spec.SpecialtyDecryption},
+                        {"<SPECI>", spec.SpecialtyId + " " + spec.SpecialtyDecryption},
                         {"<DISP>", discipchoised},
                         {"<CMAN>", Chairmenchoised},
                         {"<COURSE>",coursechoised},
@@ -114,37 +116,42 @@ namespace GenerationTicketsWPF
                         {"<TASK3>", ""},
                         {"<NUMB>",""},
                     };
-                            var app = new Microsoft.Office.Interop.Word.Application();
-                            var file = (wordhelper.getFileInfo).FullName;
-                            var missing = Type.Missing;
-                            var fil = app.Documents.Open(file);
-                            for (int i = 0; i < listTickets.Count() / 3; i++)
-                            {
-                                object times = 1;
-                                while (app.ActiveDocument.Undo(ref times))
-                                { }
-                                var currentTicket = listTickets.Where(x => x.TicketId == (i + 1)).Select(x => x).ToList();
-                                item["<TASK1>"] = listTasks.Where(x => x.TaskId == currentTicket[0].TaskId).Select(x => x.TaskDecryption).FirstOrDefault();
-                                item["<TASK2>"] = listTasks.Where(x => x.TaskId == currentTicket[1].TaskId).Select(x => x.TaskDecryption).FirstOrDefault();
-                                item["<TASK3>"] = listTasks.Where(x => x.TaskId == currentTicket[2].TaskId).Select(x => x.TaskDecryption).FirstOrDefault();
-                                item["<NUMB>"] = (i + 1).ToString();
-                                await Trd.Task.Run(()=> { wordhelper.Process(item, path, app, file, missing); });
-                               
-                                //app.ActiveDocument.UndoClear();
-                                ProgressCheck.Value += 1;
-                                //  ProgressCheck.Value += 1;
-                            }
+                                var app = new Microsoft.Office.Interop.Word.Application();
+                                var file = (wordhelper.getFileInfo).FullName;
+                                var missing = Type.Missing;
+                                var fil = app.Documents.Open(file);
+                                for (int i = 0; i < listTickets.Count() / 3; i++)
+                                {
+                                    object times = 1;
+                                    while (app.ActiveDocument.Undo(ref times))
+                                    { }
+                                    var currentTicket = listTickets.Where(x => x.TicketId == (i + 1)).Select(x => x).ToList();
+                                    item["<TASK1>"] = listTasks.Where(x => x.TaskId == currentTicket[0].TaskId).Select(x => x.TaskDecryption).FirstOrDefault();
+                                    item["<TASK2>"] = listTasks.Where(x => x.TaskId == currentTicket[1].TaskId).Select(x => x.TaskDecryption).FirstOrDefault();
+                                    item["<TASK3>"] = listTasks.Where(x => x.TaskId == currentTicket[2].TaskId).Select(x => x.TaskDecryption).FirstOrDefault();
+                                    item["<NUMB>"] = (i + 1).ToString();
+                                    await Trd.Task.Run(() => { wordhelper.Process(item, path, app, file, missing); });
 
-                            app.ActiveDocument.Close();
-                            app.Quit();
-                            ProgressCheck.Value = ProgressCheck.Maximum;
+                                    //app.ActiveDocument.UndoClear();
+                                    ProgressCheck.Value += 1;
+                                    //  ProgressCheck.Value += 1;
+                                }
+
+                                app.ActiveDocument.Close();
+                                app.Quit();
+                                ProgressCheck.Value = ProgressCheck.Maximum;
+                            }
+                            MessageBox.Show("Готово!");
+                            ProgressCheck.Value = 0;
                         }
-                        MessageBox.Show("Готово!");
-                        ProgressCheck.Value = 0;
+                        else
+                        {
+                            MessageBox.Show("База данных и локальный кеш пуст, сгенерируйте билеты");
+                        }
                     }
-                    else
+                    catch (System.Runtime.InteropServices.COMException ex)
                     {
-                        MessageBox.Show("База данных и локальный кеш пуст, сгенерируйте билеты");
+                        MessageBox.Show(ex.Message);
                     }
                 }
                 //}
