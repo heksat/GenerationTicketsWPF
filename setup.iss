@@ -57,5 +57,4 @@ Filename: "{app}\GenerationTicketsWPF.exe"; Flags: nowait postinstall skipifsile
 Filename: "{app}\UpDBscript.bat"; WorkingDir: "{app}"; Flags: waituntilterminated runascurrentuser; Description: "Создание\обновление бд"; Tasks: CreateOrUpdateDB
 
 [Components]
-Name: "program"; Description: "Программа"
-
+Name: "program"; Description: "Программа"; Types: full
