@@ -49,6 +49,7 @@ Specialty_ID nvarchar(8) not NULL, -- нужно ограничение
 Specialty_decryption nvarchar(50) not NULL,
 Chairman_ID int not NULL ,
 CONSTRAINT PK_UNIQUE_Specialty  PRIMARY KEY (Specialty_ID),
+CONSTRAINT chk_Specialty_ID CHECK ((Specialty_ID like '[0-9][0-9].[0-9][0-9].[0-9][0-9]') and (Specialty_ID != '00.00.00')),
 FOREIGN KEY (Chairman_ID) REFERENCES
 dbo.Chairmans (Chairman_ID)
 ON DELETE CASCADE
@@ -118,17 +119,17 @@ insert into Levels VALUES ('Halyava')
 insert into Levels VALUES ('Hard')
 GO
 create table TypesTask(
-Types_Task_ID int IDENTITY (1,1),
+Types_Task_ID int,
 Types_Task_Decryption nvarchar(50) not NULL,
 CONSTRAINT PK_UNIQUE_TypesTask PRIMARY KEY (Types_Task_ID)
 )
-insert into TypesTask VALUES ('Практика')
-insert into TypesTask VALUES ('Теория')
+insert into TypesTask VALUES (1,'Практика')
+insert into TypesTask VALUES (2,'Теория')
 GO
 create table Tasks(
 Task_ID int IDENTITY (1,1),
 Discipline_ID int not NULL,
-Task_decryption nvarchar(255) not NULL,
+Task_decryption nvarchar(500) not NULL,
 Level_ID INT not NULL,
 Types_Task_ID int not NULL,
 Worker_ID int not NULL,
@@ -145,8 +146,58 @@ FOREIGN KEY (Level_ID) REFERENCES Levels (Level_ID)
 ON DELETE CASCADE
 ON UPDATE CASCADE
 )
+--Теор вопросы
 insert into Tasks VALUES (1,N'Прикладное и системное программирование. Языки системного программирования. Особенности языков системного программирования.'
 ,1,2,1)
+insert into Tasks VALUES (1,N' Программные прерывания. Функции 9, 4c, 3F, 40 прерывания 21h. Методики ввода/вывода чисел на ассемблере.'
+,1,2,1)
+insert into Tasks VALUES (1,N'Система типов языка Си.'
+,1,2,1)
+insert into Tasks VALUES (1,N'Операции языка Си.'
+,1,2,1)
+insert into Tasks VALUES (1,N' Работа с файлами на языке Си'
+,1,2,1)
+insert into Tasks VALUES (1,N'Управляющие операторы языка Си. Процедуры и функции языка Си. va_arg.'
+,1,2,1)
+insert into Tasks VALUES (1,N'Язык препроцессора.'
+,1,2,1)
+insert into Tasks VALUES (1,N'Ключевые слова static, extern, auto, register, const, restrict, volatile, _Alignas, _Atomic'
+,1,2,1)
+insert into Tasks VALUES (1,N' Методика работы с многобайтовыми и широкими символами на языке Си.'
+,1,2,1)
+insert into Tasks VALUES (1,N'Инструменты автоматизации сборки: make, cmake. Статические и динамические библиотеки. Методики их создания и использования.'
+,1,2,1)
+insert into Tasks VALUES (1,N'Unit-тестирование. Понятие. Принципы. Фреймворк.'
+,1,2,1)
+insert into Tasks VALUES (1,N'Методы создания процессов и потоков: CreateThread, fork, thread языка C. Критические секции. Семафоры. Mutex.'
+,1,2,1)
+--Практ вопросы
+insert into Tasks VALUES (1,N'Для данного натурального числа найдите сумму первых двух его цифр. Работа осуществляется в среде dosbox, реализовать программу следует на языке Ассемблера.'
+,1,1,1)
+insert into Tasks VALUES (1,N'Разработайте программы для Linux и Windows, используя API операционных систем. У обычных файлов (regular file), у которых имя является целым неотрицательным числом прибавить к этому числу 1000. Предполагается, что изначально файлы имеют названия, числовое значение которых не превышает 999.'
+,1,1,1)
+insert into Tasks VALUES (1,N' Разработайте программы для Linux и Windows, используя API операционных систем. Удалить из имен обычных файлов (regular file) все цифры..'
+,1,1,1)
+insert into Tasks VALUES (1,N' Разработайте функцию, в которую передаётся целое число n, затем передаётся число x1 и функция f1, далее x2 и f2 и так далее до xn и fn. Функции f1 . . . fn преобразуют вещественное число в вещественное число. Результатом работы функции должна быть f1(x1)+. . .+fn(xn) (где n — количество переданных функций). Разработайте make-файл и разместите функцию в динамической и статической библиотеке.'
+,1,1,1)
+insert into Tasks VALUES (1,N' Разработайте функцию, в которую передаётся вещественное число x, целое число n и n функций fi , которые преобразуют вещественное число в вещественное число. Результатом работы функции должен быть 8 минимум среди чисел f1(x), . . . , fn(x) (где n – количество переданных функций). Разработайте UNIT-тесты с использованием фреймворка.'
+,1,1,1)
+insert into Tasks VALUES (1,N'Разработайте функцию char * strrchr (char * s,char * c) – функция поиска первого многобайтного символа c в строке s. Возвращает адрес найденного символа или 0, если символ не найден. Поиск ведется с конца строки.'
+,1,1,1)
+insert into Tasks VALUES (1,N'Разработайте программу для Linux, чтобы каждый каталог обрабатывался отдельным C-потоком (thread), используя API операционных систем. Найти файл (выведите на экран его имя), имеющий наибольшую длину среди файлов, расположенных в текущем каталоге или его подкаталоге любой степени вложенности.'
+,1,1,1)
+insert into Tasks VALUES (1,N'Осуществите вычисление на ассемблере с использованием SIMD. Сложение всех элементов массива целых однобайтовых чисел.'
+,1,1,1)
+insert into Tasks VALUES (1,N'Осуществите вычисление на ассемблере с использованием SIMD. Сложение всех элементов массива вещественных чисел одинарной точности'
+,1,1,1)
+insert into Tasks VALUES (1,N'Осуществите вычисление на ассемблере с использованием SIMD. Нахождение максимума среди всех элементов массива вещественных чисел одинарной точности.'
+,1,1,1)
+insert into Tasks VALUES (1,N'Разработайте функцию wchar_t * upcase (wchar_t * dst, char * src) – копирование строки src, состоящей из многобайтных символов, в строку dst (состоящей из широких символов), при этом строчные латинские буквы заменяются на соответствующие заглавные. Результат – dst.'
+,1,1,1)
+insert into Tasks VALUES (1,N'Разработайте функцию char * strncat (char * dest,char * src,unsigned int n) – функция дописывания к строке dest строки src (максимум n многобайтных символов). Возвращает dest.'
+,1,1,1)
+
+
 GO
 create table Tickets(
 Ticket_ID int, --IDENTITY (1,1),

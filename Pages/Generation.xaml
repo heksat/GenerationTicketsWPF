@@ -9,35 +9,42 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Generation">
 
-    <Grid >
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
-            <RowDefinition Height="600*"/>
+            <RowDefinition Height="450"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="800*"/>
+            <ColumnDefinition Width="800"/>
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
         <Canvas Grid.Row="1" Grid.Column="1">
             <ComboBox x:Name="DiscipDescList" SelectionChanged="DiscipList_SelectionChanged" Canvas.Left="33" Width="123" Canvas.Top="73"/>
             <ComboBox x:Name="Chairmen" IsEnabled="False" Canvas.Left="33" Canvas.Top="120" Width="123"/>
             <TextBlock  Text="Курс" Canvas.Left="33" Canvas.Top="179"/>
-            <TextBox x:Name="Course" Canvas.Left="33" Canvas.Top="200" Width="54" />
+            <TextBox x:Name="Course" PreviewTextInput="PreviewTextInput" Canvas.Left="33" Canvas.Top="200" Width="54" TextChanged="text_TextChanged" />
             <TextBlock  Text="Семестр" Canvas.Left="37" Canvas.Top="234"  />
-            <TextBox x:Name="Semestr"  Canvas.Left="33" Canvas.Top="255" Width="123" />
+            <TextBox x:Name="Semestr" PreviewTextInput="PreviewTextInput" Canvas.Left="33" Canvas.Top="255" Width="54" TextChanged="text_TextChanged" />
             <TextBlock  Text="Количество билетов" Canvas.Left="299" Canvas.Top="73"  />
             <TextBlock x:Name="MaxTickets" Margin="377,134,328,257"  />
             <TextBlock Text="Lvl" Canvas.Left="306" Canvas.Top="142"  />
             <ComboBox x:Name="Lvl"  SelectionChanged="CountTickets_TextChanged" Canvas.Left="306" Canvas.Top="163" Width="93"/>
             <Button x:Name="Back" Content="Back" Width="50" Height="30"  Click="Back_Click" Canvas.Left="704" Canvas.Top="30"/>
-            <Button x:Name="Run" Content="Генерировать!" Click="Run_Click" Height="44" Width="112" Canvas.Left="566" Canvas.Top="323" />
-            <StackPanel Orientation="Horizontal"  Canvas.Left="298" Canvas.Top="94">
+            <Button x:Name="Run" Content="Конвертировать!" Click="Run_Click" Height="44" Width="112" Canvas.Left="566" Canvas.Top="323" />
+            <StackPanel x:Name="counttick" Orientation="Horizontal"  Canvas.Left="298" Canvas.Top="94" >
                 <TextBox x:Name="txtNum" x:FieldModifier="private" Margin="5,5,0,5" Width="50" Text="0" TextChanged="txtNum_TextChanged" />
                 <Button x:Name="cmdUp" x:FieldModifier="private" Margin="5,5,0,5" Content="˄" Width="20" Click="cmdUp_Click" />
                 <Button x:Name="cmdDown" x:FieldModifier="private" Margin="0,5,0,5"  Content="˅" Width="20" Click="cmdDown_Click" />
             </StackPanel>
+            <Button x:Name="GenButton" Content="Генерировать" Canvas.Left="566" Canvas.Top="264" Height="35" Width="112" Click="Gen_Click"/>
+            <CheckBox x:Name="DoLocalGen"  Content="Генерировать по БД" Canvas.Left="566" Canvas.Top="197"  IsThreeState="False" Checked="DoAddDB_Checked" Unchecked="DoAddDB_UnChecked"/>
+
+            <CheckBox x:Name="DoAddDB"  Content="Обновить базу данных" Canvas.Left="566" Canvas.Top="224"  IsThreeState="False" />
+            <StatusBar Width="315" Canvas.Left="46" Canvas.Top="360" Height="24">
+                <ProgressBar x:Name="ProgressCheck" Minimum="0" Width="310" Height="18" />
+            </StatusBar>
         </Canvas>
     </Grid>
 </Page>

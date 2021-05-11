@@ -98,7 +98,7 @@ namespace GenerationTicketsWPF
 
                     using (var db = new GenerationTicketsContext(Config.Options))
                     {
-                        if ((db.Workers.Select(x => x.WorkerLogin).Contains(Login.Text)))
+                        if ((db.Workers.Select(x => x.WorkerLogin.ToUpper()).Contains((Login.Text).ToUpper())))
                         {
                             Login.BorderBrush = Brushes.Red;
                         }
@@ -141,6 +141,7 @@ namespace GenerationTicketsWPF
             {
                     Dbhelper.AddUser(new Worker() { Lname = LName.Text, Fname = FName.Text, Sname = SName.Text, Gender = gender, WorkerLogin = Login.Text, 
                         RoleId = (int)ListRoles.SelectedValue, WorkerPassword = Password.Password },choicelistdisname);
+                MessageBox.Show("Пользователь зарегистрирован");
             }
             
         }

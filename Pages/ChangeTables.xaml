@@ -41,7 +41,7 @@ Loaded="Page_Loaded"
                 <TabItem.Header>
                     <TextBlock Text="Председатели"/>
                 </TabItem.Header>
-                <DataGrid  DataContext="{StaticResource chairmanViewSource}" EnableRowVirtualization="True" ItemsSource="{Binding}" x:Name="ChairGrid" AutoGenerateColumns="False" >
+                <DataGrid  DataContext="{StaticResource chairmanViewSource}" EnableRowVirtualization="True" ItemsSource="{Binding}" x:Name="ChairGrid" AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Номер председателя" Binding="{Binding ChairmanId}" IsReadOnly="True"/>
                         <DataGridTextColumn Header="Фамилия" Binding="{Binding Lname}"/>
@@ -102,8 +102,8 @@ Loaded="Page_Loaded"
                 </TabItem.Header>
                 <DataGrid DataContext="{StaticResource taskViewSource}" ItemsSource="{Binding}" x:Name="TaskGrid" AutoGenerateColumns="False">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Номер специальности" Binding="{Binding TaskId}"/>
-                        <DataGridTextColumn Header="Расшифровка специальности" Binding="{Binding DisciplineId}"/>
+                        <DataGridTextColumn Header="Номер задания" Binding="{Binding TaskId}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Номер дисциплины" Binding="{Binding DisciplineId}"/>
                         <DataGridTextColumn Header="Задание" Binding="{Binding TaskDecryption}"/>
                         <DataGridTextColumn Header="Уровень" Binding="{Binding LevelId}"/>
                         <DataGridTextColumn Header="Тип задания" Binding="{Binding TypesTaskId}"/>
@@ -126,13 +126,19 @@ Loaded="Page_Loaded"
                 <TabItem.Header>
                     <TextBlock Text="Билеты"/>
                 </TabItem.Header>
-                <DataGrid x:Name="TickGrid" DataContext="{StaticResource ticketViewSource}" ItemsSource="{Binding}" AutoGenerateColumns="False">
+                <DataGrid x:Name="TickGrid" DataContext="{StaticResource ticketViewSource}" ItemsSource="{Binding}" AutoGenerateColumns="False" IsReadOnly="True">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Номер дисциплины" Binding="{Binding TicketId}"/>
                         <DataGridTextColumn Header="Номер билета" Binding="{Binding TaskNumber}"/>
                         <DataGridTextColumn Header="Номер задания" Binding="{Binding TaskId}"/>
+                        <!--<DataGridComboBoxColumn DisplayMemberPath="Task.TaskDecryption" SelectedValuePath="Tasks" SelectedValueBinding="{Binding TaskId}"
+                                ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=DataGrid}}">
+                            <ComboBox DisplayMemberPath="TaskDecryption"
+                                SelectedValuePath="Tasks"
+                                 SelectedValue="{Binding TaskId}"
+                                ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=DataGrid}" />
+                        </DataGridComboBoxColumn> -->
                         <DataGridTextColumn Header="Номер дисциплины" Binding="{Binding DisciplineId}"/>
-                        <DataGridTextColumn Header="Номер председателя" Binding="{Binding ChairmanId}"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>

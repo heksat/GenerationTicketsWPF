@@ -37,6 +37,7 @@ namespace GenerationTicketsWPF
 #warning:требуется рефакторинг    
         private void AddTick_Click(object sender, RoutedEventArgs e)
         {
+            var DBhelper = new DbInteraction();
             string rbcontext = "";
             foreach (var i in TypeTick.Children.OfType<RadioButton>()) { 
                 if (i.IsChecked == true)
@@ -58,8 +59,8 @@ namespace GenerationTicketsWPF
                     var idlvl = db.Levels.Where(x => x.LeverDecryption == LvlList.SelectedItem.ToString()).Select(x => x.LevelId).FirstOrDefault(); 
                     if (iddisp != 0 && idtype!=0 && idlvl!=0)
                     {
-                        db.Tasks.Add(new Task() { TaskDecryption = TicketBox.Text, DisciplineId = iddisp, WorkerId = Config.User.WorkerId, TypesTaskId=idtype, LevelId=idlvl}); //Config.User.WorkerId
-                        db.SaveChanges();
+                        DBhelper.TaskAdd(new Task() { TaskDecryption = TicketBox.Text, DisciplineId = iddisp, WorkerId = Config.User.WorkerId, TypesTaskId = idtype, LevelId = idlvl });
+                        MessageBox.Show("Билет добавлен");
                     }
                     else
                         MessageBox.Show("Беда!");
