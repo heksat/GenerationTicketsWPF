@@ -12,7 +12,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Linq;
 using GenerationTicketsWPF.Models;
-
+using GenerationTicketsWPF.Pages;
 namespace GenerationTicketsWPF
 {
     /// <summary>
@@ -78,6 +78,11 @@ namespace GenerationTicketsWPF
         private void Back_Click(object sender, RoutedEventArgs e)
         {
             NavigationService.GoBack();
+        }
+
+        private void ChanTick_Click(object sender, RoutedEventArgs e)
+        {
+            this.NavigationService.Navigate(new Changetasks());
         }
     }
 }
