@@ -107,10 +107,10 @@ namespace GenerationTicketsWPF.Models
             {
                 using (var db = new GenerationTicketsContext(Config.Options))
                 {
-                    return (from p in db.Disciplines
-                            join c in db.Teachings on p.DisciplineId equals c.DisciplineId
-                            where c.WorkerId == Config.User.WorkerId
-                            select p.DisciplineName).ToList();
+                        return (from p in db.Disciplines
+                                                      join c in db.Teachings on p.DisciplineId equals c.DisciplineId
+                                                      where c.WorkerId == Config.User.WorkerId
+                                                      select p.DisciplineName).ToList();
                 }
             }
             catch (Exception ex)
@@ -359,7 +359,30 @@ namespace GenerationTicketsWPF.Models
             }
 
         }
-
+        public void checkactualdiscip()
+        {
+            try
+            {
+                using (var db = new GenerationTicketsContext(Config.Options))
+                {
+                    var newlist = db.Disciplines.Select(x => x.DisciplineId).ToList();
+                    List<Teaching> templist = new List<Teaching>(newlist.Count);
+                    foreach (var item in newlist)
+                    {
+                        if (!db.Teachings.Any(x => x.DisciplineId == item))
+                        {
+                            templist.Add(new Teaching() { WorkerId = Config.User.WorkerId, DisciplineId = item });
+                        }
+                    }
+                    db.Teachings.AddRange(templist);
+                    db.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
             //public List<T> GetListTable<T>()
             //{
             //    var test = (Type.GetTypeCode(typeof(Discipline)));

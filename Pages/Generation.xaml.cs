@@ -44,6 +44,7 @@ namespace GenerationTicketsWPF
         private DbInteraction dbInteraction = new DbInteraction();
         private List<Ticket> listTickets = null;
         private List<Ticket> localTickets = null;
+        ErrorLogTraceListener listener = new ErrorLogTraceListener();
         public Generation()
         {
             InitializeComponent();
@@ -56,17 +57,17 @@ namespace GenerationTicketsWPF
             
             using (var db = new GenerationTicketsContext(Config.Options))
             {
-                if (Config.User.RoleId != 1)
-                {
+                //if (Config.User.RoleId != 1)
+                //{
                     DiscipDescList.ItemsSource = (from p in db.Disciplines
                                                   join c in db.Teachings on p.DisciplineId equals c.DisciplineId
                                                   where c.WorkerId == Config.User.WorkerId
                                                   select p.DisciplineName).ToList();
-                }
-                else
-                {
-                    DiscipDescList.ItemsSource = db.Disciplines.Select(x => x.DisciplineName).ToList();
-                }
+                //}
+                //else
+                //{
+                //    DiscipDescList.ItemsSource = db.Disciplines.Select(x => x.DisciplineName).ToList();
+                //}
                 Lvl.ItemsSource = db.Levels.Select(x => x.LeverDecryption).ToList();
             }
 
@@ -215,7 +216,7 @@ namespace GenerationTicketsWPF
                         && (y.Level.LeverDecryption == Lvl.SelectedItem.ToString())
                         && (y.TypesTaskId == 1)
                         ).Select(x => x).Count();
-                        MaxTickets.Text = ((CountTeorTask / 2 < CountPractTask) ? CountTeorTask / 2 : CountPractTask).ToString(); //реф
+                        MaxTickets.Text = (((CountTeorTask / 2) < CountPractTask) ? CountTeorTask / 2 : CountPractTask).ToString(); //реф
                                                                                                                                   //MaxTickets.Text = db.Tasks.Where(y =>
                                                                                                                                   //(y.DisciplineId == (int)(db.Disciplines.Where(x => x.DisciplineName == (DiscipList.SelectedItem.ToString())).Select(x => x.DisciplineId).FirstOrDefault()))
                                                                                                                                   //&& (y.Level.LeverDecryption == Lvl.SelectedItem.ToString())

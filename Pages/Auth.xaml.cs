@@ -29,9 +29,14 @@ namespace GenerationTicketsWPF
 
         private void Log_In(object sender, RoutedEventArgs e)
         {
-            Config.User = (new DbInteraction()).Auth(login.Text, password.Password);
+            var db = (new DbInteraction());
+            Config.User = db.Auth(login.Text, password.Password);
             if (Config.User != null)
             {
+                if (Config.User.RoleId == 1)
+                {
+                    db.checkactualdiscip();
+                }
                 this.NavigationService.Navigate(new MenuPage());
             }
             else

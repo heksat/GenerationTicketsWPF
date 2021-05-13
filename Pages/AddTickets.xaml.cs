@@ -46,7 +46,7 @@ namespace GenerationTicketsWPF
                     break;
                 }
             }
-            if (rbcontext == "")
+            if (rbcontext == "" || LvlList.SelectedIndex==-1 || DiscipAllow.SelectedIndex==-1)
             {
                 MessageBox.Show("Выберите тип задания!");
             }
