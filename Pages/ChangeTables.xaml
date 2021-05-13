@@ -90,7 +90,7 @@ Loaded="Page_Loaded"
                 </TabItem.Header>
                 <DataGrid DataContext="{StaticResource specViewSource}" ItemsSource="{Binding}" x:Name="SpecGrid" AutoGenerateColumns="False">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Номер специальности" Binding="{Binding SpecialtyId}"/>
+                        <DataGridTextColumn Header="Номер специальности" Binding="{Binding SpecialtyId}" />
                         <DataGridTextColumn Header="Расшифровка специальности" Binding="{Binding SpecialtyDecryption}"/>
                         <DataGridTextColumn Header="Номер председателя" Binding="{Binding ChairmanId}"/>
                     </DataGrid.Columns>

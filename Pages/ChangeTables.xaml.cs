@@ -29,12 +29,18 @@ namespace GenerationTicketsWPF.Pages
         //public event UnhandledExceptionEventHandler? UnhandledException;
 
         public GenerationTicketsContext db = new GenerationTicketsContext(Config.Options);
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
+        //[SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         public ChangeTables()
         {
-            InitializeComponent();
-            MessageBox.Show("Все действия проделанные здесь после сохранения на прямую влияет на базу данных! При удалении какой-то записи также удаляются данные, связанные с удаленной записью в зависимых таблицах. При сохранении обязательно проверить правильности изменений. ");
-
+            try
+            {
+                InitializeComponent();
+                MessageBox.Show("Все действия проделанные здесь после сохранения на прямую влияет на базу данных! При удалении какой-то записи также удаляются данные, связанные с удаленной записью в зависимых таблицах. При сохранении обязательно проверить правильности изменений. ");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void UpdateDB_Click(object sender, RoutedEventArgs e)
@@ -44,11 +50,7 @@ namespace GenerationTicketsWPF.Pages
             try
             {
                 db.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+           
             ChairGrid.Items.Refresh();
             DispGrid.Items.Refresh();
             LvlGrid.Items.Refresh();
@@ -59,6 +61,11 @@ namespace GenerationTicketsWPF.Pages
             TypeGrid.Items.Refresh();
             TickGrid.Items.Refresh();
             WorkGrid.Items.Refresh();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             //this.ControlItems.Items.Refresh();
             //ControlItems.TabPages
             //foreach (var item in ControlItems.Items)
@@ -78,14 +85,14 @@ namespace GenerationTicketsWPF.Pages
         {
             NavigationService.GoBack();
         }
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
+        //[SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             //using (var db = new GenerationTicketsContext(Config.Options))
             //{
-            AppDomain currentDomain = AppDomain.CurrentDomain;
-            currentDomain.UnhandledException += new UnhandledExceptionEventHandler((s, e) => MessageBox.Show("Так делать нельзя."));
+            //AppDomain currentDomain = AppDomain.CurrentDomain;
+            //currentDomain.UnhandledException += new UnhandledExceptionEventHandler((s, e) => MessageBox.Show("Так делать нельзя."));
             //UnhandledException += ((s, e) => MessageBox.Show("Так делать нельзя."));
             System.Windows.Data.CollectionViewSource chairmanViewSource =
                    ((System.Windows.Data.CollectionViewSource)(this.FindResource("chairmanViewSource")));

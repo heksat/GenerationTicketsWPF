@@ -16,13 +16,25 @@ using GenerationTicketsWPF.Models;
 using System.Text.RegularExpressions;
 using  Trd = System.Threading.Tasks;
 using System.Threading;
+using System.Diagnostics;
 
 namespace GenerationTicketsWPF
 {
     /// <summary>
     /// Interaction logic for Generation.xaml
     /// </summary>
+    public class ErrorLogTraceListener : TraceListener
+    {
+        public override void Write(string message)
+        {
+            MessageBox.Show(message);   
+        }
 
+        public override void WriteLine(string message)
+        {
+            MessageBox.Show(message);
+        }
+    }
     public partial class Generation : Page
     {
         private List<Discipline> DiscipList = null;
@@ -35,6 +47,7 @@ namespace GenerationTicketsWPF
         public Generation()
         {
             InitializeComponent();
+           
             MaxTickets.Text = "Unknows";
             txtNum.Text = _numValue.ToString();
             var test = new DbInteraction();
@@ -120,7 +133,7 @@ namespace GenerationTicketsWPF
                                 var app = new Microsoft.Office.Interop.Word.Application();
                                 var file = (wordhelper.getFileInfo).FullName;
                                 var missing = Type.Missing;
-                                var fil = app.Documents.Open(file, ReadOnly: false, Visible: true);
+                                var fil = app.Documents.Open(file, ReadOnly: false);
                                 for (int i = 0; i < listTickets.Count() / 3; i++)
                                 {
                                     object times = 1;

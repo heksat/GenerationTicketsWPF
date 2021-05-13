@@ -20,6 +20,8 @@ Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
 
+[Dirs]
+Name:"{autopf}\GenTicks"; Permissions: users-full
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
@@ -35,7 +37,7 @@ Name: "CreateOrUpdateDB"; Description: "Create\Update Database | Создание\Обновл
 [Files]
 Source: "bin\Debug\netcoreapp3.1\GenerationTicketsWPF.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: program
 Source: "bin\Debug\netcoreapp3.1\*.dll"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs; Components: program
-Source: "bin\Debug\netcoreapp3.1\Shablon.docx"; DestDir: "{app}"; Flags: ignoreversion; Components: program
+Source: "bin\Debug\netcoreapp3.1\Shablon.docx"; DestDir: "{app}"; Flags: ignoreversion nocompression; Components: program
 Source: "bin\Debug\netcoreapp3.1\*.json"; DestDir: "{app}"; Flags: ignoreversion; Components: program
 Source: "SQLQuery_CreateDB.sql"; DestDir: "{app}"; Flags: ignoreversion; Components: program
 Source: "UpDBscript.bat"; DestDir: "{app}"; Flags: ignoreversion; Components: program
