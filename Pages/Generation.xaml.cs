@@ -120,7 +120,7 @@ namespace GenerationTicketsWPF
                                 var app = new Microsoft.Office.Interop.Word.Application();
                                 var file = (wordhelper.getFileInfo).FullName;
                                 var missing = Type.Missing;
-                                var fil = app.Documents.Open(file);
+                                var fil = app.Documents.Open(file, ReadOnly: false, Visible: true);
                                 for (int i = 0; i < listTickets.Count() / 3; i++)
                                 {
                                     object times = 1;
@@ -317,17 +317,25 @@ namespace GenerationTicketsWPF
         private void DoAddDB_Checked(object sender, RoutedEventArgs e)
         {
             //_numValue = dbInteraction
-            Lvl.IsEnabled = false;
-            DiscipDescList.IsEnabled = false;
-           // Course.IsEnabled = false;
-           // Semestr.IsEnabled = false;
-            counttick.IsEnabled = false;
-            DoAddDB.IsEnabled = false;
-            GenButton.IsEnabled = false;
-            Chairmen.IsEnabled = true;
-            Chairmen.ItemsSource = (dbInteraction.GetChairmanList(dbInteraction.GetDispfromTickets(listTickets))).Select(p => p.Lname + ' ' + p.Fname + ' ' + p.Sname);
-            Chairmen.SelectedIndex = -1;
-            DoAddDB.IsChecked = false;
+            if (dbInteraction.isOneRecord())
+            {
+                Lvl.IsEnabled = false;
+                DiscipDescList.IsEnabled = false;
+                // Course.IsEnabled = false;
+                // Semestr.IsEnabled = false;
+                counttick.IsEnabled = false;
+                DoAddDB.IsEnabled = false;
+                GenButton.IsEnabled = false;
+                Chairmen.IsEnabled = true;
+                Chairmen.ItemsSource = (dbInteraction.GetChairmanList(dbInteraction.GetDispfromTickets(listTickets))).Select(p => p.Lname + ' ' + p.Fname + ' ' + p.Sname);
+                Chairmen.SelectedIndex = -1;
+                DoAddDB.IsChecked = false;
+            }
+            else
+            {
+                MessageBox.Show("Походу в базе данных нет билетов. Проверьте их наличие или соединение с сервером");
+                DoLocalGen.IsChecked = false;
+            }
         }
         private void DoAddDB_UnChecked(object sender, RoutedEventArgs e)
         {

@@ -296,6 +296,21 @@ namespace GenerationTicketsWPF.Models
                 return new List<Ticket>(0);
             }
         }
+        public bool isOneRecord()
+        {
+            try
+            {
+                using (var db = new GenerationTicketsContext(Config.Options))
+                {
+                    return db.Tickets.Any();
+                }
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+            
+        }
         //public string GetDispfromTickets()
         //{
         //    try

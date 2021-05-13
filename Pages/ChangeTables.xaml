@@ -159,7 +159,7 @@ Loaded="Page_Loaded"
                 </TabItem.Header>
                 <DataGrid DataContext="{StaticResource workerViewSource}" ItemsSource="{Binding}" x:Name="WorkGrid" AutoGenerateColumns="False" >
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Номер работника" Binding="{Binding WorkerId}"/>
+                        <DataGridTextColumn Header="Номер работника" Binding="{Binding WorkerId}" IsReadOnly="True"/>
                         <DataGridTextColumn Header="Фамилия" Binding="{Binding Lname}"/>
                         <DataGridTextColumn Header="Имя" Binding="{Binding Fname}"/>
                         <DataGridTextColumn Header="Отчество" Binding="{Binding Sname}"/>

@@ -39,6 +39,7 @@ Source: "bin\Debug\netcoreapp3.1\Shablon.docx"; DestDir: "{app}"; Flags: ignorev
 Source: "bin\Debug\netcoreapp3.1\*.json"; DestDir: "{app}"; Flags: ignoreversion; Components: program
 Source: "SQLQuery_CreateDB.sql"; DestDir: "{app}"; Flags: ignoreversion; Components: program
 Source: "UpDBscript.bat"; DestDir: "{app}"; Flags: ignoreversion; Components: program
+Source: "bin\Debug\netcoreapp3.1\*.pdb"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs; Components: program
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]
