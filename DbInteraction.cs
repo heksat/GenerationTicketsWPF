@@ -253,8 +253,7 @@ namespace GenerationTicketsWPF.Models
                     return (from p in db.Chairmans
                             join c in db.Specialties on p.ChairmanId equals c.ChairmanId
                             join x in db.Disciplines on c.SpecialtyId equals x.SpecialtyId
-                            join t in db.Teachings on x.DisciplineId equals t.DisciplineId
-                            where (t.WorkerId == Config.User.WorkerId) && (disp == x.DisciplineName)//Config.User.WorkerId
+                            where (disp == x.DisciplineName)
                             select p).Distinct().ToList();
                 }
             }

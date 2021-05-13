@@ -61,7 +61,7 @@ namespace GenerationTicketsWPF
 
         private async void Run_Click(object sender, RoutedEventArgs e)
         {
-            ProgressCheck.Value = 1;
+
             
             if (DoLocalGen.IsChecked == true)
             {
@@ -86,9 +86,10 @@ namespace GenerationTicketsWPF
                 }
                 else
                 {
+                    ProgressCheck.Value = 1;
                     try
                     {
-                        ProgressCheck.Maximum = listTickets.Count + 1;
+                        ProgressCheck.Maximum = listTickets.Count / 3 + 1;
                         if (listTickets.Any())
                         {
                             var pathChoice = new WinForms.FolderBrowserDialog();
@@ -218,14 +219,15 @@ namespace GenerationTicketsWPF
         {
             if ((DoLocalGen.IsChecked == true) || (Lvl.SelectedIndex != -1 && DiscipDescList.SelectedIndex != -1 && _numValue > 0))
             {
-                    ProgressCheck.Value = 1;
-                    ProgressCheck.Maximum = _numValue+1;
+                    
                     var AllTasks = dbinteration.GetTasks(DiscipDescList.SelectedItem.ToString(),Lvl.SelectedItem.ToString());
                     var teorTask = AllTasks.Where(x => x.TypesTaskId == 2).Select(x => x.TaskId).ToList();
                     var practTask = AllTasks.Where(x => x.TypesTaskId == 1).Select(x => x.TaskId).ToList();
                     Random random = new Random();
                     if (MaxTickets.Text != "Unknows" && _numValue <= int.Parse(MaxTickets.Text))
                     {
+                    ProgressCheck.Value = 1;
+                    ProgressCheck.Maximum = _numValue + 1;
                     localTickets = new List<Ticket>(_numValue);
                         for (int i = 1; i <= _numValue; i++)
                         {
@@ -277,7 +279,10 @@ namespace GenerationTicketsWPF
 
         private void cmdDown_Click(object sender, RoutedEventArgs e)
         {
-            NumValue--;
+            if (NumValue > 0)
+            {
+                NumValue--;
+            }
         }
 
         private void txtNum_TextChanged(object sender, TextChangedEventArgs e)

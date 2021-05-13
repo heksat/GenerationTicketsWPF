@@ -15,14 +15,15 @@
 
     <Grid Background="white">
         <Grid.RowDefinitions>
-            <RowDefinition Height="89*"/>
-            <RowDefinition Height="289*"/>
-            <RowDefinition Height="42*"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="289"/>
+            <RowDefinition Height="42"/>
+            <RowDefinition Height="30"/>
             <RowDefinition Height="30*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="138"/>
             <ColumnDefinition Width="400"/>
             <ColumnDefinition Width="100"/>
             <ColumnDefinition Width="150"/>
@@ -41,8 +42,8 @@
             <TextBlock x:Name="CounterChar" Grid.Column="1" Grid.Row="1" />
         </Grid>
         <Button x:Name="AddTick" Grid.Row="2" Grid.Column="3" Click="AddTick_Click" Content="Добавить"/>
-        <Button x:Name="Back" Content="Back" Grid.Row="1" Grid.Column="3" Height="30" Margin="5,25,5,234" Click="Back_Click"/>
-        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" >
+        <Button x:Name="Back" Content="Back" Grid.Row="1" Grid.Column="3" Margin="5,10,5,229" Click="Back_Click"/>
+        <StackPanel Grid.Row="1" Grid.Column="1"  >
             <TextBlock Text="Выбор дисциплины"/>
             <ComboBox x:Name="DiscipAllow"/>
             <TextBlock Text="Уровень задания" />

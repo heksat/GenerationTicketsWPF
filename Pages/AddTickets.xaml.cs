@@ -56,14 +56,22 @@ namespace GenerationTicketsWPF
                 {
                     var iddisp = db.Disciplines.Where(x => x.DisciplineName == DiscipAllow.SelectedItem.ToString()).Select(x => x.DisciplineId).FirstOrDefault();
                     var idtype = db.TypesTasks.Where(x => x.TypesTaskDecryption == rbcontext).Select(x => x.TypesTaskId).FirstOrDefault();
-                    var idlvl = db.Levels.Where(x => x.LeverDecryption == LvlList.SelectedItem.ToString()).Select(x => x.LevelId).FirstOrDefault(); 
-                    if (iddisp != 0 && idtype!=0 && idlvl!=0)
+                    var idlvl = db.Levels.Where(x => x.LeverDecryption == LvlList.SelectedItem.ToString()).Select(x => x.LevelId).FirstOrDefault();
+                    TicketBox.Text.Trim();
+                    if (TicketBox.Text == string.Empty)
                     {
-                        DBhelper.TaskAdd(new Task() { TaskDecryption = TicketBox.Text, DisciplineId = iddisp, WorkerId = Config.User.WorkerId, TypesTaskId = idtype, LevelId = idlvl });
-                        MessageBox.Show("Билет добавлен");
+                        MessageBox.Show("Вы пытаетесь добавить пустой билет, не хорошо так делать");
                     }
                     else
-                        MessageBox.Show("Беда!");
+                    {
+                        if (iddisp != 0 && idtype != 0 && idlvl != 0)
+                        {
+                            DBhelper.TaskAdd(new Task() { TaskDecryption = TicketBox.Text, DisciplineId = iddisp, WorkerId = Config.User.WorkerId, TypesTaskId = idtype, LevelId = idlvl });
+                            MessageBox.Show("Билет добавлен");
+                        }
+                        else
+                            MessageBox.Show("Беда!");
+                    }
                 }
             }
         }
