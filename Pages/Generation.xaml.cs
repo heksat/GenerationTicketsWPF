@@ -96,9 +96,9 @@ namespace GenerationTicketsWPF
                             {
                                 var path = pathChoice.SelectedPath;
                                 var wordhelper = new WordHelper("Shablon.docx");
-                                var spec = dbInteraction.GetSpectoDisp(dbInteraction.GetDispfromTickets());
+                                var spec = dbInteraction.GetSpectoDisp(dbInteraction.GetDispfromTickets(listTickets));
                                 List<Task> listTasks = dbInteraction.GetTasks();
-                                var discipchoised = dbInteraction.GetDispfromTickets();
+                                var discipchoised = dbInteraction.GetDispfromTickets(listTickets);
                                 var coursechoised = Course.Text;
                                 var Chairmenchoised = Chairmen.SelectedItem.ToString();
                                 var Semestrchoised = Semestr.Text;
@@ -320,7 +320,7 @@ namespace GenerationTicketsWPF
             DoAddDB.IsEnabled = false;
             GenButton.IsEnabled = false;
             Chairmen.IsEnabled = true;
-            Chairmen.ItemsSource = (dbInteraction.GetChairmanList(dbInteraction.GetDispfromTickets())).Select(p => p.Lname + ' ' + p.Fname + ' ' + p.Sname);
+            Chairmen.ItemsSource = (dbInteraction.GetChairmanList(dbInteraction.GetDispfromTickets(listTickets))).Select(p => p.Lname + ' ' + p.Fname + ' ' + p.Sname);
             Chairmen.SelectedIndex = -1;
             DoAddDB.IsChecked = false;
         }

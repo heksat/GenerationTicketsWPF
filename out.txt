@@ -1,0 +1,3141 @@
+C:\Users\heksa\kursach\GenerationTicketsWPF\App.xaml.cs  
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+
+namespace GenerationTicketsWPF
+{
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
+    public partial class App : Application
+    {
+    }
+}
+C:\Users\heksa\kursach\GenerationTicketsWPF\AssemblyInfo.cs  
+using System.Windows;
+
+[assembly: ThemeInfo(
+    ResourceDictionaryLocation.None, //where theme specific resource dictionaries are located
+                                     //(used if a resource is not found in the page,
+                                     // or application resource dictionaries)
+    ResourceDictionaryLocation.SourceAssembly //where the generic resource dictionary is located
+                                              //(used if a resource is not found in the page,
+                                              // app, or any theme specific resource dictionaries)
+)]
+C:\Users\heksa\kursach\GenerationTicketsWPF\Config.cs  
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using Microsoft.Extensions.Configuration;
+using System.IO;
+using Microsoft.EntityFrameworkCore;
+using GenerationTicketsWPF.Models;
+
+namespace GenerationTicketsWPF
+{
+    static class Config
+    {
+        private static DbContextOptions<GenerationTicketsContext> options;
+        public static DbContextOptions<GenerationTicketsContext> Options
+        {
+            get { return options; }
+        }
+        private static Worker user;
+        public static Worker User{
+            get { return user; }
+            set { user = value; }
+        }
+        static Config()
+        {
+            var builder = new ConfigurationBuilder();
+            builder.SetBasePath(Directory.GetCurrentDirectory());// установка пути к текущему каталогу
+            builder.AddJsonFile("appconfig.json");// получаем конфигурацию из файла appsettings.json
+            var config = builder.Build(); // создаем конфигурацию
+            string connectionString = config.GetConnectionString("DefaultConnection");// получаем строку подключения
+
+            var optionsBuilder = new DbContextOptionsBuilder<GenerationTicketsContext>();
+            options = optionsBuilder
+                .UseSqlServer(connectionString)
+                .Options;
+
+        }
+        
+    }
+}
+C:\Users\heksa\kursach\GenerationTicketsWPF\CounterMaxTickets.cs  
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace GenerationTicketsWPF
+{
+    class CounterMaxTickets
+    {
+    }
+}
+C:\Users\heksa\kursach\GenerationTicketsWPF\DbInteraction.cs  
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using GenerationTicketsWPF.Pages;
+using System.Linq;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore;
+using GenerationTicketsWPF;
+using System.Windows;
+
+namespace GenerationTicketsWPF.Models
+{
+
+
+    public class DbInteraction
+    {
+        public Worker Auth(string login,string password)
+        {
+            try
+            {
+                using (var db = new GenerationTicketsContext(Config.Options))
+                {
+                    return db.Workers.Where(el => el.WorkerLogin.Equals(login) && el.WorkerPassword.Equals(password)).FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+        }
+        public object ListTickets()
+        {
+            try
+            {
+                using (var db = new GenerationTicketsContext(Config.Options))
+                {
+                    return (from p in db.Tickets join c in db.Tasks on p.TaskId equals c.TaskId select new { p.TicketId, p.TaskNumber, c.TaskDecryption }).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+        }
+        public List<Discipline> GetDiscipList()
+        {
+            try
+            {
+                using (var db = new GenerationTicketsContext(Config.Options))
+                {
+                    return (from p in db.Disciplines
+                            join c in db.Teachings on p.DisciplineId equals c.DisciplineId
+                            where c.WorkerId == Config.User.WorkerId
+                            select p).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return new List<Discipline>(0);
+            }
+        }
+        public List<Level> GetLevels()
+        {
+            try
+            {
+                using (var db = new GenerationTicketsContext(Config.Options))
+                {
+                    return db.Levels.Select(x => x).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return new List<Level>(0);
+
+            }
+        }
+        public bool UpdatePassword(string pass)
+        {
+            try
+            {
+                using (var db = new GenerationTicketsContext(Config.Options))
+                {
+                    bool check = false;
+                    var user = db.Workers.Where(x => x.WorkerId == Config.User.WorkerId).Select(x => x).FirstOrDefault();
+                    if (user != null)
+                    {
+                        user.WorkerPassword = pass;
+                        db.SaveChanges();
+                        check = true;
+                    }
+                    return check;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;
+            }
+        }
+        public List<string> GetAllowDisciplines()
+        {
+            try
+            {
+                using (var db = new GenerationTicketsContext(Config.Options))
+                {
+                    return (from p in db.Disciplines
+                            join c in db.Teachings on p.DisciplineId equals c.DisciplineId
+                            where c.WorkerId == Config.User.WorkerId
+                            select p.DisciplineName).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return new List<string>(0);
+            }
+        }
+        public List<string> GetDisciplinesDecryption()
+        {
+            try
+            {
+                using (var db = new GenerationTicketsContext(Config.Options))
+                {
+                    return db.Disciplines.Select(x => x.DisciplineName).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return new List<string>(0);
+            }
+        }
+        public List<Discipline> GetDisciplines()
+        {
+            try
+            {
+                using (var db = new GenerationTicketsContext(Config.Options))
+                {
+                    return db.Disciplines.Select(x => x).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return new List<Discipline>(0);
+            }
+        }
+
+
+        public SByte AddUser(Worker newuser, List<Discipline> choicelistdisname)
+        {
+            try
+            {
+                SByte check = 0;
+                using (var db = new GenerationTicketsContext(Config.Options))
+                {
+                    db.Workers.Add(newuser);
+                    if (newuser.RoleId == 2) //teacher
+                    {
+                        choicelistdisname.ForEach((i) =>
+                             db.Entry(new Teaching() { Worker = newuser, Discipline = i }).State = EntityState.Added);
+                    }
+                   // else
+                   // {
+                    //    if (newuser.RoleId == 1)
+                    //    {
+                    //        var listdis = db.Disciplines.ToList();
+                    //        listdis.ForEach((i) =>
+                    //         db.Entry(new Teaching() { Worker = newuser, Discipline = i }).State = EntityState.Added);
+                    //    }
+                    //}
+                    db.SaveChanges();
+                    return check;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return 0;
+            }
+        }
+        public void UpdateUser(Worker worker)
+        {
+            try
+            {
+                using (var db = new GenerationTicketsContext(Config.Options))
+                {
+                    db.Entry(worker).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        public List<Task> GetTasks(string disp = null, string lvl = null)
+        {
+            try
+            {
+                using (var db = new GenerationTicketsContext(Config.Options))
+                {
+                    List<Task> templist;
+                    if (disp == null || lvl == null)
+                    {
+                        templist = db.Tasks.ToList();
+                    }
+                    else
+                    {
+                        templist = db.Tasks.Where(y =>
+                                (y.DisciplineId == (db.Disciplines.Where(x => x.DisciplineName == disp).Select(x => x.DisciplineId).FirstOrDefault()))
+                                && (y.Level.LeverDecryption == lvl)
+                                ).ToList();//Select(x => new { IDTask = x.TaskId, TypeTask = x.TypesTaskId });
+                    }
+                    return templist;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return new List<Task>(0);
+
+            }
+
+        }
+        public bool PullTickets(List<Ticket> newlist)
+        {
+            try
+            {
+                using (var db = new GenerationTicketsContext(Config.Options))
+                {
+                    db.Tickets.RemoveRange(db.Tickets);
+                    db.Tickets.AddRange(newlist);
+                    db.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            return true;
+        }
+        public List<Chairman> GetChairmanList(string disp)
+        {
+            try
+            {
+                using (var db = new GenerationTicketsContext(Config.Options))
+                {
+                    return (from p in db.Chairmans
+                            join c in db.Specialties on p.ChairmanId equals c.ChairmanId
+                            join x in db.Disciplines on c.SpecialtyId equals x.SpecialtyId
+                            join t in db.Teachings on x.DisciplineId equals t.DisciplineId
+                            where (t.WorkerId == Config.User.WorkerId) && (disp == x.DisciplineName)//Config.User.WorkerId
+                            select p).Distinct().ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return new List<Chairman>(0);
+            }
+        }
+        public Specialty GetSpectoDisp(string disp)
+        {
+            try
+            {
+                using (var db = new GenerationTicketsContext(Config.Options))
+                {
+                    return (from c in db.Disciplines
+                            join p in db.Specialties on c.SpecialtyId equals p.SpecialtyId
+                            where c.DisciplineName == disp
+                            select p).FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+        }
+        public List<Ticket> GetTickets()
+        {
+            try
+            {
+                using (var db = new GenerationTicketsContext(Config.Options))
+                {
+                    return db.Tickets.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return new List<Ticket>(0);
+            }
+        }
+        public string GetDispfromTickets()
+        {
+            try
+            {
+                using (var db = new GenerationTicketsContext(Config.Options))
+                {
+                    return db.Disciplines.Where(x => x.DisciplineId == (db.Tickets.Select(x => x.DisciplineId).FirstOrDefault())).Select(x => x.DisciplineName).FirstOrDefault();
+                    // from p in db.Tickets join c in db.Tasks on p.TaskId equals c.TaskId select c.DisciplineId
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+        }
+        public void TaskAdd(Task task)
+        {
+            try
+            {
+                using (var db = new GenerationTicketsContext(Config.Options))
+                {
+                    db.Tasks.Add(task);
+                    db.SaveChanges();
+                }
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+        }
+
+            //public List<T> GetListTable<T>()
+            //{
+            //    var test = (Type.GetTypeCode(typeof(Discipline)));
+            //    using (var db = new GenerationTicketsContext(Config.Options)) {
+            //        switch(Type.GetTypeCode(typeof(T)))
+            //        {
+            //            case test: return db.Disciplines.Select(x => x).ToList();
+            //            default: return null;
+            //        };
+
+            //    }
+            //}
+        }
+}
+C:\Users\heksa\kursach\GenerationTicketsWPF\ListExtension.cs  
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace GenerationTicketsWPF
+{
+    public static class ListExtension
+    {
+        public static Type GetTypeElement<T>(this List<T> plist)
+        {
+            return typeof(T);
+        }
+    }
+}
+C:\Users\heksa\kursach\GenerationTicketsWPF\MainWindow.xaml.cs  
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using System.Windows.Navigation;
+using System.Security.Permissions;
+
+namespace GenerationTicketsWPF
+{
+    /// <summary>
+    /// Логика взаимодействия для MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : NavigationWindow
+    {
+        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
+        public MainWindow()
+        {
+            InitializeComponent();
+        }
+        
+       // public static Click Goback()
+       // public void GoBack_Click(object sender, RoutedEventArgs e)
+       // {
+       //     NavigationService.GoBack();
+       // }
+    }
+}
+C:\Users\heksa\kursach\GenerationTicketsWPF\WordHelper.cs  
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using Word = Microsoft.Office.Interop.Word;
+namespace GenerationTicketsWPF
+{
+    class WordHelper
+    {
+        private FileInfo fileinfo;
+        public FileInfo getFileInfo { get { return fileinfo; } }
+        public WordHelper(string filename)
+        {
+            if (File.Exists(filename))
+            {
+                fileinfo = new FileInfo(filename);
+            }
+            else
+            {
+                MessageBox.Show("Не найден шаблон");
+            }
+        }
+
+        internal void Process(Dictionary<string, string> item, string path, Word.Application app, string file, object missing)
+        {
+            try
+            {
+                // var file = fileinfo.FullName;
+                //var missing = Type.Missing; 
+                // app.Documents.Open(file);
+                foreach (var i in item)
+                {
+                    var range = app.ActiveDocument.Content;
+                    range.Find.Execute(i.Key);
+                    range.Text = i.Value;
+                    //Word.Find find = app.Selection.Find;
+                    //find.Text = i.Key;
+                    //find.Replacement.Text = i.Value;
+                    //object wrap = Word.WdFindWrap.wdFindContinue;
+                    //object replace = Word.WdReplace.wdReplaceAll;
+                    //find.Execute(FindText: missing,
+                    //    MatchCase: false,
+                    //    MatchWholeWord: false,
+                    //    MatchWildcards: false,
+                    //    MatchSoundsLike: missing,
+                    //    MatchAllWordForms: false,
+                    //    Forward: true,
+                    //    Wrap: wrap,
+                    //    Format: false,
+                    //    ReplaceWith: missing,
+                    //    Replace: replace);
+                }
+                var newFile = Path.Combine($"{path}\\Ticket{item["<NUMB>"]}");
+                app.ActiveDocument.SaveAs2(newFile);
+            }
+            catch (System.Runtime.InteropServices.COMException ex) {
+                MessageBox.Show(ex.Message);
+            }
+            //https://docs.microsoft.com/ru-ru/dotnet/api/microsoft.office.tools.word.document.undo?view=vsto-2017
+            // app.ActiveDocument.Close();
+            // app.Quit();
+        }
+    }
+}
+C:\Users\heksa\kursach\GenerationTicketsWPF\App.xaml  
+﻿<Application x:Class="GenerationTicketsWPF.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:GenerationTicketsWPF"
+             StartupUri="MainWindow.xaml"> 
+    <Application.Resources>
+         
+    </Application.Resources>
+</Application>
+C:\Users\heksa\kursach\GenerationTicketsWPF\MainWindow.xaml  
+﻿<NavigationWindow x:Class="GenerationTicketsWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GenerationTicketsWPF"
+        mc:Ignorable="d"
+        Title="Generation" Height="450" Width="800" Source="Pages/Auth.xaml" ShowsNavigationUI="False" Background="White" WindowStartupLocation="CenterScreen">
+</NavigationWindow>
+C:\Users\heksa\kursach\GenerationTicketsWPF\Models\Chairman.cs  
+﻿using System;
+using System.Collections.Generic;
+
+#nullable disable
+
+namespace GenerationTicketsWPF.Models
+{
+    public partial class Chairman
+    {
+        public Chairman()
+        {
+            Specialties = new HashSet<Specialty>();
+        }
+
+        public int ChairmanId { get; set; }
+        public string Lname { get; set; }
+        public string Fname { get; set; }
+        public string Sname { get; set; }
+
+        public virtual ICollection<Specialty> Specialties { get; set; }
+    }
+}
+C:\Users\heksa\kursach\GenerationTicketsWPF\Models\Discipline.cs  
+﻿using System;
+using System.Collections.Generic;
+
+#nullable disable
+
+namespace GenerationTicketsWPF.Models
+{
+    public partial class Discipline
+    {
+        public Discipline()
+        {
+            Teachings = new HashSet<Teaching>();
+        }
+
+        public int DisciplineId { get; set; }
+        public string DisciplineName { get; set; }
+        public string SpecialtyId { get; set; }
+
+        public virtual Specialty Specialty { get; set; }
+        public virtual ICollection<Teaching> Teachings { get; set; }
+    }
+}
+C:\Users\heksa\kursach\GenerationTicketsWPF\Models\GenerationTicketsContext.cs  
+﻿using System;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+
+#nullable disable
+
+namespace GenerationTicketsWPF.Models
+{
+    public partial class GenerationTicketsContext : DbContext
+    {
+        public GenerationTicketsContext()
+        {
+        }
+
+        public GenerationTicketsContext(DbContextOptions<GenerationTicketsContext> options)
+            : base(options)
+        {
+        }
+
+        public virtual DbSet<Chairman> Chairmans { get; set; }
+        public virtual DbSet<Discipline> Disciplines { get; set; }
+        public virtual DbSet<Level> Levels { get; set; }
+        public virtual DbSet<Role> Roles { get; set; }
+        public virtual DbSet<Specialty> Specialties { get; set; }
+        public virtual DbSet<Task> Tasks { get; set; }
+        public virtual DbSet<Teaching> Teachings { get; set; }
+        public virtual DbSet<Ticket> Tickets { get; set; }
+        public virtual DbSet<TypesTask> TypesTasks { get; set; }
+        public virtual DbSet<Worker> Workers { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=GenerationTickets;Trusted_Connection=True;");
+            }
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.HasAnnotation("Relational:Collation", "Cyrillic_General_CI_AS");
+
+            modelBuilder.Entity<Chairman>(entity =>
+            {
+                entity.Property(e => e.ChairmanId).HasColumnName("Chairman_ID");
+
+                entity.Property(e => e.Fname)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Lname)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("LName");
+
+                entity.Property(e => e.Sname)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("SName");
+            });
+
+            modelBuilder.Entity<Discipline>(entity =>
+            {
+                entity.Property(e => e.DisciplineId).HasColumnName("Discipline_ID");
+
+                entity.Property(e => e.DisciplineName)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("Discipline_name");
+
+                entity.Property(e => e.SpecialtyId)
+                    .IsRequired()
+                    .HasMaxLength(8)
+                    .HasColumnName("Specialty_ID");
+
+                entity.HasOne(d => d.Specialty)
+                    .WithMany(p => p.Disciplines)
+                    .HasForeignKey(d => d.SpecialtyId)
+                    .HasConstraintName("FK__Disciplin__Speci__7A521F79");
+            });
+
+            modelBuilder.Entity<Level>(entity =>
+            {
+                entity.Property(e => e.LevelId).HasColumnName("Level_ID");
+
+                entity.Property(e => e.LeverDecryption)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("Lever_Decryption");
+            });
+
+            modelBuilder.Entity<Role>(entity =>
+            {
+                entity.Property(e => e.RoleId).HasColumnName("Role_ID");
+
+                entity.Property(e => e.RoleDecryption)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("Role_decryption");
+            });
+
+            modelBuilder.Entity<Specialty>(entity =>
+            {
+                entity.ToTable("Specialty");
+
+                entity.Property(e => e.SpecialtyId)
+                    .HasMaxLength(8)
+                    .HasColumnName("Specialty_ID");
+
+                entity.Property(e => e.ChairmanId).HasColumnName("Chairman_ID");
+
+                entity.Property(e => e.SpecialtyDecryption)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("Specialty_decryption");
+
+                entity.HasOne(d => d.Chairman)
+                    .WithMany(p => p.Specialties)
+                    .HasForeignKey(d => d.ChairmanId)
+                    .HasConstraintName("FK__Specialty__Chair__7775B2CE");
+            });
+
+            modelBuilder.Entity<Task>(entity =>
+            {
+                entity.HasKey(e => new { e.TaskId, e.DisciplineId })
+                    .HasName("PK_UNIQIE_Tasks");
+
+                entity.Property(e => e.TaskId)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("Task_ID");
+
+                entity.Property(e => e.DisciplineId).HasColumnName("Discipline_ID");
+
+                entity.Property(e => e.LevelId).HasColumnName("Level_ID");
+
+                entity.Property(e => e.TaskDecryption)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .HasColumnName("Task_decryption");
+
+                entity.Property(e => e.TypesTaskId).HasColumnName("Types_Task_ID");
+
+                entity.Property(e => e.WorkerId).HasColumnName("Worker_ID");
+
+                entity.HasOne(d => d.Level)
+                    .WithMany(p => p.Tasks)
+                    .HasForeignKey(d => d.LevelId)
+                    .HasConstraintName("FK__Tasks__Level_ID__0D64F3ED");
+
+                entity.HasOne(d => d.TypesTask)
+                    .WithMany(p => p.Tasks)
+                    .HasForeignKey(d => d.TypesTaskId)
+                    .HasConstraintName("FK__Tasks__Types_Tas__0C70CFB4");
+
+                entity.HasOne(d => d.Teaching)
+                    .WithMany(p => p.Tasks)
+                    .HasForeignKey(d => new { d.DisciplineId, d.WorkerId })
+                    .HasConstraintName("FK__Tasks__0B7CAB7B");
+            });
+
+            modelBuilder.Entity<Teaching>(entity =>
+            {
+                entity.HasKey(e => new { e.DisciplineId, e.WorkerId })
+                    .HasName("PK_UNIQUE_Teaching");
+
+                entity.ToTable("Teaching");
+
+                entity.Property(e => e.DisciplineId).HasColumnName("Discipline_ID");
+
+                entity.Property(e => e.WorkerId).HasColumnName("Worker_ID");
+
+                entity.HasOne(d => d.Discipline)
+                    .WithMany(p => p.Teachings)
+                    .HasForeignKey(d => d.DisciplineId)
+                    .HasConstraintName("FK__Teaching__Discip__03DB89B3");
+
+                entity.HasOne(d => d.Worker)
+                    .WithMany(p => p.Teachings)
+                    .HasForeignKey(d => d.WorkerId)
+                    .HasConstraintName("FK__Teaching__Worker__04CFADEC");
+            });
+
+            modelBuilder.Entity<Ticket>(entity =>
+            {
+                entity.HasKey(e => new { e.TicketId, e.TaskNumber })
+                    .HasName("PK_UNIQUE_Tickets");
+
+                entity.Property(e => e.TicketId).HasColumnName("Ticket_ID");
+
+                entity.Property(e => e.DisciplineId).HasColumnName("Discipline_ID");
+
+                entity.Property(e => e.TaskId).HasColumnName("Task_ID");
+
+                entity.HasOne(d => d.Task)
+                    .WithMany(p => p.Tickets)
+                    .HasForeignKey(d => new { d.TaskId, d.DisciplineId })
+                    .HasConstraintName("FK__Tickets__10416098");
+            });
+
+            modelBuilder.Entity<TypesTask>(entity =>
+            {
+                entity.ToTable("TypesTask");
+
+                entity.Property(e => e.TypesTaskId).HasColumnName("Types_Task_ID");
+
+                entity.Property(e => e.TypesTaskDecryption)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("Types_Task_Decryption");
+            });
+
+            modelBuilder.Entity<Worker>(entity =>
+            {
+                entity.HasIndex(e => e.WorkerLogin, "UQ__Workers__913667C7D366FA7D")
+                    .IsUnique();
+
+                entity.Property(e => e.WorkerId).HasColumnName("Worker_ID");
+
+                entity.Property(e => e.Fname)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("FName");
+
+                entity.Property(e => e.Gender)
+                    .IsRequired()
+                    .HasMaxLength(1);
+
+                entity.Property(e => e.Lname)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("LName");
+
+                entity.Property(e => e.RoleId).HasColumnName("Role_ID");
+
+                entity.Property(e => e.Sname)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("SName");
+
+                entity.Property(e => e.WorkerLogin)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .HasColumnName("Worker_Login")
+                    .UseCollation("Latin1_General_CS_AS");
+
+                entity.Property(e => e.WorkerPassword)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("Worker_password")
+                    .UseCollation("Latin1_General_CS_AS");
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.Workers)
+                    .HasForeignKey(d => d.RoleId)
+                    .HasConstraintName("FK__Workers__Role_ID__000AF8CF");
+            });
+
+            OnModelCreatingPartial(modelBuilder);
+        }
+
+        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+    }
+}
+C:\Users\heksa\kursach\GenerationTicketsWPF\Models\Level.cs  
+﻿using System;
+using System.Collections.Generic;
+
+#nullable disable
+
+namespace GenerationTicketsWPF.Models
+{
+    public partial class Level
+    {
+        public Level()
+        {
+            Tasks = new HashSet<Task>();
+        }
+
+        public int LevelId { get; set; }
+        public string LeverDecryption { get; set; }
+
+        public virtual ICollection<Task> Tasks { get; set; }
+    }
+}
+C:\Users\heksa\kursach\GenerationTicketsWPF\Models\Role.cs  
+﻿using System;
+using System.Collections.Generic;
+
+#nullable disable
+
+namespace GenerationTicketsWPF.Models
+{
+    public partial class Role
+    {
+        public Role()
+        {
+            Workers = new HashSet<Worker>();
+        }
+
+        public int RoleId { get; set; }
+        public string RoleDecryption { get; set; }
+
+        public virtual ICollection<Worker> Workers { get; set; }
+    }
+}
+C:\Users\heksa\kursach\GenerationTicketsWPF\Models\Specialty.cs  
+﻿using System;
+using System.Collections.Generic;
+
+#nullable disable
+
+namespace GenerationTicketsWPF.Models
+{
+    public partial class Specialty
+    {
+        public Specialty()
+        {
+            Disciplines = new HashSet<Discipline>();
+            SpecialtyId = "00.00.00";
+        }
+
+        public string SpecialtyId { get; set; }
+        public string SpecialtyDecryption { get; set; }
+        public int ChairmanId { get; set; }
+
+        public virtual Chairman Chairman { get; set; }
+        public virtual ICollection<Discipline> Disciplines { get; set; }
+    }
+}
+C:\Users\heksa\kursach\GenerationTicketsWPF\Models\TableName.cs  
+﻿using System;
+using System.Collections.Generic;
+
+#nullable disable
+
+namespace GenerationTicketsWPF.Models
+{
+    public partial class TableName
+    {
+        public string Name { get; set; }
+    }
+}
+C:\Users\heksa\kursach\GenerationTicketsWPF\Models\Task.cs  
+﻿using System;
+using System.Collections.Generic;
+
+#nullable disable
+
+namespace GenerationTicketsWPF.Models
+{
+    public partial class Task
+    {
+        public Task()
+        {
+            Tickets = new HashSet<Ticket>();
+        }
+
+        public int TaskId { get; set; }
+        public int DisciplineId { get; set; }
+        public string TaskDecryption { get; set; }
+        public int LevelId { get; set; }
+        public int TypesTaskId { get; set; }
+        public int WorkerId { get; set; }
+
+        public virtual Level Level { get; set; }
+        public virtual Teaching Teaching { get; set; }
+        public virtual TypesTask TypesTask { get; set; }
+        public virtual ICollection<Ticket> Tickets { get; set; }
+    }
+}
+C:\Users\heksa\kursach\GenerationTicketsWPF\Models\Teaching.cs  
+﻿using System;
+using System.Collections.Generic;
+
+#nullable disable
+
+namespace GenerationTicketsWPF.Models
+{
+    public partial class Teaching
+    {
+        public Teaching()
+        {
+            Tasks = new HashSet<Task>();
+        }
+
+        public int DisciplineId { get; set; }
+        public int WorkerId { get; set; }
+
+        public virtual Discipline Discipline { get; set; }
+        public virtual Worker Worker { get; set; }
+        public virtual ICollection<Task> Tasks { get; set; }
+    }
+}
+C:\Users\heksa\kursach\GenerationTicketsWPF\Models\Ticket.cs  
+﻿using System;
+using System.Collections.Generic;
+
+#nullable disable
+
+namespace GenerationTicketsWPF.Models
+{
+    public partial class Ticket
+    {
+        public int TicketId { get; set; }
+        public byte TaskNumber { get; set; }
+        public int TaskId { get; set; }
+        public int DisciplineId { get; set; }
+
+        public virtual Task Task { get; set; }
+    }
+}
+C:\Users\heksa\kursach\GenerationTicketsWPF\Models\TypesTask.cs  
+﻿using System;
+using System.Collections.Generic;
+
+#nullable disable
+
+namespace GenerationTicketsWPF.Models
+{
+    public partial class TypesTask
+    {
+        public TypesTask()
+        {
+            Tasks = new HashSet<Task>();
+        }
+
+        public int TypesTaskId { get; set; }
+        public string TypesTaskDecryption { get; set; }
+
+        public virtual ICollection<Task> Tasks { get; set; }
+    }
+}
+C:\Users\heksa\kursach\GenerationTicketsWPF\Models\Worker.cs  
+﻿using System;
+using System.Collections.Generic;
+
+#nullable disable
+
+namespace GenerationTicketsWPF.Models
+{
+    public partial class Worker
+    {
+        public Worker()
+        {
+            Teachings = new HashSet<Teaching>();
+        }
+
+        public int WorkerId { get; set; }
+        public string Lname { get; set; }
+        public string Fname { get; set; }
+        public string Sname { get; set; }
+        public string Gender { get; set; }
+        public string WorkerLogin { get; set; }
+        public string WorkerPassword { get; set; }
+        public int RoleId { get; set; }
+
+        public virtual Role Role { get; set; }
+        public virtual ICollection<Teaching> Teachings { get; set; }
+    }
+}
+C:\Users\heksa\kursach\GenerationTicketsWPF\obj\Debug\netcoreapp3.1\.NETCoreApp,Version=v3.1.AssemblyAttributes.cs  
+// <autogenerated />
+using System;
+using System.Reflection;
+[assembly: global::System.Runtime.Versioning.TargetFrameworkAttribute(".NETCoreApp,Version=v3.1", FrameworkDisplayName = "")]
+C:\Users\heksa\kursach\GenerationTicketsWPF\obj\Debug\netcoreapp3.1\AddTickets.g.i.cs  
+﻿#pragma checksum "..\..\..\AddTickets.xaml" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "8F68C1B7CBE7CDEE7AD200352854F44596F985C6"
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     Этот код создан программой.
+//     Исполняемая версия:4.0.30319.42000
+//
+//     Изменения в этом файле могут привести к неправильной работе и будут потеряны в случае
+//     повторной генерации кода.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using GenerationTicketsWPF;
+using System;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Controls.Ribbon;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Forms.Integration;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Markup;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
+using System.Windows.Media.TextFormatting;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Windows.Shell;
+
+
+namespace GenerationTicketsWPF {
+    
+    
+    /// <summary>
+    /// AddTickets
+    /// </summary>
+    public partial class AddTickets : System.Windows.Controls.Page, System.Windows.Markup.IComponentConnector {
+        
+        
+        #line 33 "..\..\..\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.TextBox TicketBox;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 34 "..\..\..\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.TextBlock CounterChar;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 36 "..\..\..\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.Button AddTick;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 39 "..\..\..\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.ComboBox DiscipAllow;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 41 "..\..\..\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.ComboBox LvlList;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 43 "..\..\..\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.StackPanel TypeTick;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 44 "..\..\..\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.RadioButton Practic;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 45 "..\..\..\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.RadioButton NoPractic;
+        
+        #line default
+        #line hidden
+        
+        private bool _contentLoaded;
+        
+        /// <summary>
+        /// InitializeComponent
+        /// </summary>
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        public void InitializeComponent() {
+            if (_contentLoaded) {
+                return;
+            }
+            _contentLoaded = true;
+            System.Uri resourceLocater = new System.Uri("/GenerationTicketsWPF;component/addtickets.xaml", System.UriKind.Relative);
+            
+            #line 1 "..\..\..\AddTickets.xaml"
+            System.Windows.Application.LoadComponent(this, resourceLocater);
+            
+            #line default
+            #line hidden
+        }
+        
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
+        void System.Windows.Markup.IComponentConnector.Connect(int connectionId, object target) {
+            switch (connectionId)
+            {
+            case 1:
+            this.TicketBox = ((System.Windows.Controls.TextBox)(target));
+            
+            #line 33 "..\..\..\AddTickets.xaml"
+            this.TicketBox.TextChanged += new System.Windows.Controls.TextChangedEventHandler(this.TextBox_TextChanged);
+            
+            #line default
+            #line hidden
+            return;
+            case 2:
+            this.CounterChar = ((System.Windows.Controls.TextBlock)(target));
+            return;
+            case 3:
+            this.AddTick = ((System.Windows.Controls.Button)(target));
+            
+            #line 36 "..\..\..\AddTickets.xaml"
+            this.AddTick.Click += new System.Windows.RoutedEventHandler(this.AddTick_Click);
+            
+            #line default
+            #line hidden
+            return;
+            case 4:
+            this.DiscipAllow = ((System.Windows.Controls.ComboBox)(target));
+            return;
+            case 5:
+            this.LvlList = ((System.Windows.Controls.ComboBox)(target));
+            return;
+            case 6:
+            this.TypeTick = ((System.Windows.Controls.StackPanel)(target));
+            return;
+            case 7:
+            this.Practic = ((System.Windows.Controls.RadioButton)(target));
+            return;
+            case 8:
+            this.NoPractic = ((System.Windows.Controls.RadioButton)(target));
+            return;
+            }
+            this._contentLoaded = true;
+        }
+    }
+}
+
+C:\Users\heksa\kursach\GenerationTicketsWPF\obj\Debug\netcoreapp3.1\App.g.cs  
+﻿#pragma checksum "..\..\..\App.xaml" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "86C62F2B6F6E7582FB95FA13D611F9B2C65D90DE"
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     Этот код создан программой.
+//     Исполняемая версия:4.0.30319.42000
+//
+//     Изменения в этом файле могут привести к неправильной работе и будут потеряны в случае
+//     повторной генерации кода.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using GenerationTicketsWPF;
+using System;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Controls.Ribbon;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Forms.Integration;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Markup;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
+using System.Windows.Media.TextFormatting;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Windows.Shell;
+
+
+namespace GenerationTicketsWPF {
+    
+    
+    /// <summary>
+    /// App
+    /// </summary>
+    public partial class App : System.Windows.Application {
+        
+        /// <summary>
+        /// InitializeComponent
+        /// </summary>
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        public void InitializeComponent() {
+            
+            #line 5 "..\..\..\App.xaml"
+            this.StartupUri = new System.Uri("MainWindow.xaml", System.UriKind.Relative);
+            
+            #line default
+            #line hidden
+        }
+        
+        /// <summary>
+        /// Application Entry Point.
+        /// </summary>
+        [System.STAThreadAttribute()]
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        public static void Main() {
+            GenerationTicketsWPF.App app = new GenerationTicketsWPF.App();
+            app.InitializeComponent();
+            app.Run();
+        }
+    }
+}
+
+C:\Users\heksa\kursach\GenerationTicketsWPF\obj\Debug\netcoreapp3.1\App.g.i.cs  
+﻿#pragma checksum "..\..\..\App.xaml" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "86C62F2B6F6E7582FB95FA13D611F9B2C65D90DE"
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     Этот код создан программой.
+//     Исполняемая версия:4.0.30319.42000
+//
+//     Изменения в этом файле могут привести к неправильной работе и будут потеряны в случае
+//     повторной генерации кода.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using GenerationTicketsWPF;
+using System;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Controls.Ribbon;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Forms.Integration;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Markup;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
+using System.Windows.Media.TextFormatting;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Windows.Shell;
+
+
+namespace GenerationTicketsWPF {
+    
+    
+    /// <summary>
+    /// App
+    /// </summary>
+    public partial class App : System.Windows.Application {
+        
+        /// <summary>
+        /// InitializeComponent
+        /// </summary>
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        public void InitializeComponent() {
+            
+            #line 5 "..\..\..\App.xaml"
+            this.StartupUri = new System.Uri("MainWindow.xaml", System.UriKind.Relative);
+            
+            #line default
+            #line hidden
+        }
+        
+        /// <summary>
+        /// Application Entry Point.
+        /// </summary>
+        [System.STAThreadAttribute()]
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        public static void Main() {
+            GenerationTicketsWPF.App app = new GenerationTicketsWPF.App();
+            app.InitializeComponent();
+            app.Run();
+        }
+    }
+}
+
+C:\Users\heksa\kursach\GenerationTicketsWPF\obj\Debug\netcoreapp3.1\Auth.g.i.cs  
+﻿#pragma checksum "..\..\..\Auth.xaml" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "AB172F97D38F31E14CF3A7C7F8A406A24FD3A56D"
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     Этот код создан программой.
+//     Исполняемая версия:4.0.30319.42000
+//
+//     Изменения в этом файле могут привести к неправильной работе и будут потеряны в случае
+//     повторной генерации кода.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using GenerationTicketsWPF;
+using System;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Controls.Ribbon;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Forms.Integration;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Markup;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
+using System.Windows.Media.TextFormatting;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Windows.Shell;
+
+
+namespace GenerationTicketsWPF {
+    
+    
+    /// <summary>
+    /// Auth
+    /// </summary>
+    public partial class Auth : System.Windows.Controls.Page, System.Windows.Markup.IComponentConnector {
+        
+        
+        #line 11 "..\..\..\Auth.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.Grid MainGrid;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 12 "..\..\..\Auth.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.TextBox login;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 13 "..\..\..\Auth.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.PasswordBox password;
+        
+        #line default
+        #line hidden
+        
+        private bool _contentLoaded;
+        
+        /// <summary>
+        /// InitializeComponent
+        /// </summary>
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        public void InitializeComponent() {
+            if (_contentLoaded) {
+                return;
+            }
+            _contentLoaded = true;
+            System.Uri resourceLocater = new System.Uri("/GenerationTicketsWPF;component/auth.xaml", System.UriKind.Relative);
+            
+            #line 1 "..\..\..\Auth.xaml"
+            System.Windows.Application.LoadComponent(this, resourceLocater);
+            
+            #line default
+            #line hidden
+        }
+        
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
+        void System.Windows.Markup.IComponentConnector.Connect(int connectionId, object target) {
+            switch (connectionId)
+            {
+            case 1:
+            this.MainGrid = ((System.Windows.Controls.Grid)(target));
+            return;
+            case 2:
+            this.login = ((System.Windows.Controls.TextBox)(target));
+            return;
+            case 3:
+            this.password = ((System.Windows.Controls.PasswordBox)(target));
+            return;
+            case 4:
+            
+            #line 16 "..\..\..\Auth.xaml"
+            ((System.Windows.Controls.Button)(target)).Click += new System.Windows.RoutedEventHandler(this.Log_In);
+            
+            #line default
+            #line hidden
+            return;
+            }
+            this._contentLoaded = true;
+        }
+    }
+}
+
+C:\Users\heksa\kursach\GenerationTicketsWPF\obj\Debug\netcoreapp3.1\ControlPage.g.i.cs  
+﻿#pragma checksum "..\..\..\ControlPage.xaml" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "26CFCCAE24B720FAC879224DF8683D6D179689EC"
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     Этот код создан программой.
+//     Исполняемая версия:4.0.30319.42000
+//
+//     Изменения в этом файле могут привести к неправильной работе и будут потеряны в случае
+//     повторной генерации кода.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using GenerationTicketsWPF;
+using System;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Controls.Ribbon;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Forms.Integration;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Markup;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
+using System.Windows.Media.TextFormatting;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Windows.Shell;
+
+
+namespace GenerationTicketsWPF {
+    
+    
+    /// <summary>
+    /// ControlPage
+    /// </summary>
+    public partial class ControlPage : System.Windows.Controls.Page, System.Windows.Markup.IComponentConnector {
+        
+        private bool _contentLoaded;
+        
+        /// <summary>
+        /// InitializeComponent
+        /// </summary>
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        public void InitializeComponent() {
+            if (_contentLoaded) {
+                return;
+            }
+            _contentLoaded = true;
+            System.Uri resourceLocater = new System.Uri("/GenerationTicketsWPF;component/controlpage.xaml", System.UriKind.Relative);
+            
+            #line 1 "..\..\..\ControlPage.xaml"
+            System.Windows.Application.LoadComponent(this, resourceLocater);
+            
+            #line default
+            #line hidden
+        }
+        
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
+        void System.Windows.Markup.IComponentConnector.Connect(int connectionId, object target) {
+            this._contentLoaded = true;
+        }
+    }
+}
+
+C:\Users\heksa\kursach\GenerationTicketsWPF\obj\Debug\netcoreapp3.1\Generation.g.i.cs  
+﻿#pragma checksum "..\..\..\Generation.xaml" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "C7FFAB0D759829EA02ADEB6791DE9DBBD6B38DE6"
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     Этот код создан программой.
+//     Исполняемая версия:4.0.30319.42000
+//
+//     Изменения в этом файле могут привести к неправильной работе и будут потеряны в случае
+//     повторной генерации кода.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using GenerationTicketsWPF;
+using System;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Controls.Ribbon;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Forms.Integration;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Markup;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
+using System.Windows.Media.TextFormatting;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Windows.Shell;
+
+
+namespace GenerationTicketsWPF {
+    
+    
+    /// <summary>
+    /// Generation
+    /// </summary>
+    public partial class Generation : System.Windows.Controls.Page, System.Windows.Markup.IComponentConnector {
+        
+        
+        #line 13 "..\..\..\Generation.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.ComboBox DiscipList;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 14 "..\..\..\Generation.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.ComboBox Chairmen;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 16 "..\..\..\Generation.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.TextBox Course;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 18 "..\..\..\Generation.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.TextBox Semestr;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 20 "..\..\..\Generation.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.TextBlock MaxTickets;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 22 "..\..\..\Generation.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.ComboBox Lvl;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 23 "..\..\..\Generation.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.Button Run;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 25 "..\..\..\Generation.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        private System.Windows.Controls.TextBox txtNum;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 26 "..\..\..\Generation.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        private System.Windows.Controls.Button cmdUp;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 27 "..\..\..\Generation.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        private System.Windows.Controls.Button cmdDown;
+        
+        #line default
+        #line hidden
+        
+        private bool _contentLoaded;
+        
+        /// <summary>
+        /// InitializeComponent
+        /// </summary>
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        public void InitializeComponent() {
+            if (_contentLoaded) {
+                return;
+            }
+            _contentLoaded = true;
+            System.Uri resourceLocater = new System.Uri("/GenerationTicketsWPF;component/generation.xaml", System.UriKind.Relative);
+            
+            #line 1 "..\..\..\Generation.xaml"
+            System.Windows.Application.LoadComponent(this, resourceLocater);
+            
+            #line default
+            #line hidden
+        }
+        
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
+        void System.Windows.Markup.IComponentConnector.Connect(int connectionId, object target) {
+            switch (connectionId)
+            {
+            case 1:
+            this.DiscipList = ((System.Windows.Controls.ComboBox)(target));
+            
+            #line 13 "..\..\..\Generation.xaml"
+            this.DiscipList.SelectionChanged += new System.Windows.Controls.SelectionChangedEventHandler(this.DiscipList_SelectionChanged);
+            
+            #line default
+            #line hidden
+            return;
+            case 2:
+            this.Chairmen = ((System.Windows.Controls.ComboBox)(target));
+            return;
+            case 3:
+            this.Course = ((System.Windows.Controls.TextBox)(target));
+            return;
+            case 4:
+            this.Semestr = ((System.Windows.Controls.TextBox)(target));
+            return;
+            case 5:
+            this.MaxTickets = ((System.Windows.Controls.TextBlock)(target));
+            return;
+            case 6:
+            this.Lvl = ((System.Windows.Controls.ComboBox)(target));
+            
+            #line 22 "..\..\..\Generation.xaml"
+            this.Lvl.SelectionChanged += new System.Windows.Controls.SelectionChangedEventHandler(this.CountTickets_TextChanged);
+            
+            #line default
+            #line hidden
+            return;
+            case 7:
+            this.Run = ((System.Windows.Controls.Button)(target));
+            
+            #line 23 "..\..\..\Generation.xaml"
+            this.Run.Click += new System.Windows.RoutedEventHandler(this.Run_Click);
+            
+            #line default
+            #line hidden
+            return;
+            case 8:
+            this.txtNum = ((System.Windows.Controls.TextBox)(target));
+            
+            #line 25 "..\..\..\Generation.xaml"
+            this.txtNum.TextChanged += new System.Windows.Controls.TextChangedEventHandler(this.txtNum_TextChanged);
+            
+            #line default
+            #line hidden
+            return;
+            case 9:
+            this.cmdUp = ((System.Windows.Controls.Button)(target));
+            
+            #line 26 "..\..\..\Generation.xaml"
+            this.cmdUp.Click += new System.Windows.RoutedEventHandler(this.cmdUp_Click);
+            
+            #line default
+            #line hidden
+            return;
+            case 10:
+            this.cmdDown = ((System.Windows.Controls.Button)(target));
+            
+            #line 27 "..\..\..\Generation.xaml"
+            this.cmdDown.Click += new System.Windows.RoutedEventHandler(this.cmdDown_Click);
+            
+            #line default
+            #line hidden
+            return;
+            }
+            this._contentLoaded = true;
+        }
+    }
+}
+
+C:\Users\heksa\kursach\GenerationTicketsWPF\obj\Debug\netcoreapp3.1\GenerationTicketsWPF.AssemblyInfo.cs  
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     Этот код создан программой.
+//     Исполняемая версия:4.0.30319.42000
+//
+//     Изменения в этом файле могут привести к неправильной работе и будут потеряны в случае
+//     повторной генерации кода.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using System;
+using System.Reflection;
+
+[assembly: System.Reflection.AssemblyCompanyAttribute("GenerationTicketsWPF")]
+[assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+[assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyProductAttribute("GenerationTicketsWPF")]
+[assembly: System.Reflection.AssemblyTitleAttribute("GenerationTicketsWPF")]
+[assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
+
+// Создано классом WriteCodeFragment MSBuild.
+
+C:\Users\heksa\kursach\GenerationTicketsWPF\obj\Debug\netcoreapp3.1\MainWindow.g.cs  
+﻿#pragma checksum "..\..\..\MainWindow.xaml" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "D06E4D12A6D458A07E9A550BF84F14C84641AC1D"
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     Этот код создан программой.
+//     Исполняемая версия:4.0.30319.42000
+//
+//     Изменения в этом файле могут привести к неправильной работе и будут потеряны в случае
+//     повторной генерации кода.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using GenerationTicketsWPF;
+using System;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Controls.Ribbon;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Forms.Integration;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Markup;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
+using System.Windows.Media.TextFormatting;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Windows.Shell;
+
+
+namespace GenerationTicketsWPF {
+    
+    
+    /// <summary>
+    /// MainWindow
+    /// </summary>
+    public partial class MainWindow : System.Windows.Navigation.NavigationWindow, System.Windows.Markup.IComponentConnector {
+        
+        private bool _contentLoaded;
+        
+        /// <summary>
+        /// InitializeComponent
+        /// </summary>
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        public void InitializeComponent() {
+            if (_contentLoaded) {
+                return;
+            }
+            _contentLoaded = true;
+            System.Uri resourceLocater = new System.Uri("/GenerationTicketsWPF;component/mainwindow.xaml", System.UriKind.Relative);
+            
+            #line 1 "..\..\..\MainWindow.xaml"
+            System.Windows.Application.LoadComponent(this, resourceLocater);
+            
+            #line default
+            #line hidden
+        }
+        
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
+        void System.Windows.Markup.IComponentConnector.Connect(int connectionId, object target) {
+            this._contentLoaded = true;
+        }
+    }
+}
+
+C:\Users\heksa\kursach\GenerationTicketsWPF\obj\Debug\netcoreapp3.1\MainWindow.g.i.cs  
+﻿#pragma checksum "..\..\..\MainWindow.xaml" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "D06E4D12A6D458A07E9A550BF84F14C84641AC1D"
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     Этот код создан программой.
+//     Исполняемая версия:4.0.30319.42000
+//
+//     Изменения в этом файле могут привести к неправильной работе и будут потеряны в случае
+//     повторной генерации кода.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using GenerationTicketsWPF;
+using System;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Controls.Ribbon;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Forms.Integration;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Markup;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
+using System.Windows.Media.TextFormatting;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Windows.Shell;
+
+
+namespace GenerationTicketsWPF {
+    
+    
+    /// <summary>
+    /// MainWindow
+    /// </summary>
+    public partial class MainWindow : System.Windows.Navigation.NavigationWindow, System.Windows.Markup.IComponentConnector {
+        
+        private bool _contentLoaded;
+        
+        /// <summary>
+        /// InitializeComponent
+        /// </summary>
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        public void InitializeComponent() {
+            if (_contentLoaded) {
+                return;
+            }
+            _contentLoaded = true;
+            System.Uri resourceLocater = new System.Uri("/GenerationTicketsWPF;V1.0.0.0;component/mainwindow.xaml", System.UriKind.Relative);
+            
+            #line 1 "..\..\..\MainWindow.xaml"
+            System.Windows.Application.LoadComponent(this, resourceLocater);
+            
+            #line default
+            #line hidden
+        }
+        
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
+        void System.Windows.Markup.IComponentConnector.Connect(int connectionId, object target) {
+            this._contentLoaded = true;
+        }
+    }
+}
+
+C:\Users\heksa\kursach\GenerationTicketsWPF\obj\Debug\netcoreapp3.1\Menu.g.i.cs  
+﻿#pragma checksum "..\..\..\Menu.xaml" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "61721B985919DE146E39AE17AD430DD44D83A674"
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     Этот код создан программой.
+//     Исполняемая версия:4.0.30319.42000
+//
+//     Изменения в этом файле могут привести к неправильной работе и будут потеряны в случае
+//     повторной генерации кода.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using GenerationTicketsWPF;
+using System;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Controls.Ribbon;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Markup;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
+using System.Windows.Media.TextFormatting;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Windows.Shell;
+
+
+namespace GenerationTicketsWPF {
+    
+    
+    /// <summary>
+    /// Menu
+    /// </summary>
+    public partial class Menu : System.Windows.Controls.Page, System.Windows.Markup.IComponentConnector {
+        
+        
+        #line 11 "..\..\..\Menu.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.Grid MainGrid;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 12 "..\..\..\Menu.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.TextBlock text1;
+        
+        #line default
+        #line hidden
+        
+        private bool _contentLoaded;
+        
+        /// <summary>
+        /// InitializeComponent
+        /// </summary>
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.2.0")]
+        public void InitializeComponent() {
+            if (_contentLoaded) {
+                return;
+            }
+            _contentLoaded = true;
+            System.Uri resourceLocater = new System.Uri("/GenerationTicketsWPF;component/menu.xaml", System.UriKind.Relative);
+            
+            #line 1 "..\..\..\Menu.xaml"
+            System.Windows.Application.LoadComponent(this, resourceLocater);
+            
+            #line default
+            #line hidden
+        }
+        
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.2.0")]
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
+        void System.Windows.Markup.IComponentConnector.Connect(int connectionId, object target) {
+            switch (connectionId)
+            {
+            case 1:
+            this.MainGrid = ((System.Windows.Controls.Grid)(target));
+            return;
+            case 2:
+            this.text1 = ((System.Windows.Controls.TextBlock)(target));
+            return;
+            }
+            this._contentLoaded = true;
+        }
+    }
+}
+
+C:\Users\heksa\kursach\GenerationTicketsWPF\obj\Debug\netcoreapp3.1\MenuPage.g.i.cs  
+﻿#pragma checksum "..\..\..\MenuPage.xaml" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "45FB2520924FBE54537F9A3856750E82DF81659D"
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     Этот код создан программой.
+//     Исполняемая версия:4.0.30319.42000
+//
+//     Изменения в этом файле могут привести к неправильной работе и будут потеряны в случае
+//     повторной генерации кода.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using GenerationTicketsWPF;
+using System;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Controls.Ribbon;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Forms.Integration;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Markup;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
+using System.Windows.Media.TextFormatting;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Windows.Shell;
+
+
+namespace GenerationTicketsWPF {
+    
+    
+    /// <summary>
+    /// MenuPage
+    /// </summary>
+    public partial class MenuPage : System.Windows.Controls.Page, System.Windows.Markup.IComponentConnector {
+        
+        
+        #line 11 "..\..\..\MenuPage.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.Grid MainGrid;
+        
+        #line default
+        #line hidden
+        
+        private bool _contentLoaded;
+        
+        /// <summary>
+        /// InitializeComponent
+        /// </summary>
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        public void InitializeComponent() {
+            if (_contentLoaded) {
+                return;
+            }
+            _contentLoaded = true;
+            System.Uri resourceLocater = new System.Uri("/GenerationTicketsWPF;component/menupage.xaml", System.UriKind.Relative);
+            
+            #line 1 "..\..\..\MenuPage.xaml"
+            System.Windows.Application.LoadComponent(this, resourceLocater);
+            
+            #line default
+            #line hidden
+        }
+        
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
+        void System.Windows.Markup.IComponentConnector.Connect(int connectionId, object target) {
+            switch (connectionId)
+            {
+            case 1:
+            this.MainGrid = ((System.Windows.Controls.Grid)(target));
+            return;
+            case 2:
+            
+            #line 26 "..\..\..\MenuPage.xaml"
+            ((System.Windows.Controls.Button)(target)).Click += new System.Windows.RoutedEventHandler(this.Button_Click);
+            
+            #line default
+            #line hidden
+            return;
+            case 3:
+            
+            #line 28 "..\..\..\MenuPage.xaml"
+            ((System.Windows.Controls.Button)(target)).Click += new System.Windows.RoutedEventHandler(this.AddTicket_Click);
+            
+            #line default
+            #line hidden
+            return;
+            }
+            this._contentLoaded = true;
+        }
+    }
+}
+
+C:\Users\heksa\kursach\GenerationTicketsWPF\obj\Debug\netcoreapp3.1\Page1.g.i.cs  
+﻿#pragma checksum "..\..\..\Page1.xaml" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "DA232CAF942F303350C6D426D35AA10A5D01B6FD"
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     Этот код создан программой.
+//     Исполняемая версия:4.0.30319.42000
+//
+//     Изменения в этом файле могут привести к неправильной работе и будут потеряны в случае
+//     повторной генерации кода.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using GenerationTicketsWPF;
+using System;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Controls.Ribbon;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Forms.Integration;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Markup;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
+using System.Windows.Media.TextFormatting;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Windows.Shell;
+
+
+namespace GenerationTicketsWPF {
+    
+    
+    /// <summary>
+    /// Page1
+    /// </summary>
+    public partial class Page1 : System.Windows.Controls.Page, System.Windows.Markup.IComponentConnector {
+        
+        private bool _contentLoaded;
+        
+        /// <summary>
+        /// InitializeComponent
+        /// </summary>
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        public void InitializeComponent() {
+            if (_contentLoaded) {
+                return;
+            }
+            _contentLoaded = true;
+            System.Uri resourceLocater = new System.Uri("/GenerationTicketsWPF;V1.0.0.0;component/page1.xaml", System.UriKind.Relative);
+            
+            #line 1 "..\..\..\Page1.xaml"
+            System.Windows.Application.LoadComponent(this, resourceLocater);
+            
+            #line default
+            #line hidden
+        }
+        
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
+        void System.Windows.Markup.IComponentConnector.Connect(int connectionId, object target) {
+            this._contentLoaded = true;
+        }
+    }
+}
+
+C:\Users\heksa\kursach\GenerationTicketsWPF\obj\Debug\netcoreapp3.1\PersonalArea.g.i.cs  
+﻿#pragma checksum "..\..\..\PersonalArea.xaml" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "A72F748F0CD4C09B24E12FF726199CAC4FBD1B8C"
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     Этот код создан программой.
+//     Исполняемая версия:4.0.30319.42000
+//
+//     Изменения в этом файле могут привести к неправильной работе и будут потеряны в случае
+//     повторной генерации кода.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using GenerationTicketsWPF;
+using System;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Controls.Ribbon;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Forms.Integration;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Markup;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
+using System.Windows.Media.TextFormatting;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Windows.Shell;
+
+
+namespace GenerationTicketsWPF {
+    
+    
+    /// <summary>
+    /// PersonalArea
+    /// </summary>
+    public partial class PersonalArea : System.Windows.Controls.Page, System.Windows.Markup.IComponentConnector {
+        
+        private bool _contentLoaded;
+        
+        /// <summary>
+        /// InitializeComponent
+        /// </summary>
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        public void InitializeComponent() {
+            if (_contentLoaded) {
+                return;
+            }
+            _contentLoaded = true;
+            System.Uri resourceLocater = new System.Uri("/GenerationTicketsWPF;component/personalarea.xaml", System.UriKind.Relative);
+            
+            #line 1 "..\..\..\PersonalArea.xaml"
+            System.Windows.Application.LoadComponent(this, resourceLocater);
+            
+            #line default
+            #line hidden
+        }
+        
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
+        void System.Windows.Markup.IComponentConnector.Connect(int connectionId, object target) {
+            this._contentLoaded = true;
+        }
+    }
+}
+
+C:\Users\heksa\kursach\GenerationTicketsWPF\obj\Debug\netcoreapp3.1\Registration.g.i.cs  
+﻿#pragma checksum "..\..\..\Registration.xaml" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "244D1BC4D2C6BC63A49CB4CD8E5B33154B43C9B4"
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     Этот код создан программой.
+//     Исполняемая версия:4.0.30319.42000
+//
+//     Изменения в этом файле могут привести к неправильной работе и будут потеряны в случае
+//     повторной генерации кода.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using GenerationTicketsWPF;
+using System;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Controls.Ribbon;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Forms.Integration;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Markup;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
+using System.Windows.Media.TextFormatting;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Windows.Shell;
+
+
+namespace GenerationTicketsWPF {
+    
+    
+    /// <summary>
+    /// Registration
+    /// </summary>
+    public partial class Registration : System.Windows.Controls.Page, System.Windows.Markup.IComponentConnector {
+        
+        
+        #line 12 "..\..\..\Registration.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.TextBox LName;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 14 "..\..\..\Registration.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.TextBox FName;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 16 "..\..\..\Registration.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.TextBox SName;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 18 "..\..\..\Registration.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.StackPanel Gender;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 24 "..\..\..\Registration.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.RadioButton Man;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 25 "..\..\..\Registration.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.RadioButton Woman;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 28 "..\..\..\Registration.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.ComboBox ListRoles;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 30 "..\..\..\Registration.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.TextBox Login;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 32 "..\..\..\Registration.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.PasswordBox Password;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 34 "..\..\..\Registration.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.PasswordBox TryPassword;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 36 "..\..\..\Registration.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.Button Predmets;
+        
+        #line default
+        #line hidden
+        
+        private bool _contentLoaded;
+        
+        /// <summary>
+        /// InitializeComponent
+        /// </summary>
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        public void InitializeComponent() {
+            if (_contentLoaded) {
+                return;
+            }
+            _contentLoaded = true;
+            System.Uri resourceLocater = new System.Uri("/GenerationTicketsWPF;component/registration.xaml", System.UriKind.Relative);
+            
+            #line 1 "..\..\..\Registration.xaml"
+            System.Windows.Application.LoadComponent(this, resourceLocater);
+            
+            #line default
+            #line hidden
+        }
+        
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
+        void System.Windows.Markup.IComponentConnector.Connect(int connectionId, object target) {
+            switch (connectionId)
+            {
+            case 1:
+            this.LName = ((System.Windows.Controls.TextBox)(target));
+            
+            #line 12 "..\..\..\Registration.xaml"
+            this.LName.SelectionChanged += new System.Windows.RoutedEventHandler(this.MouseClick);
+            
+            #line default
+            #line hidden
+            return;
+            case 2:
+            this.FName = ((System.Windows.Controls.TextBox)(target));
+            
+            #line 14 "..\..\..\Registration.xaml"
+            this.FName.SelectionChanged += new System.Windows.RoutedEventHandler(this.MouseClick);
+            
+            #line default
+            #line hidden
+            return;
+            case 3:
+            this.SName = ((System.Windows.Controls.TextBox)(target));
+            
+            #line 16 "..\..\..\Registration.xaml"
+            this.SName.SelectionChanged += new System.Windows.RoutedEventHandler(this.MouseClick);
+            
+            #line default
+            #line hidden
+            return;
+            case 4:
+            this.Gender = ((System.Windows.Controls.StackPanel)(target));
+            return;
+            case 5:
+            this.Man = ((System.Windows.Controls.RadioButton)(target));
+            return;
+            case 6:
+            this.Woman = ((System.Windows.Controls.RadioButton)(target));
+            return;
+            case 7:
+            this.ListRoles = ((System.Windows.Controls.ComboBox)(target));
+            
+            #line 28 "..\..\..\Registration.xaml"
+            this.ListRoles.SelectionChanged += new System.Windows.Controls.SelectionChangedEventHandler(this.ListRoles_SelectionChanged);
+            
+            #line default
+            #line hidden
+            return;
+            case 8:
+            this.Login = ((System.Windows.Controls.TextBox)(target));
+            
+            #line 30 "..\..\..\Registration.xaml"
+            this.Login.SelectionChanged += new System.Windows.RoutedEventHandler(this.MouseClick);
+            
+            #line default
+            #line hidden
+            return;
+            case 9:
+            this.Password = ((System.Windows.Controls.PasswordBox)(target));
+            return;
+            case 10:
+            this.TryPassword = ((System.Windows.Controls.PasswordBox)(target));
+            return;
+            case 11:
+            
+            #line 35 "..\..\..\Registration.xaml"
+            ((System.Windows.Controls.Button)(target)).Click += new System.Windows.RoutedEventHandler(this.Button_Click);
+            
+            #line default
+            #line hidden
+            return;
+            case 12:
+            this.Predmets = ((System.Windows.Controls.Button)(target));
+            
+            #line 36 "..\..\..\Registration.xaml"
+            this.Predmets.Click += new System.Windows.RoutedEventHandler(this.choise_subject);
+            
+            #line default
+            #line hidden
+            return;
+            }
+            this._contentLoaded = true;
+        }
+    }
+}
+
+C:\Users\heksa\kursach\GenerationTicketsWPF\obj\Debug\netcoreapp3.1\Pages\AddTickets.g.cs  
+﻿#pragma checksum "..\..\..\..\Pages\AddTickets.xaml" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "685F132E5F149E8F744E0D0C9474528BA8371CC1"
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     Этот код создан программой.
+//     Исполняемая версия:4.0.30319.42000
+//
+//     Изменения в этом файле могут привести к неправильной работе и будут потеряны в случае
+//     повторной генерации кода.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using GenerationTicketsWPF;
+using System;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Controls.Ribbon;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Forms.Integration;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Markup;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
+using System.Windows.Media.TextFormatting;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Windows.Shell;
+
+
+namespace GenerationTicketsWPF {
+    
+    
+    /// <summary>
+    /// AddTickets
+    /// </summary>
+    public partial class AddTickets : System.Windows.Controls.Page, System.Windows.Markup.IComponentConnector {
+        
+        
+        #line 40 "..\..\..\..\Pages\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.TextBox TicketBox;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 41 "..\..\..\..\Pages\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.TextBlock CounterChar;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 43 "..\..\..\..\Pages\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.Button AddTick;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 44 "..\..\..\..\Pages\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.Button Back;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 47 "..\..\..\..\Pages\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.ComboBox DiscipAllow;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 49 "..\..\..\..\Pages\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.ComboBox LvlList;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 51 "..\..\..\..\Pages\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.StackPanel TypeTick;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 52 "..\..\..\..\Pages\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.RadioButton Practic;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 53 "..\..\..\..\Pages\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.RadioButton NoPractic;
+        
+        #line default
+        #line hidden
+        
+        private bool _contentLoaded;
+        
+        /// <summary>
+        /// InitializeComponent
+        /// </summary>
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        public void InitializeComponent() {
+            if (_contentLoaded) {
+                return;
+            }
+            _contentLoaded = true;
+            System.Uri resourceLocater = new System.Uri("/GenerationTicketsWPF;component/pages/addtickets.xaml", System.UriKind.Relative);
+            
+            #line 1 "..\..\..\..\Pages\AddTickets.xaml"
+            System.Windows.Application.LoadComponent(this, resourceLocater);
+            
+            #line default
+            #line hidden
+        }
+        
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
+        void System.Windows.Markup.IComponentConnector.Connect(int connectionId, object target) {
+            switch (connectionId)
+            {
+            case 1:
+            this.TicketBox = ((System.Windows.Controls.TextBox)(target));
+            
+            #line 40 "..\..\..\..\Pages\AddTickets.xaml"
+            this.TicketBox.TextChanged += new System.Windows.Controls.TextChangedEventHandler(this.TextBox_TextChanged);
+            
+            #line default
+            #line hidden
+            return;
+            case 2:
+            this.CounterChar = ((System.Windows.Controls.TextBlock)(target));
+            return;
+            case 3:
+            this.AddTick = ((System.Windows.Controls.Button)(target));
+            
+            #line 43 "..\..\..\..\Pages\AddTickets.xaml"
+            this.AddTick.Click += new System.Windows.RoutedEventHandler(this.AddTick_Click);
+            
+            #line default
+            #line hidden
+            return;
+            case 4:
+            this.Back = ((System.Windows.Controls.Button)(target));
+            
+            #line 44 "..\..\..\..\Pages\AddTickets.xaml"
+            this.Back.Click += new System.Windows.RoutedEventHandler(this.Back_Click);
+            
+            #line default
+            #line hidden
+            return;
+            case 5:
+            this.DiscipAllow = ((System.Windows.Controls.ComboBox)(target));
+            return;
+            case 6:
+            this.LvlList = ((System.Windows.Controls.ComboBox)(target));
+            return;
+            case 7:
+            this.TypeTick = ((System.Windows.Controls.StackPanel)(target));
+            return;
+            case 8:
+            this.Practic = ((System.Windows.Controls.RadioButton)(target));
+            return;
+            case 9:
+            this.NoPractic = ((System.Windows.Controls.RadioButton)(target));
+            return;
+            }
+            this._contentLoaded = true;
+        }
+    }
+}
+
+C:\Users\heksa\kursach\GenerationTicketsWPF\obj\Debug\netcoreapp3.1\Pages\AddTickets.g.i.cs  
+﻿#pragma checksum "..\..\..\..\Pages\AddTickets.xaml" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "685F132E5F149E8F744E0D0C9474528BA8371CC1"
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     Этот код создан программой.
+//     Исполняемая версия:4.0.30319.42000
+//
+//     Изменения в этом файле могут привести к неправильной работе и будут потеряны в случае
+//     повторной генерации кода.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using GenerationTicketsWPF;
+using System;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Controls.Ribbon;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Forms.Integration;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Markup;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
+using System.Windows.Media.TextFormatting;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Windows.Shell;
+
+
+namespace GenerationTicketsWPF {
+    
+    
+    /// <summary>
+    /// AddTickets
+    /// </summary>
+    public partial class AddTickets : System.Windows.Controls.Page, System.Windows.Markup.IComponentConnector {
+        
+        
+        #line 40 "..\..\..\..\Pages\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.TextBox TicketBox;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 41 "..\..\..\..\Pages\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.TextBlock CounterChar;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 43 "..\..\..\..\Pages\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.Button AddTick;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 44 "..\..\..\..\Pages\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.Button Back;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 47 "..\..\..\..\Pages\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.ComboBox DiscipAllow;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 49 "..\..\..\..\Pages\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.ComboBox LvlList;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 51 "..\..\..\..\Pages\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.StackPanel TypeTick;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 52 "..\..\..\..\Pages\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.RadioButton Practic;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 53 "..\..\..\..\Pages\AddTickets.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.RadioButton NoPractic;
+        
+        #line default
+        #line hidden
+        
+        private bool _contentLoaded;
+        
+        /// <summary>
+        /// InitializeComponent
+        /// </summary>
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        public void InitializeComponent() {
+            if (_contentLoaded) {
+                return;
+            }
+            _contentLoaded = true;
+            System.Uri resourceLocater = new System.Uri("/GenerationTicketsWPF;V1.0.0.0;component/pages/addtickets.xaml", System.UriKind.Relative);
+            
+            #line 1 "..\..\..\..\Pages\AddTickets.xaml"
+            System.Windows.Application.LoadComponent(this, resourceLocater);
+            
+            #line default
+            #line hidden
+        }
+        
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
+        void System.Windows.Markup.IComponentConnector.Connect(int connectionId, object target) {
+            switch (connectionId)
+            {
+            case 1:
+            this.TicketBox = ((System.Windows.Controls.TextBox)(target));
+            
+            #line 40 "..\..\..\..\Pages\AddTickets.xaml"
+            this.TicketBox.TextChanged += new System.Windows.Controls.TextChangedEventHandler(this.TextBox_TextChanged);
+            
+            #line default
+            #line hidden
+            return;
+            case 2:
+            this.CounterChar = ((System.Windows.Controls.TextBlock)(target));
+            return;
+            case 3:
+            this.AddTick = ((System.Windows.Controls.Button)(target));
+            
+            #line 43 "..\..\..\..\Pages\AddTickets.xaml"
+            this.AddTick.Click += new System.Windows.RoutedEventHandler(this.AddTick_Click);
+            
+            #line default
+            #line hidden
+            return;
+            case 4:
+            this.Back = ((System.Windows.Controls.Button)(target));
+            
+            #line 44 "..\..\..\..\Pages\AddTickets.xaml"
+            this.Back.Click += new System.Windows.RoutedEventHandler(this.Back_Click);
+            
+            #line default
+            #line hidden
+            return;
+            case 5:
+            this.DiscipAllow = ((System.Windows.Controls.ComboBox)(target));
+            return;
+            case 6:
+            this.LvlList = ((System.Windows.Controls.ComboBox)(target));
+            return;
+            case 7:
+            this.TypeTick = ((System.Windows.Controls.StackPanel)(target));
+            return;
+            case 8:
+            this.Practic = ((System.Windows.Controls.RadioButton)(target));
+            return;
+            case 9:
+            this.NoPractic = ((System.Windows.Controls.RadioButton)(target));
+            return;
+            }
+            this._contentLoaded = true;
+        }
+    }
+}
+
+C:\Users\heksa\kursach\GenerationTicketsWPF\obj\Debug\netcoreapp3.1\Pages\Auth.g.cs  
+﻿#pragma checksum "..\..\..\..\Pages\Auth.xaml" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "AB172F97D38F31E14CF3A7C7F8A406A24FD3A56D"
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     Этот код создан программой.
+//     Исполняемая версия:4.0.30319.42000
+//
+//     Изменения в этом файле могут привести к неправильной работе и будут потеряны в случае
+//     повторной генерации кода.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using GenerationTicketsWPF;
+using System;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Controls.Ribbon;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Forms.Integration;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Markup;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
+using System.Windows.Media.TextFormatting;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Windows.Shell;
+
+
+namespace GenerationTicketsWPF {
+    
+    
+    /// <summary>
+    /// Auth
+    /// </summary>
+    public partial class Auth : System.Windows.Controls.Page, System.Windows.Markup.IComponentConnector {
+        
+        
+        #line 11 "..\..\..\..\Pages\Auth.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.Grid MainGrid;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 12 "..\..\..\..\Pages\Auth.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.TextBox login;
+        
+        #line default
+        #line hidden
+        
+        
+        #line 13 "..\..\..\..\Pages\Auth.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.PasswordBox password;
+        
+        #line default
+        #line hidden
+        
+        private bool _contentLoaded;
+        
+        /// <summary>
+        /// InitializeComponent
+        /// </summary>
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        public void InitializeComponent() {
+            if (_contentLoaded) {
+                return;
+            }
+            _contentLoaded = true;
+            System.Uri resourceLocater = new System.Uri("/GenerationTicketsWPF;component/pages/auth.xaml", System.UriKind.Relative);
+            
+            #line 1 "..\..\..\..\Pages\Auth.xaml"
+            System.Windows.Application.LoadComponent(this, resourceLocater);
+            
+            #line default
+            #line hidden
+        }
+        
+        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("PresentationBuildTasks", "5.0.4.0")]
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
+        void System.Windows.Markup.IComponentConnector.Connect(int connectionId, object target) {
+            switch (connectionId)
+            {
+            case 1:
+            this.MainGrid = ((System.Windows.Controls.Grid)(target));
+            return;
+            case 2:
+            this.login = ((System.Windows.Controls.TextBox)(target));
+            return;
+            case 3:
+            this.password = ((System.Windows.Controls.PasswordBox)(target));
+            return;
+            case 4:
+            
+            #line 16 "..\..\..\..\Pages\Auth.xaml"
+            ((System.Windows.Controls.Button)(target)).Click += new System.Windows.RoutedEventHandler(this.Log_In);
+            
+            #line default
+            #line hidden
+            return;
+            }
+            this._contentLoaded = true;
+        }
+    }
+}
+

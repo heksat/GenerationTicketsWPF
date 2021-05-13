@@ -297,13 +297,29 @@ namespace GenerationTicketsWPF.Models
                 return new List<Ticket>(0);
             }
         }
-        public string GetDispfromTickets()
+        //public string GetDispfromTickets()
+        //{
+        //    try
+        //    {
+        //        using (var db = new GenerationTicketsContext(Config.Options))
+        //        {
+        //            return db.Disciplines.Where(x => x.DisciplineId == ((db.Tickets).Select(x => x.DisciplineId).FirstOrDefault())).Select(x => x.DisciplineName).FirstOrDefault();
+        //            // from p in db.Tickets join c in db.Tasks on p.TaskId equals c.TaskId select c.DisciplineId
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show(ex.Message);
+        //        return null;
+        //    }
+        //}
+        public string GetDispfromTickets(List<Ticket> ticklist)
         {
             try
             {
                 using (var db = new GenerationTicketsContext(Config.Options))
                 {
-                    return db.Disciplines.Where(x => x.DisciplineId == (db.Tickets.Select(x => x.DisciplineId).FirstOrDefault())).Select(x => x.DisciplineName).FirstOrDefault();
+                    return db.Disciplines.Where(x => x.DisciplineId == ((ticklist ?? db.Tickets.ToList()).Select(x => x.DisciplineId).FirstOrDefault())).Select(x => x.DisciplineName).FirstOrDefault();
                     // from p in db.Tickets join c in db.Tasks on p.TaskId equals c.TaskId select c.DisciplineId
                 }
             }
