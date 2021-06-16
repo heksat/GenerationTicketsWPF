@@ -7,6 +7,9 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore;
 using GenerationTicketsWPF;
 using System.Windows;
+using System.Security;
+using GenerationTicketsWPF.Infrastructure;
+using System.Runtime.InteropServices;
 
 namespace GenerationTicketsWPF.Models
 {
@@ -14,13 +17,24 @@ namespace GenerationTicketsWPF.Models
 
     public class DbInteraction
     {
-        public Worker Auth(string login,string password)
+        public Worker Auth(string login,SecureString password)
         {
             try
             {
                 using (var db = new GenerationTicketsContext(Config.Options))
                 {
-                    return db.Workers.Where(el => el.WorkerLogin.Equals(login) && el.WorkerPassword.Equals(password)).FirstOrDefault();
+                    IntPtr valuePtr = IntPtr.Zero;
+                    try
+                    {
+                        valuePtr = Marshal.SecureStringToGlobalAllocUnicode(password);
+                        string plainTextPassword = Marshal.PtrToStringUni(valuePtr);
+                        return db.Workers.Where(el => el.WorkerLogin.Equals(login) && el.WorkerPassword.Equals(plainTextPassword)).FirstOrDefault();
+                    }
+                    finally
+                    {
+                        Marshal.ZeroFreeGlobalAllocUnicode(valuePtr);
+                    }
+                    
                 }
             }
             catch (Exception ex)

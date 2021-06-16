@@ -13,7 +13,7 @@ using System.Windows.Shapes;
 using System.Linq;
 using GenerationTicketsWPF.Models;
 using GenerationTicketsWPF.Pages;
-namespace GenerationTicketsWPF
+namespace GenerationTicketsWPF.Pages
 {
     /// <summary>
     /// Interaction logic for AddTickets.xaml

@@ -27,22 +27,14 @@ namespace GenerationTicketsWPF
             InitializeComponent();
         }
 
-        private void Log_In(object sender, RoutedEventArgs e)
+
+        private void password_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            var db = (new DbInteraction());
-            Config.User = db.Auth(login.Text, password.Password);
-            if (Config.User != null)
+            if (this.DataContext != null)
             {
-                if (Config.User.RoleId == 1)
-                {
-                    db.checkactualdiscip();
-                }
-                this.NavigationService.Navigate(new MenuPage());
-            }
-            else
-            {
-                MessageBox.Show("Не получилось!(");
+                ((ViewModels.AuthViewModel)this.DataContext).Password = ((PasswordBox)sender).SecurePassword;
             }
         }
+        //нарушение принципов MVVM в целях безопасности передачи пароля
     }
 }

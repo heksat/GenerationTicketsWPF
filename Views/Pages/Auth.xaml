@@ -3,11 +3,13 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:GenerationTicketsWPF"
+      xmlns:vm="clr-namespace:GenerationTicketsWPF.ViewModels"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Auth">
-
+    <Page.DataContext>
+        <vm:AuthViewModel/>
+    </Page.DataContext>
     <Grid x:Name="MainGrid" >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
@@ -20,11 +22,11 @@
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         <Grid Grid.Column="1" Grid.Row="1">
-        <TextBox x:Name="login" HorizontalAlignment="Left" Margin="511,90,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="241" Height="34"/>
-        <PasswordBox x:Name="password" HorizontalAlignment="Left" Margin="511,158,0,0" VerticalAlignment="Top" Width="241" Height="34"/>
+        <TextBox x:Name="login" HorizontalAlignment="Left" Margin="511,90,0,0" Text="{Binding Login}" TextWrapping="Wrap" VerticalAlignment="Top" Width="241" Height="34"/>
+        <PasswordBox x:Name="password" HorizontalAlignment="Left" Margin="511,158,0,0" VerticalAlignment="Top" Width="241" Height="34" PasswordChanged="password_PasswordChanged"/>
         <TextBlock HorizontalAlignment="Left" Margin="400,90,0,0" Text="Логин" TextWrapping="Wrap" VerticalAlignment="Top" Height="34" Width="92" FontSize="25"/>
         <TextBlock HorizontalAlignment="Left" Margin="400,158,0,0" Text="Пароль" TextWrapping="Wrap" VerticalAlignment="Top" Height="34" Width="92" FontSize="25"/>
-        <Button Content="Войти" HorizontalAlignment="Left" Margin="573,225,0,0" VerticalAlignment="Top" Height="42" Width="179" IsDefault="True" Click="Log_In"/>
+            <Button Content="Войти" HorizontalAlignment="Left" Margin="573,225,0,0" VerticalAlignment="Top" Height="42" Width="179" IsDefault="True" Command="{Binding LogInUserCommand}" />
         </Grid>
     </Grid>
 </Page>
